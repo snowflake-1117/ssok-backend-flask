@@ -7,21 +7,19 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 browser.get(url)
 
-
-print(browser.find_element_by_tag_name('html').text)
-'''
-noticeTrs = browser.find_elements_by_xpath('//*[@id="messageListBody"]/tr[*]')
-
-messageTrs = browser.find_element_by_css_selector('a')
-for a in messageTrs:
+#print(browser.find_element_by_tag_name('html').text)
+board = browser.find_element_by_xpath('//*[@id="messageListBody"]')
+noticeTds = board.find_elements_by_css_selector('td.title')
+for td in noticeTds:
+    a = td.find_element_by_css_selector('a')
     href = a.get_attribute('href')
     try:
         print("-",href)
         span = a.find_element_by_css_selector('span')
-        print(span)
+        print(span.text)
     except NoSuchElementException:
         print("-", href)
 
-'''
+
 browser.quit()
 
