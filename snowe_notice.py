@@ -25,7 +25,7 @@ browser.implicitly_wait(3)
 browser.get(url)
 
 # print(browser.find_element_by_tag_name('html').text)
-time.sleep(10)
+time.sleep(5)
 callBoardList()
 
 browser.quit()
