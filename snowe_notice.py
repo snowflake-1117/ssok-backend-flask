@@ -1,7 +1,6 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from snowe_notice_board import printPage
-
 import time
 
 def callBoardList():
