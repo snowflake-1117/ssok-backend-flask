@@ -7,31 +7,21 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 browser.get(url)
 
-#titles = browser.find_elements_by_css_selector("td.title")
-#
-#
-# for title in titles:
-#     try:
-#         a = title.find_element_by_css_selector("a")
-#         print ("-",a.get_attribute("href"))
-#         print("-",title.text)
-#     except NoSuchElementException:
-#         print(title.text)
-#
-# browser.quit()
 
+print(browser.find_element_by_tag_name('html').text)
+'''
+noticeTrs = browser.find_elements_by_xpath('//*[@id="messageListBody"]/tr[*]')
 
-messageTrs = browser.find_elements_by_xpath('//*[@id="messageListBody"]/tr[*]')
-print(messageTrs)
-
-for tr in messageTrs:
-    td = tr.find_element_by_css_selector('td.title')
+messageTrs = browser.find_element_by_css_selector('a')
+for a in messageTrs:
+    href = a.get_attribute('href')
     try:
-        a = td.find_element_by_css_selector("a")
-        href = a.get_attribute('href')
         print("-",href)
-        print(td.text)
+        span = a.find_element_by_css_selector('span')
+        print(span)
     except NoSuchElementException:
-         print(td.text)
+        print("-", href)
 
+'''
 browser.quit()
+
