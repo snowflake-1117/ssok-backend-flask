@@ -1,6 +1,11 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-from department_english_board import jf_view
+
+def submit(href):
+    #browser.execute_script("return "+href)
+    #browser.find_element_by_xpath("//a[@href=\"javascript:page_link('" + str(count) + "')\"]").click()
+    browser.find_element_by_xpath("//a[@href=\""+href+"\"]").click()
+    return;
 
 def printList():
     titles = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]/td[3]')
@@ -10,10 +15,10 @@ def printList():
             a = title.find_element_by_css_selector("a")
             global href
             href = a.get_attribute("href")
-            href = href[11:]
+            href = href[:len(href)-1]
             print("-", href)
             print(title.text)
-            jf_view(href)
+            submit(href)
         except NoSuchElementException:
             print(title.text)
     return;
