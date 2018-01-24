@@ -1,7 +1,19 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-from snowe_notice_board import printPage
+
 import time
+def printPage(url):
+    browser.get(url)
+
+    article = browser.find_element_by_css_selector('div.article')
+    pList = article.find_elements_by_tag_name('p')
+
+    content = ""
+    for p in pList:
+        if p.text:
+            content = content + p.text + '\n'
+    print(content)
+    return;
 
 def callBoardList():
     board = browser.find_element_by_xpath('//*[@id="messageListBody"]')
