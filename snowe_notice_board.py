@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import urllib.request as request
 
 
-def printPage(url):
+def print_page(url):
     html = request.urlopen(url).read()
     soup = BeautifulSoup(html,'lxml')
     article = soup.select_one('div.article')
@@ -14,3 +14,4 @@ def printPage(url):
              content = content + p.text + '\n'
     print(content)
     return;
+
