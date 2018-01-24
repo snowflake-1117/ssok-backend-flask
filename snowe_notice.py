@@ -1,17 +1,7 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from snowe_notice_board import *
 import time
-
-def printPage(contentUrl):
-    browser.get(contentUrl)
-    article = browser.find_element_by_css_selector('div.article')
-    pList = article.find_elements_by_tag_name('p')
-    content = ""
-    for p in pList:
-        if p.text:
-            content = content + p.text + '\n'
-    print(content)
-    return;
 
 def set_page_crawling():
     global page_max
@@ -25,11 +15,11 @@ def crawl_pages():
     global count
     count = 1
     while count <= page_max:
-        print('page: '+str(count))
+        print('page: ',str(count))
+        browser.get(url+'#'+str(count))
+        time.sleep(5)
         call_list()
-        time.sleep(1)
         count+=1
-        browser.get(url+'#'+count)
     return;
 
 def call_list():
@@ -42,7 +32,7 @@ def call_list():
             print("-", href)
             span = a.find_element_by_css_selector('span')
             print("-", span.text)
-            printPage(href)
+            print_page(href)
         except NoSuchElementException:
             print("-", td.text)
     return;
@@ -53,8 +43,8 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 browser.get(url)
 time.sleep(5)
-#set_page_crawling()
-#crawl_pages()
+set_page_crawling()
+crawl_pages()
 call_list()
 browser.quit()
 
