@@ -16,10 +16,10 @@ def crawl_pages():
     count = 1
     while count <= page_max:
         print('page: ',str(count))
-        time.sleep(2)
+        browser.get(url+'#'+str(count))
+        time.sleep(5)
         call_list()
         count+=1
-        browser.get(url+'#'+str(count))
     return;
 
 def call_list():
@@ -32,7 +32,7 @@ def call_list():
             print("-", href)
             span = a.find_element_by_css_selector('span')
             print("-", span.text)
-            # print_page(href)
+            print_page(href)
         except NoSuchElementException:
             print("-", td.text)
     return;
