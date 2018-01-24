@@ -1,9 +1,6 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-
-def jf_view():
-    browser.execute_script("return "+href)
-    return;
+from department_english_board import jf_view
 
 def printList():
     titles = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]/td[3]')
@@ -16,7 +13,7 @@ def printList():
             href = href[11:]
             print("-", href)
             print(title.text)
-            jf_view()
+            jf_view(href)
         except NoSuchElementException:
             print(title.text)
     return;
