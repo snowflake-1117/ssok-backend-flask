@@ -1,18 +1,16 @@
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import WebDriverException
+from bs4 import BeautifulSoup
+import urllib.request as request
+
 
 def printPage(url):
-    browser = webdriver.PhantomJS()
-    browser.implicitly_wait(3)
-    browser.get(url)
-
-    article = browser.find_element_by_css_selector('div.article')
-    pList = article.find_elements_by_tag_name('p')
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html,'lxml')
+    article = soup.select_one('div.article')
+    p_list = article.find_all('p')
 
     content = ""
-    for p in pList:
+    for p in p_list:
         if p.text:
-            content = content + p.text + '\n'
+             content = content + p.text + '\n'
     print(content)
     return;
