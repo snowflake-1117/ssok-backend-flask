@@ -13,7 +13,7 @@ def printPage(contentUrl):
     print(content)
     return;
 
-def setPageCrawling():
+def set_page_crawling():
     global page_max
     page_end = browser.find_element_by_css_selector('a.next_end')
     page_max = page_end.get_attribute('href')[len(url) + 1:]
@@ -21,21 +21,21 @@ def setPageCrawling():
     page_max = int(page_max)
     return;
 
-def crawlPages():
+def crawl_pages():
     global count
     count = 1
     while count <= page_max:
         print('page: '+str(count))
-        callBoardList()
+        call_list()
         time.sleep(1)
         count+=1
-        browser.get(url+count)
+        browser.get(url+'#'+count)
     return;
 
-def callBoardList():
+def call_list():
     board = browser.find_element_by_xpath('//*[@id="messageListBody"]')
-    noticeTds = board.find_elements_by_css_selector('td.title')
-    for td in noticeTds:
+    td_list = board.find_elements_by_css_selector('td.title')
+    for td in td_list:
         try:
             a = td.find_element_by_css_selector('a')
             href = a.get_attribute('href')
@@ -50,11 +50,11 @@ def callBoardList():
 global url
 url = 'https://snowe.sookmyung.ac.kr/bbs5/boards/notice'
 browser = webdriver.PhantomJS()
-global browser
 browser.implicitly_wait(3)
 browser.get(url)
 time.sleep(5)
-setPageCrawling()
-crawlPages()
+#set_page_crawling()
+#crawl_pages()
+call_list()
 browser.quit()
 
