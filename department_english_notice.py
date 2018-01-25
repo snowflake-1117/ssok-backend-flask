@@ -11,7 +11,9 @@ def print_list():
             href = a.get_attribute("href")
             print("-", href)
             print("-",title.text)
-            a.click()
+            test_click()
+            browser.get(board_url)
+            time.sleep(5)
         except NoSuchElementException:
             print("-",title.text)
 
@@ -22,15 +24,20 @@ def test_click():
     href = a.get_attribute("href")
     print("-", href)
     a.click()
-    print("page_source",browser.page_source)
+    time.sleep(5)
+    span_list = browser.find_elements_by_css_selector('span')
+    content = ""
+    for span in span_list:
+        if span.text:
+            content = content + span.text + '\n'
+    print('<content>\n',content)
     return
 
-url = 'http://english.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=english&handle=3'
+board_url = 'http://english.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=english&handle=3'
 browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
-browser.get(url)
+browser.get(board_url)
 time.sleep(5)
-#print(browser.find_element_by_css_selector('html').text)
 #print_list()
 test_click()
 browser.quit()
