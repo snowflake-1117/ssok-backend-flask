@@ -5,17 +5,21 @@ import time
 def get_page():
 
     while(True):
-        page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/*')
-        try:
-            current_page = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/b')
-            current_page_number = int(current_page.text[1:len(current_page.text)-1])
-            print('page:',current_page_number)
-            current_item_count = page_list.index(current_page)
-            a = page_list.__getitem__(current_item_count+1)
-            a.click()
-        except NoSuchElementException:
+        tr_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]')
+        table_len = str(len(tr_list)-2)
+        page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr['+table_len+']/td/table/tbody/tr/td[2]/*')
+
+        current_page = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+table_len+']/td/table/tbody/tr/td[2]/b')
+            # 28 :/html/body/form[2]/table/tbody/tr[10]/td/table/tbody/tr/td[2]/b
+        current_page_number = int(current_page.text[1:len(current_page.text)-1])
+        print('page:',current_page_number)
+        if(current_page_number==28):
             print("END OF PAGE")
             break
+
+        current_item_count = page_list.index(current_page)
+        a = page_list.__getitem__(current_item_count+1)
+        a.click()
     return;
 
 def print_list():
@@ -30,7 +34,6 @@ def print_list():
             href = a.get_attribute("href")
             print("href: ", href)
             print(str(count)+"."+"제목: ",a.text)
-            #print_link(a)
         except NoSuchElementException:
             print("-",a.text)
 
