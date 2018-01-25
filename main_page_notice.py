@@ -16,8 +16,8 @@ def scrape_current_to_max_page(start_page, last_page):
     current_page = start_page
     while current_page <= last_page:
         print("page: " + str(current_page))
-        selected_notice = browser.find_elements_by_css_selector("a.artclLinkView")
-        print_titles_and_contents_of(selected_notice)
+        page_notices = browser.find_elements_by_css_selector("a.artclLinkView")
+        print_titles_and_contents_of(page_notices)
         current_page += 1
         browser.find_element_by_xpath(get_page_link(current_page)).click()
 
