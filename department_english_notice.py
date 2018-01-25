@@ -3,16 +3,17 @@ from selenium.common.exceptions import NoSuchElementException
 import time
 
 def get_page():
-    current_page = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/b')
-    current_page_number = int(current_page.text[1])
-    print('page:', current_page_number)
+
     while(True):
         page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/*')
-        page_count = len(page_list)
-        a = page_list.__getitem__(current_page_number + 1)
-        if(a):
+        try:
+            current_page = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/b')
+            current_page_number = int(current_page.text[1:len(current_page.text)-1])
+            print('page:',current_page_number)
+            current_item_count = page_list.index(current_page)
+            a = page_list.__getitem__(current_item_count+1)
             a.click()
-        else:
+        except NoSuchElementException:
             print("END OF PAGE")
             break
     return;
