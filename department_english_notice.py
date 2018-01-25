@@ -7,16 +7,15 @@ def print_list():
     titles = browser.find_elements_by_css_selector('td.list_td1')
     list_len = len(titles)//5
     print('count list: '+str(list_len))
-    count = 1
     START_OF_LIST_TD = 4
+
     for count in range(1, list_len):
         try:
             a = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[3]/a')
             href = a.get_attribute("href")
             print("href: ", href)
-            #test_click()
             print("제목: ",a.text)
-            # print_link(a)
+            print_link(a)
         except NoSuchElementException:
             print("-",a.text)
 
