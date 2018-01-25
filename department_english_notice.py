@@ -7,14 +7,14 @@ def print_list():
     list_len = len(titles)//5
     print('count list: '+str(list_len))
     START_OF_LIST_TD = 5
-    count=4
-    if count==4:
-        try:
-            a = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[3]/a')
-            print(str(count+1)+"."+"제목: ",a.text)
-            print_link(a)
-        except NoSuchElementException:
-            print("-",a.text)
+    count =0
+    while count < list_len:
+        list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]/td[3]/a')
+        a = list.__getitem__(count)
+        print(str(count+1)+"."+"제목: ",a.text)
+        print_link(a)
+        count+=1
+        #print("-",'NoSuchElementException')
     return
 
 def move_to_next_page():
