@@ -14,8 +14,8 @@ def print_list():
             a = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[3]/a')
             href = a.get_attribute("href")
             print("href: ", href)
-            print("제목: ",a.text)
-            #print_link(a)
+            print(str(count)+"."+"제목: ",a.text)
+            print_link(a)
         except NoSuchElementException:
             print("-",a.text)
 
@@ -24,12 +24,14 @@ def print_list():
 def print_link(a):
     a.click()
     time.sleep(5)
-    span_list = browser.find_elements_by_css_selector('span')
-    content = ""
-    for span in span_list:
-        if span.text:
-            content = content + span.text + '\n'
-    print('<content>\n',content)
+    content_div =browser.find_element_by_xpath('//*[@id="contentsDiv"]')
+    print('<content>\n',content_div.text)
+    # span_list = browser.find_elements_by_css_selector('span')
+    # content = ""
+    # for span in span_list:
+    #     if span.text:
+    #         content = content + span.text + '\n'
+    # print('<content>\n',content)
     browser.get(board_url)
     time.sleep(5)
     return
