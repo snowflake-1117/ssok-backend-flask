@@ -2,16 +2,17 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-def print_list():
+def print_list1():
     titles = browser.find_elements_by_css_selector('td.list_td1')
-
+    list_len = len(titles)//5
+    print('count list: '+str(list_len))
     for title in titles:
         try:
             a = title.find_element_by_css_selector("a")
             href = a.get_attribute("href")
             print("-", href)
             print("-",title.text)
-            test_click()
+            #test_click()
             browser.get(board_url)
             time.sleep(5)
         except NoSuchElementException:
@@ -38,7 +39,6 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 browser.get(board_url)
 time.sleep(5)
-#print_list()
-test_click()
+print_list1()
 browser.quit()
 
