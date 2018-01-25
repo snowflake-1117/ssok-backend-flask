@@ -17,27 +17,11 @@ def print_list():
             print_link(a)
         except NoSuchElementException:
             print("-",a.text)
-    print('out of for')
     return
 
 def move_to_next_page():
     #print(browser.find_element_by_css_selector('html').text)
-    titles = browser.find_elements_by_css_selector('td.list_td1')
-    list_len = len(titles) // 5
-    print('count list: ' + str(list_len))
-    notice_list = browser.find_elements_by_xpath(
-                '/html/body/form[2]/table/tbody/tr[*]/td[3]/a')
-    START_OF_LIST_TD = 5
-    count = 4
-    if count == 4:
-        try:
-            current_notice = notice_list.__getitem__(count+START_OF_LIST_TD)
-            # href = a.get_attribute("href")
-            # print("href: ", href)
-            print(str(count + 1) + "." + "제목: ", current_notice.text)
-            print_link(current_notice)
-        except NoSuchElementException:
-            print("-", current_notice.text)
+    print_list()
     total_tr = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]')
     page_location = str(len(total_tr) - 2)
     page_list = browser.find_elements_by_xpath(
