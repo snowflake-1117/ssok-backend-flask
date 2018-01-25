@@ -3,9 +3,18 @@ from selenium.common.exceptions import NoSuchElementException
 import time
 
 def get_page():
-    page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/*')
-    page_count = len(page_list)
-    print('page :',page_count)
+    current_page = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/b')
+    current_page_number = int(current_page.text[1])
+    print('page:', current_page_number)
+    while(True):
+        page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/*')
+        page_count = len(page_list)
+        a = page_list.__getitem__(current_page_number + 1)
+        if(a):
+            a.click()
+        else:
+            print("END OF PAGE")
+            break
     return;
 
 def print_list():
@@ -20,7 +29,7 @@ def print_list():
             href = a.get_attribute("href")
             print("href: ", href)
             print(str(count)+"."+"제목: ",a.text)
-            print_link(a)
+            #print_link(a)
         except NoSuchElementException:
             print("-",a.text)
 
