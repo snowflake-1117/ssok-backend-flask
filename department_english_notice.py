@@ -2,6 +2,11 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
 
+def get_page():
+    page_list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[17]/td/table/tbody/tr/td[2]/*')
+    page_count = len(page_list)
+    print('page :',page_count)
+    return;
 
 def print_list():
     titles = browser.find_elements_by_css_selector('td.list_td1')
@@ -42,6 +47,6 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 browser.get(board_url)
 time.sleep(5)
-print_list()
+get_page()
 browser.quit()
 
