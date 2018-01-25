@@ -13,8 +13,8 @@ def get_last_page(last_number):
 
 
 def scrape_current_to_max_page(start_page, last_page):
-    while start_page <= last_page:
-        current_page = start_page
+    current_page = start_page
+    while current_page <= last_page:
         print("page: " + str(current_page))
         selected_notice = browser.find_elements_by_css_selector("a.artclLinkView")
         print_titles_and_contents_of(selected_notice)
