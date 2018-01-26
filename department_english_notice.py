@@ -9,8 +9,8 @@ def print_list():
     START_OF_LIST_TD = 5
     count =0
     while count < list_len:
-        list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]/td[3]/a')
-        a = list.__getitem__(count)
+        #list = browser.find_elements_by_xpath('/html/body/form[2]/table/tbody/tr[*]/td[3]/a')
+        a = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[3]/a')
         print(str(count+1)+"."+"제목: ",a.text)
         print_link(a)
         count+=1
