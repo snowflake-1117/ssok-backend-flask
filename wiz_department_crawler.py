@@ -45,11 +45,15 @@ def print_link(a):
     time.sleep(5)
     return
 
-url = 'http://english.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=english&handle=4'
+def crawl_department(url):
+    browser.get(url)
+    time.sleep(5)
+    move_to_next_page()
+    return
+
+url = 'http://csweb.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=cs&handle=1'
 browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
-browser.get(url)
-time.sleep(5)
-move_to_next_page()
+crawl_department(url)
 browser.quit()
 
