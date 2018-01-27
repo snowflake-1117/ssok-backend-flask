@@ -3,6 +3,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
+from MainPageNotice import MainPageNotice
 
 
 def get_last_page(last_number):
@@ -17,23 +18,30 @@ def scrape_current_to_max_page(start_page, last_page):
     while current_page <= last_page:
         print("page: " + str(current_page))
         page_notices = browser.find_elements_by_css_selector("a.artclLinkView")
-        print_titles_and_contents_of(page_notices)
+        save_titles_and_contents_of(page_notices)
         current_page += 1
         browser.find_element_by_xpath(get_page_link(current_page)).click()
 
 
-def print_titles_and_contents_of(selected_page):
+def save_titles_and_contents_of(selected_page):
     for notice in selected_page:
-        print("제목: ", notice.text)
-        notice_item_url = notice.get_attribute("href")
-        notice_item_response = urllib.request.urlopen(notice_item_url)
-        soup_notice = BeautifulSoup(notice_item_response, "html.parser")
-        notice_content = soup_notice.select_one(".view_contents")
-        notice_content_output = get_content_output(notice_content)
-        print(notice_content_output)
-        print("")
-
+        main_page_notice = MainPageNotice()
+        save_title(notice, main_page_notice)
+        save_content(notice, main_page_notice)
+        main_page_notice_list.append(main_page_notice)
         time.sleep(1)
+
+
+def save_title(notice, main_page_notice):
+    main_page_notice.title = notice.text
+
+
+def save_content(notice, main_page_notice):
+    notice_item_url = notice.get_attribute("href")
+    notice_item_response = urllib.request.urlopen(notice_item_url)
+    soup_notice = BeautifulSoup(notice_item_response, "html.parser")
+    notice_content = soup_notice.select_one(".view_contents")
+    main_page_notice.content = get_content_output(notice_content)
 
 
 def get_content_output(content_sentences):
@@ -62,6 +70,7 @@ start_notice_page = 1
 last_notice_number = int(browser.find_element_by_class_name("num").text)
 last_notice_page = get_last_page(last_notice_number)
 
+main_page_notice_list = []
 scrape_current_to_max_page(start_notice_page, last_notice_page)
 
 browser.quit()
