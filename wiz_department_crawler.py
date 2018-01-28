@@ -17,17 +17,6 @@ def print_list():
             print(str(count + 1) + "." + "제목: ", link.text)
             print_link(link)
         count+=1
-
-        # item = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']')
-        # #number = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[1]')
-        # number = item.find_element_by_xpath('//td[1]')
-        # print('number:',number.text)
-        # if(number.text!='공지'):
-        #     #title = browser.find_element_by_xpath('/html/body/form[2]/table/tbody/tr['+str(count+START_OF_LIST_TD)+']/td[3]/a')
-        #     title = item.find_element_by_xpath('//td[3]/a')
-        #     print(str(count+1)+"."+"제목: ",title.text)
-        #     print_link(title)
-        # count+=1
     return
 
 def move_to_next_page():
@@ -67,7 +56,7 @@ def crawl_department(url):
     move_to_next_page()
     return
 
-url = 'http://csweb.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=cs&handle=1'
+url = 'http://english.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=english&handle=3'
 browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 crawl_department(url)
