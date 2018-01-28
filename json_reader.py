@@ -13,5 +13,4 @@ for count in range(0,len(data)):
     print('domain_name:', data[count]['domain_name'])
     print('home_id:', data[count]['home_id'])
     print('handle:', data[count]['handle'])
-#"college":"문과대학","department":"한국어문학부","domain_name":"korean","home_id":"korean","handle":1
 exit()
