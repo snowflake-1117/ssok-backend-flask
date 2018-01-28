@@ -73,10 +73,3 @@ class WizCrawler:
         WizCrawler.browser.quit()
         return
 
-
-crawler = WizCrawler()
-domain_name='csweb'
-home_id='cs'
-handle=str(1)
-url='http://'+domain_name+'.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='+home_id+'&handle='+handle
-crawler.crawl_site(url)
