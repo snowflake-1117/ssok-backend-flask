@@ -55,6 +55,13 @@ def scrap_current_to_max_page(url_data, start_page, last_page):
         browser.get(get_total_url(url_data, current_page))
 
 
+def get_last_notice_number(number_data):
+    for number in number_data:
+        last_number = number.text
+        if last_number.isdigit():
+            return int(last_number)
+
+
 department_url_data_list = []
 data = json.load(open('wiz5_departments.json'))
 base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
@@ -70,13 +77,15 @@ for i in data:
 departments_notice_list = []
 
 count = 0
+
 for department_url_data in department_url_data_list:
     total_url = get_total_url(department_url_data, department_url_data.page)
     browser.get(total_url)
     browser.save_screenshot("department" + str(count) + ".png")
 
     start_notice_page = department_url_data.page
-    last_notice_number = int(browser.find_element_by_xpath("//*[@id=\"board-container\"]/div[2]/form/table/tbody/tr[1]/td[2]").text)
+    numbers = browser.find_elements_by_xpath("//*[@id=\"board-container\"]/div[2]/form/table/tbody/tr/td[2]")
+    last_notice_number = get_last_notice_number(numbers)
     last_notice_page = get_last_page(last_notice_number, len(browser.find_elements_by_css_selector("tbody > tr > td.title")))
 
     notice_list = []
