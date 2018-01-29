@@ -14,17 +14,16 @@ class WizCrawler:
         titles = WizCrawler.browser.find_elements_by_css_selector('td.list_td1')
         NUMBER_COLUMN = 5
         list_len = len(titles)//NUMBER_COLUMN
-        print('count list: '+str(list_len))
         count =0
         while count < list_len:
             titles = WizCrawler.browser.find_elements_by_css_selector('td.list_td1')
             number = titles.__getitem__(count*NUMBER_COLUMN)
-            print('number:',number.text)
             if(number.text!='공지'):
-                title = titles.__getitem__(count*NUMBER_COLUMN+2)
-                link = title.find_element_by_css_selector('a')
-                print(str(count + 1) + "." + "제목: ", link.text)
-                WizCrawler.print_link_content(link)
+                title_tr = titles.__getitem__(count*NUMBER_COLUMN+2)
+                title_a = title_tr.find_element_by_css_selector('a')
+                title = title_a.text
+                print(str(count + 1) + "." + "제목: ", title)
+                WizCrawler.print_link_content(title_a)
             count+=1
         return
 
@@ -55,7 +54,8 @@ class WizCrawler:
         a.click()
         time.sleep(5)
         content_div =WizCrawler.browser.find_element_by_xpath('//*[@id="contentsDiv"]')
-        print('<content>\n',content_div.text)
+        content = content_div.text
+        print('content:\n',content)
         WizCrawler.browser.execute_script("window.history.go(-1)")
         time.sleep(5)
         return
