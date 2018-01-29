@@ -43,14 +43,15 @@ class SnoweCrawler:
         tr_list = board.find_elements_by_css_selector('tr')
         for tr in tr_list:
             if tr.get_attribute('class')!='notice':
+                print('num:',tr.find_element_by_css_selector('td.num').text)
                 title_head = tr.find_element_by_css_selector('td.title_head')
-                print("title_head.text:", title_head.text)
+                print("class:", title_head.text)
                 title = tr.find_element_by_css_selector('td.title')
                 a = title.find_element_by_css_selector('a')
                 href = a.get_attribute('href')
-                print("-", href)
+                print("href:", href)
                 span = a.find_element_by_css_selector('span')
-                print("-", span.text)
+                print("title", span.text)
                 print_page(href)
         return
 
