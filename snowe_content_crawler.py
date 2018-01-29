@@ -6,6 +6,7 @@ def print_page(url):
     html = request.urlopen(url).read()
     soup = BeautifulSoup(html,'lxml')
     article = soup.select_one('div.article')
+    #//*[@id="_ckeditorContents"]
     p_list = article.find_all('p')
 
     content = ""

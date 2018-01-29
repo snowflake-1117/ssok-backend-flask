@@ -53,7 +53,7 @@ class WizCrawler:
     def print_link_content(cls,a):
         a.click()
         time.sleep(5)
-        content_div =WizCrawler.browser.find_element_by_xpath('//*[@id="contentsDiv"]')
+        content_div = WizCrawler.browser.find_element_by_xpath('//*[@id="contentsDiv"]')
         content = content_div.text
         print('content:\n',content)
         WizCrawler.browser.execute_script("window.history.go(-1)")
