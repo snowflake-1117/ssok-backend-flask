@@ -18,16 +18,16 @@ def scrape_current_to_max_page(start_page, last_page):
     while current_page <= last_page:
         print("page: " + str(current_page))
         page_notices = browser.find_elements_by_css_selector("a.artclLinkView")
-        save_titles_and_contents_of(page_notices)
+        save_notice_data(page_notices)
         current_page += 1
         browser.find_element_by_xpath(get_page_link(current_page)).click()
 
 
-def save_titles_and_contents_of(selected_page):
+def save_notice_data(selected_page):
     for notice in selected_page:
         main_page_notice = MainPageNotice()
         save_title(notice, main_page_notice)
-        save_content(notice, main_page_notice)
+        save_content_and_category(notice, main_page_notice)
         main_page_notice_list.append(main_page_notice)
         time.sleep(1)
 
@@ -36,12 +36,14 @@ def save_title(notice, main_page_notice):
     main_page_notice.title = notice.text
 
 
-def save_content(notice, main_page_notice):
+def save_content_and_category(notice, main_page_notice):
     notice_item_url = notice.get_attribute("href")
     notice_item_response = urllib.request.urlopen(notice_item_url)
     soup_notice = BeautifulSoup(notice_item_response, "html.parser")
     notice_content = soup_notice.select_one(".view_contents")
     main_page_notice.content = get_content_output(notice_content)
+    notice_large_category = soup_notice.select_one("div.view_top > dl > dd")
+    main_page_notice.large_category = notice_large_category.text
 
 
 def get_content_output(content_sentences):
