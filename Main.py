@@ -9,7 +9,7 @@ class Main:
     def crawl_snowe_notice(self):
         crawler = SnoweCrawler()
         crawler.crawl_pages()
-
+        return
 
 start = Main()
 start.crawl_snowe_notice()

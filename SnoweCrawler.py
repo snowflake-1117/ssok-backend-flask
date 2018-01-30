@@ -57,6 +57,6 @@ class SnoweCrawler:
                 span = a.find_element_by_css_selector('span')
                 print("title", span.text)
                 content = print_page(href)
-                DBManager.insert(int(num), title_head.text,title_head.text,span.text,content)
+                #DBManager.insert(int(num), title_head.text,title_head.text,span.text,content)
         return
 
