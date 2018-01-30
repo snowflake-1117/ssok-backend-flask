@@ -51,21 +51,23 @@ def scrap_current_to_max_page(url_data, start_page, last_page):
     while current_page <= last_page:
         print("page: " + str(current_page))
         notice_href_list = browser.find_elements_by_css_selector("td.title > a")
-        save_titles_and_contents_of(notice_href_list)
+        notice_number_list = browser.find_elements_by_css_selector("tr > td:nth-child(2)")
+        save_titles_and_contents_of(notice_href_list, notice_number_list)
         current_page += 1
         browser.get(get_total_url(url_data, current_page))
 
 
-def save_titles_and_contents_of(notice_href_list):
-    for notice in notice_href_list:
-        notice_item_url = notice.get_attribute("href")
-        notice_item_response = urllib.request.urlopen(notice_item_url)
-        soup_notice = BeautifulSoup(notice_item_response, "html.parser")
-        notice_title = soup_notice.select_one("head > title")
-        print("title: ", get_content_output(notice_title))
-        notice_content = soup_notice.select_one("#innoContents")
-        print("content: ", get_content_output(notice_content))
-        time.sleep(1)
+def save_titles_and_contents_of(notice_href_list, notice_number_list):
+    for notice, number in zip(notice_href_list, notice_number_list):
+        if number.text.isdigit():
+            notice_item_url = notice.get_attribute("href")
+            notice_item_response = urllib.request.urlopen(notice_item_url)
+            soup_notice = BeautifulSoup(notice_item_response, "html.parser")
+            notice_title = soup_notice.select_one("head > title")
+            print("title: ", get_content_output(notice_title))
+            notice_content = soup_notice.select_one("#innoContents")
+            print("content: ", get_content_output(notice_content))
+            time.sleep(1)
 
 
 def get_content_output(content_sentences):
