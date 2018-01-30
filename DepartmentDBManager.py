@@ -6,20 +6,7 @@ class DepartmentDBManager:
     PW = YOUR_PW
 
     def __init__(self):
-        DepartmentDBManager.create_DB()
         DepartmentDBManager.create_department()
-        return
-
-    @staticmethod
-    def create_DB():
-        conn = pymysql.connect(host='localhost',
-                               user=DepartmentDBManager.USER,
-                               password=DepartmentDBManager.PW,
-                               charset='utf8mb4')
-        with conn.cursor() as cursor:
-            sql = 'CREATE DATABASE IF NOT EXISTS sookmyung'
-            cursor.execute(sql)
-            conn.commit()
         return
 
     @staticmethod

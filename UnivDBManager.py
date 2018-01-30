@@ -1,25 +1,11 @@
 import pymysql.cursors
 
-
 class UnivDBManager:
     USER = YOUR_USER
     PW = YOUR_PW
 
     def __init__(self):
-        UnivDBManager.create_DB()
         UnivDBManager.create_univ()
-        return
-
-    @staticmethod
-    def create_DB():
-        conn = pymysql.connect(host='localhost',
-                               user=UnivDBManager.USER,
-                               password=UnivDBManager.PW,
-                               charset='utf8mb4')
-        with conn.cursor() as cursor:
-            sql = 'CREATE DATABASE IF NOT EXISTS sookmyung'
-            cursor.execute(sql)
-            conn.commit()
         return
 
     @staticmethod
