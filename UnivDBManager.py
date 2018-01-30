@@ -1,18 +1,18 @@
 import pymysql.cursors
+from DBManager import DBManager
 
-class UnivDBManager:
-    USER = YOUR_USER
-    PW = YOUR_PW
 
+class UnivDBManager(DBManager):
     def __init__(self):
+        DBManager.__init__(self)
         UnivDBManager.create_univ()
         return
 
     @staticmethod
     def create_univ():
         conn = pymysql.connect(host='localhost',
-                               user=UnivDBManager.USER,
-                               password=UnivDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -33,8 +33,8 @@ class UnivDBManager:
     @staticmethod
     def insert(id, large_category, small_category, title, content):
         conn = pymysql.connect(host='localhost',
-                               user=UnivDBManager.USER,
-                               password=UnivDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -48,8 +48,8 @@ class UnivDBManager:
     @staticmethod
     def select():
         conn = pymysql.connect(host='localhost',
-                               user=UnivDBManager.USER,
-                               password=UnivDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -66,8 +66,8 @@ class UnivDBManager:
     @staticmethod
     def delete_all():
         conn = pymysql.connect(host='localhost',
-                               user=UnivDBManager.USER,
-                               password=UnivDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 

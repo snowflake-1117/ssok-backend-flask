@@ -1,19 +1,19 @@
 import pymysql.cursors
+from DBManager import DBManager
 
 
-class DepartmentDBManager:
-    USER = YOUR_USER
-    PW = YOUR_PW
+class DepartmentDBManager(DBManager):
 
     def __init__(self):
+        DBManager.__init__(self)
         DepartmentDBManager.create_department()
         return
 
     @staticmethod
     def create_department():
         conn = pymysql.connect(host='localhost',
-                               user=DepartmentDBManager.USER,
-                               password=DepartmentDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -34,8 +34,8 @@ class DepartmentDBManager:
     @staticmethod
     def insert(id, large_category, small_category, title, content):
         conn = pymysql.connect(host='localhost',
-                               user=DepartmentDBManager.USER,
-                               password=DepartmentDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -49,8 +49,8 @@ class DepartmentDBManager:
     @staticmethod
     def select():
         conn = pymysql.connect(host='localhost',
-                               user=DepartmentDBManager.USER,
-                               password=DepartmentDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 
@@ -67,8 +67,8 @@ class DepartmentDBManager:
     @staticmethod
     def delete_all():
         conn = pymysql.connect(host='localhost',
-                               user=DepartmentDBManager.USER,
-                               password=DepartmentDBManager.PW,
+                               user=DBManager.USER,
+                               password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
 

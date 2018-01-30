@@ -5,7 +5,6 @@ from json_reader import read_wiz
 
 class Main:
     def __init__(self):
-        DBManager()
         UnivDBManager()
         DepartmentDBManager()
         return
