@@ -1,4 +1,4 @@
-class MainPageNotice:
+class NoticeData:
     def __init__(self):
         self._title = ""
         self._content = ""
