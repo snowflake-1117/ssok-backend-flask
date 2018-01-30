@@ -1,7 +1,7 @@
 from selenium import webdriver
 from snowe_content_crawler import *
 import time
-from DBManager import DBManager
+from UnivDBManager import UnivDBManager
 
 
 class SnoweCrawler:
@@ -68,7 +68,8 @@ class SnoweCrawler:
                 span = a.find_element_by_css_selector('span')
                 print("title", span.text)
                 content = print_page(href)
-                DBManager.insert(int(num), title_head.text,title_head.text,span.text,content)
+                content = ' '.join(content.split())
+                UnivDBManager.insert(int(num), title_head.text, title_head.text, span.text, content)
         return
 
 start = SnoweCrawler()

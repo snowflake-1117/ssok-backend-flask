@@ -1,12 +1,19 @@
 from selenium import webdriver
+from DepartmentDBManager import DepartmentDBManager
 import time
 
 class WizCrawler:
     browser = None
+    domain = None
 
     def __init__(self):
         WizCrawler.browser = webdriver.PhantomJS()
         WizCrawler.browser.implicitly_wait(3)
+        return
+
+    @classmethod
+    def setDomain(cls,domain):
+        WizCrawler.domain = domain
         return
 
     @classmethod
@@ -23,7 +30,7 @@ class WizCrawler:
                 title_a = title_tr.find_element_by_css_selector('a')
                 title = title_a.text
                 print(str(count + 1) + "." + "제목: ", title)
-                WizCrawler.print_link_content(title_a)
+                WizCrawler.print_link_content(title_a,number.text,title)
             count+=1
         return
 
@@ -50,12 +57,15 @@ class WizCrawler:
         return
 
     @classmethod
-    def print_link_content(cls,a):
+    def print_link_content(cls,a,number,title):
         a.click()
         time.sleep(5)
         content_div = WizCrawler.browser.find_element_by_xpath('//*[@id="contentsDiv"]')
         content = content_div.text
+        #' '.join(mystring.split())
+        content = ' '.join(content.split())
         print('content:\n',content)
+        DepartmentDBManager.insert(number, WizCrawler.domain, WizCrawler.domain, title, content)
         WizCrawler.browser.execute_script("window.history.go(-1)")
         time.sleep(5)
         return
@@ -65,7 +75,6 @@ class WizCrawler:
         WizCrawler.browser.get(url)
         time.sleep(5)
         WizCrawler.move_to_next_page()
-
         return
 
     @staticmethod
