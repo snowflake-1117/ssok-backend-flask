@@ -3,7 +3,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
-from MainPageNotice import MainPageNotice
+from NoticeData import NoticeData
 
 
 def get_last_page(last_number):
@@ -18,14 +18,14 @@ def scrape_current_to_max_page(start_page, last_page):
     while current_page <= last_page:
         print("page: " + str(current_page))
         page_notices = browser.find_elements_by_css_selector("a.artclLinkView")
-        save_notice_data(page_notices)
+        save_notices_data(page_notices)
         current_page += 1
         browser.find_element_by_xpath(get_page_link(current_page)).click()
 
 
-def save_notice_data(selected_page):
+def save_notices_data(selected_page):
     for notice in selected_page:
-        main_page_notice = MainPageNotice()
+        main_page_notice = NoticeData()
         save_title(notice, main_page_notice)
         save_content_and_category(notice, main_page_notice)
         main_page_notice_list.append(main_page_notice)
