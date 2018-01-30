@@ -10,6 +10,7 @@ class DepartmentUrlData:
         self._category_id = 0
         self._page = 0
         self._site_id = ""
+        self._type = ""
 
     @property
     def college(self):
@@ -51,6 +52,10 @@ class DepartmentUrlData:
     def site_id(self):
         return self._site_id
 
+    @property
+    def type(self):
+        return self._type
+
     @college.setter
     def college(self, college):
         self._college = college
@@ -90,3 +95,7 @@ class DepartmentUrlData:
     @site_id.setter
     def site_id(self, site_id):
         self._site_id = site_id
+
+    @type.setter
+    def type(self, notice_type):
+        self._type = notice_type
