@@ -5,6 +5,7 @@ import time
 class WizCrawler:
     browser = None
     domain = None
+    type = None
 
     def __init__(self):
         WizCrawler.browser = webdriver.PhantomJS()
@@ -12,8 +13,9 @@ class WizCrawler:
         return
 
     @classmethod
-    def setDomain(cls,domain):
+    def setFields(cls, domain,type):
         WizCrawler.domain = domain
+        WizCrawler.type = type
         return
 
     @classmethod
@@ -60,12 +62,10 @@ class WizCrawler:
     def print_link_content(cls,a,number,title):
         a.click()
         time.sleep(5)
-        content_div = WizCrawler.browser.find_element_by_xpath('//*[@id="contentsDiv"]')
-        content = content_div.text
-        #' '.join(mystring.split())
+        content = WizCrawler.browser.find_element_by_id('contentsDiv').text
         content = ' '.join(content.split())
         print('content:\n',content)
-        DepartmentDBManager.insert(number, WizCrawler.domain, WizCrawler.domain, title, content)
+        DepartmentDBManager.insert(number, WizCrawler.domain, WizCrawler.type, title, content)
         WizCrawler.browser.execute_script("window.history.go(-1)")
         time.sleep(5)
         return

@@ -10,7 +10,8 @@ def read_wiz():
         domain_name = data[count]['domain_name']
         home_id = data[count]['home_id']
         handle = str(data[count]['handle'])
-        crawler.setDomain(domain_name)
+        type = data[count]['type']
+        crawler.setFields(domain_name,type)
         url = 'http://' + domain_name + '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=' + home_id + '&handle=' + handle
         crawler.crawl_site(url)
     crawler.quit()
