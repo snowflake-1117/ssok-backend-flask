@@ -1,6 +1,8 @@
 from selenium import webdriver
 from snowe_content_crawler import *
 import time
+from DBManager import DBManager
+
 
 class SnoweCrawler:
     browser = None
@@ -12,9 +14,11 @@ class SnoweCrawler:
         SnoweCrawler.browser.get(SnoweCrawler.url)
         time.sleep(5)
         SnoweCrawler.set_page_crawling()
+        return
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         SnoweCrawler.browser.quit()
+        return
 
     @classmethod
     def set_page_crawling(cls):
@@ -43,7 +47,7 @@ class SnoweCrawler:
         tr_list = board.find_elements_by_css_selector('tr')
         for tr in tr_list:
             if tr.get_attribute('class')!='notice':
-                print('num:',tr.find_element_by_css_selector('td.num').text)
+                num = tr.find_element_by_css_selector('td.num').text
                 title_head = tr.find_element_by_css_selector('td.title_head')
                 print("class:", title_head.text)
                 title = tr.find_element_by_css_selector('td.title')
@@ -52,9 +56,7 @@ class SnoweCrawler:
                 print("href:", href)
                 span = a.find_element_by_css_selector('span')
                 print("title", span.text)
-                print_page(href)
+                content = print_page(href)
+                DBManager.insert(int(num), title_head.text,title_head.text,span.text,content)
         return
-
-crawler = SnoweCrawler()
-crawler.crawl_pages()
 
