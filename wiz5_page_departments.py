@@ -5,9 +5,11 @@ import time
 import json
 import re
 from DepartmentUrlData import DepartmentUrlData
+from NoticeData import NoticeData
 
 
-def save_department_url_data(item, url_data):
+def save_department_url_data(item):
+    url_data = DepartmentUrlData()
     url_data.college = item["college"]
     url_data.department = item["department"]
     url_data.domain_name = item["domain_name"]
@@ -18,6 +20,8 @@ def save_department_url_data(item, url_data):
     url_data.category_id = item["categoryId"]
     url_data.page = item["page"]
     url_data.site_id = item["siteId"]
+    url_data.type = item["type"]
+    return url_data
 
 
 def get_total_url(url_data, page=1):
@@ -46,27 +50,33 @@ def get_last_page(last_number, page_notices_count):
         return last_number // page_notices_count
 
 
-def scrap_current_to_max_page(url_data, start_page, last_page):
+def scrap_current_to_max_page(url_data, start_page, last_page, large_category):
     current_page = start_page
     while current_page <= last_page:
         print("page: " + str(current_page))
         notice_href_list = browser.find_elements_by_css_selector("td.title > a")
         notice_number_list = browser.find_elements_by_css_selector("tr > td:nth-child(2)")
-        save_titles_and_contents_of(notice_href_list, notice_number_list)
+        save_notices_data(notice_href_list, notice_number_list, large_category)
         current_page += 1
         browser.get(get_total_url(url_data, current_page))
 
 
-def save_titles_and_contents_of(notice_href_list, notice_number_list):
+def save_notices_data(notice_href_list, notice_number_list, large_category):
     for notice, number in zip(notice_href_list, notice_number_list):
         if number.text.isdigit():
             notice_item_url = notice.get_attribute("href")
             notice_item_response = urllib.request.urlopen(notice_item_url)
             soup_notice = BeautifulSoup(notice_item_response, "html.parser")
+
+            notice_data = NoticeData()
             notice_title = soup_notice.select_one("head > title")
-            print("title: ", get_content_output(notice_title))
+            notice_data.title = get_content_output(notice_title)
             notice_content = soup_notice.select_one("#innoContents")
-            print("content: ", get_content_output(notice_content))
+            notice_data.content = get_content_output(notice_content)
+            notice_data.large_category = large_category
+
+            notice_data_list.append(notice_data)
+
             time.sleep(1)
 
 
@@ -81,6 +91,7 @@ def get_content_output(content_sentences):
 
 
 department_url_data_list = []
+department_large_category_list = []
 data = json.load(open('wiz5_departments.json'))
 base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
 
@@ -88,14 +99,14 @@ browser = webdriver.PhantomJS()
 browser.implicitly_wait(3)
 
 for i in data:
-    department_url_data = DepartmentUrlData()
-    save_department_url_data(i, department_url_data)
+    department_url_data = save_department_url_data(i)
     department_url_data_list.append(department_url_data)
+    department_large_category_list.append(i["type"])
 
-departments_notice_list = []
+notice_data_list = []
 notice_numbers = []
 
-for department_url_data in department_url_data_list:
+for department_url_data, department_large_category in zip(department_url_data_list, department_large_category_list):
     total_url = get_total_url(department_url_data)
     browser.get(total_url)
 
@@ -106,6 +117,6 @@ for department_url_data in department_url_data_list:
                                      len(browser.find_elements_by_css_selector("tbody > tr > td.title")))
 
     notice_list = []
-    scrap_current_to_max_page(department_url_data, start_notice_page, last_notice_page)
+    scrap_current_to_max_page(department_url_data, start_notice_page, last_notice_page, department_large_category)
 
 browser.quit()
