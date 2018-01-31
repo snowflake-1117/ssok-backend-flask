@@ -1,6 +1,7 @@
 from selenium import webdriver
-from DepartmentDBManager import DepartmentDBManager
+from DBManager import DBManager
 import time
+
 
 class WizCrawler:
     browser = None
@@ -65,7 +66,7 @@ class WizCrawler:
         content = WizCrawler.browser.find_element_by_id('contentsDiv').text
         content = ' '.join(content.split())
         print('content:\n',content)
-        DepartmentDBManager.insert(number, WizCrawler.domain, WizCrawler.type, title, content)
+        DBManager.insert(number, WizCrawler.domain, WizCrawler.type, title, content)
         WizCrawler.browser.execute_script("window.history.go(-1)")
         time.sleep(5)
         return
