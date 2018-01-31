@@ -5,6 +5,7 @@ import time
 import re
 from NoticeData import NoticeData
 from UnivDBManager import UnivDBManager
+from pymysql import InternalError
 
 
 class MainNotice:
@@ -13,7 +14,7 @@ class MainNotice:
         self.sub_url = "/bbs/sookmyungkr/66/artclList.do"
         self.notice_bbs_url = self.url + self.sub_url
 
-        self.browser = webdriver.PhantomJS()
+        self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(3)
         self.browser.get(self.notice_bbs_url)
         self.main_page_notice_list = []
@@ -36,12 +37,12 @@ class MainNotice:
 
     def scrape_current_to_max_page(self, start_page, last_page):
         current_page = start_page
-        while current_page < last_page:
+        while current_page <= last_page:
             print("page: " + str(current_page))
             page_notices = self.browser.find_elements_by_css_selector("a.artclLinkView")
             self.save_notices_data(page_notices)
-            current_page += 1
             self.browser.find_element_by_xpath(self.get_page_link(current_page)).click()
+            current_page += 1
 
     def save_notices_data(self, selected_page):
         for notice in selected_page:
@@ -79,5 +80,8 @@ class MainNotice:
 
     def save_notices_to_db(self):
         for i in self.main_page_notice_list:
-            UnivDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
-            # To-do: change number
+            try:
+                UnivDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+                # To-do: change number
+            except InternalError:
+                continue
