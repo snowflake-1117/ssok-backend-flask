@@ -1,7 +1,5 @@
 import pymysql.cursors
 from pymysql.err import InternalError
-from Record import Record
-
 
 class DBManager:
     USER = YOUR_USER

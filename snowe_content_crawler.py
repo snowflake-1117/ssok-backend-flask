@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import urllib.request as request
-
+from Record import Record
 
 def print_page(url):
     html = request.urlopen(url).read()
@@ -10,11 +10,14 @@ def print_page(url):
     content = ""
     if p_list:
         for p in p_list:
-            if p.text:
                 content = content + p.text + '\n'
     else:
         board = article.select_one('div#_ckeditorContents')
         content = board.text
-    content = ' '.join(content.split())
-    return content
+
+    record = Record()
+    record.content = ' '.join(content.split())
+    record.view = soup.select_one('li.pageview').text[4:]
+    record.date = soup.select_one('li.date').text[:10]
+    return record
 

@@ -1,6 +1,5 @@
 from selenium import webdriver
 from snowe_content_crawler import *
-from Record import Record
 from DBManager import DBManager
 import time
 
@@ -58,19 +57,17 @@ class SnoweCrawler:
         tr_list = board.find_elements_by_css_selector('tr')
         for tr in tr_list:
             if tr.get_attribute('class')!='notice':
-                num = tr.find_element_by_css_selector('td.num').text
-                title_head = tr.find_element_by_css_selector('td.title_head')
-                title = tr.find_element_by_css_selector('td.title')
-                a = title.find_element_by_css_selector('a')
+                num = tr.find_element_by_css_selector('td.num')
+                category = tr.find_element_by_css_selector('td.title_head')
+                a = tr.find_element_by_css_selector('a')
                 href = a.get_attribute('href')
-                span = a.find_element_by_css_selector('span')
-                content = print_page(href)
-                record = Record()
-                record.id = int(num)
-                record.category = title_head.text
-                record.division = title_head.text
-                record.title = span.text
-                record.content = content
+                title = tr.find_element_by_css_selector('span')
+
+                record = print_page(href)
+                record.id = int(num.text)
+                record.category = category.text
+                record.division = category.text
+                record.title = title.text
                 DBManager.insert(record)
         return
 
