@@ -1,7 +1,9 @@
 from selenium import webdriver
 from DBManager import DBManager
-from Record import  Record
+from Record import Record
+from datetime import datetime
 import time
+import re
 
 
 class WizCrawler:
@@ -30,11 +32,19 @@ class WizCrawler:
             titles = WizCrawler.browser.find_elements_by_css_selector('td.list_td1')
             number = titles.__getitem__(count*NUMBER_COLUMN)
             if(number.text!='공지'):
+                record = Record()
                 title_tr = titles.__getitem__(count*NUMBER_COLUMN+2)
                 title_a = title_tr.find_element_by_css_selector('a')
-                title = title_a.text
-                print(str(count + 1) + "." + "제목: ", title)
-                WizCrawler.print_link_content(title_a,number.text,title)
+                record.title = title_a.text
+                print(str(count + 1) + "." + "제목: ", record.title)
+                record.id = number.text
+                date = titles.__getitem__(count * NUMBER_COLUMN + 3).text
+                p = re.compile('\d{4}-\d{2}-\d{2}')
+                if not p.match(date):
+                    date = str(datetime.today().year) + '-' + date
+                record.date = date
+                record.view = titles.__getitem__(count*NUMBER_COLUMN + 4).text
+                WizCrawler.print_link_content(title_a, record)
             count+=1
         return
 
@@ -61,17 +71,14 @@ class WizCrawler:
         return
 
     @classmethod
-    def print_link_content(cls,a,number,title):
+    def print_link_content(cls, a, record):
         a.click()
         time.sleep(5)
         content = WizCrawler.browser.find_element_by_id('contentsDiv').text
         content = ' '.join(content.split())
         print('content:\n',content)
-        record = Record()
-        record.id = number
         record.category = WizCrawler.department
         record.division = WizCrawler.type
-        record.title = title
         record.content = content
         DBManager.insert(record)
         WizCrawler.browser.execute_script("window.history.go(-1)")
