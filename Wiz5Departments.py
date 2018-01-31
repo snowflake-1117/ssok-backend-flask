@@ -6,6 +6,7 @@ import json
 import re
 from DepartmentUrlData import DepartmentUrlData
 from NoticeData import NoticeData
+from DepartmentDBManager import DepartmentDBManager
 
 
 class Wiz5Departments:
@@ -40,6 +41,7 @@ class Wiz5Departments:
 
             self.scrap_current_to_max_page(department_url_data, start_notice_page, last_notice_page,
                                            department_large_category)
+        self.save_notices_to_db()
 
     def quit(self):
         self.browser.quit()
@@ -112,9 +114,16 @@ class Wiz5Departments:
 
     def get_content_output(self, content_sentences):
         output = ""
+        if content_sentences == None:
+            return ""
         for content_sentence in content_sentences.contents:
             stripped = str(content_sentence).strip()
             if stripped == "":
                 continue
             output += re.sub(r'<[^>]*?>', '', stripped)
         return output
+
+    def save_notices_to_db(self):
+        for i in self.notice_data_list:
+            DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+            # To-do: change number
