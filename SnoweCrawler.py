@@ -39,7 +39,6 @@ class SnoweCrawler:
         global page_max
         page_end = SnoweCrawler.browser.find_element_by_css_selector('a.next_end')
         page_max = page_end.get_attribute('href')[len(SnoweCrawler.url) + 1:]
-        print(page_max)
         page_max = int(page_max)
         return
 
@@ -60,18 +59,11 @@ class SnoweCrawler:
             if tr.get_attribute('class')!='notice':
                 num = tr.find_element_by_css_selector('td.num').text
                 title_head = tr.find_element_by_css_selector('td.title_head')
-                print("class:", title_head.text)
                 title = tr.find_element_by_css_selector('td.title')
                 a = title.find_element_by_css_selector('a')
                 href = a.get_attribute('href')
-                print("href:", href)
                 span = a.find_element_by_css_selector('span')
-                print("title", span.text)
                 content = print_page(href)
-                content = ' '.join(content.split())
                 UnivDBManager.insert(int(num), title_head.text, title_head.text, span.text, content)
         return
 
-start = SnoweCrawler()
-start.check_out_process()
-start.check_out_finished()
