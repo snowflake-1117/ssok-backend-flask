@@ -23,7 +23,7 @@ class UnivDBManager(DBManager):
                     large_category varchar(50) NOT NULL,
                     small_category varchar(50) NOT NULL, 
                     title varchar(200) NOT NULL,
-                    content varchar(5000)
+                    content varchar(15000)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
             '''
             cursor.execute(sql)
@@ -42,7 +42,6 @@ class UnivDBManager(DBManager):
             sql = 'INSERT INTO univ (id, large_category, small_category, title, content) VALUES (%s,%s,%s,%s,%s)'
             cursor.execute(sql, (str(id), large_category, small_category, title, content))
         conn.commit()
-        # 1 (last insert id)
         return
 
     @staticmethod
@@ -60,7 +59,6 @@ class UnivDBManager(DBManager):
             result = cursor.fetchall()
             for row in result:
                 print(row)
-            # (1, 'test@test.com', 'my-passwd')
         return
 
     @staticmethod
