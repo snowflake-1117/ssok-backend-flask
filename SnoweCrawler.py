@@ -1,7 +1,8 @@
 from selenium import webdriver
 from snowe_content_crawler import *
-import time
+from Record import Record
 from DBManager import DBManager
+import time
 
 
 class SnoweCrawler:
@@ -64,6 +65,12 @@ class SnoweCrawler:
                 href = a.get_attribute('href')
                 span = a.find_element_by_css_selector('span')
                 content = print_page(href)
-                DBManager.insert(int(num), title_head.text, title_head.text, span.text, content)
+                record = Record()
+                record.id = int(num)
+                record.category = title_head.text
+                record.division = title_head.text
+                record.title = span.text
+                record.content = content
+                DBManager.insert(record)
         return
 
