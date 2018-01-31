@@ -24,7 +24,7 @@ class DepartmentDBManager(DBManager):
                     large_category varchar(50) NOT NULL,
                     small_category varchar(50) NOT NULL, 
                     title varchar(200) NOT NULL,
-                    content varchar(13000) 
+                    content varchar(15000) 
                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
             '''
             cursor.execute(sql)
