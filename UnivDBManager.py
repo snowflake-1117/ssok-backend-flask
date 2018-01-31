@@ -23,8 +23,8 @@ class UnivDBManager(DBManager):
                     large_category varchar(50) NOT NULL,
                     small_category varchar(50) NOT NULL, 
                     title varchar(200) NOT NULL,
-                    content varchar(5000)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+                    content varchar(16000)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             '''
             cursor.execute(sql)
         return
