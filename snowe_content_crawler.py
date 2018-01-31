@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import urllib.request as request
 from Record import Record
 
+
 def print_page(url):
     html = request.urlopen(url).read()
     soup = BeautifulSoup(html,'lxml')

@@ -7,12 +7,14 @@ def read_wiz():
     print('url개수 : ',len(data))
     crawler = WizCrawler()
     for count in range(0,len(data)):
+        department = data[count]['department']
         domain_name = data[count]['domain_name']
         home_id = data[count]['home_id']
         handle = str(data[count]['handle'])
         type = data[count]['type']
-        crawler.setFields(domain_name,type)
-        url = 'http://' + domain_name + '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id=' + home_id + '&handle=' + handle
+        crawler.setFields(department,type)
+        wiz = '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='
+        url = 'http://' + domain_name + wiz + home_id + '&handle=' + handle
         crawler.crawl_site(url)
     crawler.quit()
     exit()

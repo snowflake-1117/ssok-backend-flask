@@ -1,11 +1,12 @@
 from selenium import webdriver
 from DBManager import DBManager
+from Record import  Record
 import time
 
 
 class WizCrawler:
     browser = None
-    domain = None
+    department = None
     type = None
 
     def __init__(self):
@@ -14,8 +15,8 @@ class WizCrawler:
         return
 
     @classmethod
-    def setFields(cls, domain,type):
-        WizCrawler.domain = domain
+    def setFields(cls, department, type):
+        WizCrawler.department = department
         WizCrawler.type = type
         return
 
@@ -66,7 +67,13 @@ class WizCrawler:
         content = WizCrawler.browser.find_element_by_id('contentsDiv').text
         content = ' '.join(content.split())
         print('content:\n',content)
-        DBManager.insert(number, WizCrawler.domain, WizCrawler.type, title, content)
+        record = Record()
+        record.id = number
+        record.category = WizCrawler.department
+        record.division = WizCrawler.type
+        record.title = title
+        record.content = content
+        DBManager.insert(record)
         WizCrawler.browser.execute_script("window.history.go(-1)")
         time.sleep(5)
         return

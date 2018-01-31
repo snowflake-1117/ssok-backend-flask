@@ -1,5 +1,5 @@
 from DBManager import DBManager
+from read_wiz import  read_wiz
 
 DBManager()
-# 여기에 코드를 실행시키세요
-# main은 지웠습니다.
+read_wiz()

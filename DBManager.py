@@ -1,6 +1,7 @@
 import pymysql.cursors
 from pymysql.err import InternalError
 
+
 class DBManager:
     USER = YOUR_USER
     PW = YOUR_PW
@@ -43,7 +44,7 @@ class DBManager:
                         category varchar(50) NOT NULL,
                         division varchar(50) NOT NULL, 
                         title varchar(200) NOT NULL,
-                        content varchar(15000),
+                        content varchar(20000),
                         view int(10),
                         date Date
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8
