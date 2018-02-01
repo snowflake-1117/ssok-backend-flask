@@ -89,7 +89,8 @@ class Wiz5Departments:
         while current_page <= last_page:
             print("page: " + str(current_page))
             notice_href_list = self.browser.find_elements_by_css_selector("td.title > a")
-            notice_number_list = self.browser.find_elements_by_css_selector("tr > td:nth-child(2)")
+            notice_number_list = self.browser.find_elements_by_css_selector(
+                "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
             self.save_notices_data(notice_href_list, notice_number_list, large_category)
             current_page += 1
             self.browser.get(self.get_total_url(url_data, current_page))
@@ -106,6 +107,7 @@ class Wiz5Departments:
                 notice_data.title = self.get_content_output(notice_title)
                 notice_content = soup_notice.select("td > div")
                 notice_data.content = self.get_content_output(notice_content)
+                print(notice_data.content)
                 notice_data.large_category = large_category
                 DepartmentDBManager.insert(1, notice_data.large_category, notice_data.large_category, notice_data.title,
                                            notice_data.content)
@@ -115,12 +117,11 @@ class Wiz5Departments:
                 time.sleep(1)
 
     def get_content_output(self, content):
-        output = ""
         if content is None:
             return ""
         stripped = str(content).strip()
-        output += re.sub(r'<[^>]*?>', '', stripped)
-        return output
+        return re.sub(r'<[^>]*?>', '', stripped)
+
 
         # def save_notices_to_db(self):
         #     for i in self.notice_data_list:
