@@ -12,7 +12,7 @@ from DepartmentDBManager import DepartmentDBManager
 class Wiz5Departments:
     def __init__(self):
         self.base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
-        self.browser = webdriver.PhantomJS()
+        self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(3)
 
         self.department_url_data_list = []
@@ -41,7 +41,7 @@ class Wiz5Departments:
 
             self.scrap_current_to_max_page(department_url_data, start_notice_page, last_notice_page,
                                            department_large_category)
-        self.save_notices_to_db()
+            # self.save_notices_to_db()
 
     def quit(self):
         self.browser.quit()
@@ -104,26 +104,25 @@ class Wiz5Departments:
                 notice_data = NoticeData()
                 notice_title = soup_notice.select_one("head > title")
                 notice_data.title = self.get_content_output(notice_title)
-                notice_content = soup_notice.select_one("#innoContents")
+                notice_content = soup_notice.select("td > div")
                 notice_data.content = self.get_content_output(notice_content)
                 notice_data.large_category = large_category
+                DepartmentDBManager.insert(1, notice_data.large_category, notice_data.large_category, notice_data.title,
+                                           notice_data.content)
 
                 self.notice_data_list.append(notice_data)
 
                 time.sleep(1)
 
-    def get_content_output(self, content_sentences):
+    def get_content_output(self, content):
         output = ""
-        if content_sentences == None:
+        if content is None:
             return ""
-        for content_sentence in content_sentences.contents:
-            stripped = str(content_sentence).strip()
-            if stripped == "":
-                continue
-            output += re.sub(r'<[^>]*?>', '', stripped)
+        stripped = str(content).strip()
+        output += re.sub(r'<[^>]*?>', '', stripped)
         return output
 
-    def save_notices_to_db(self):
-        for i in self.notice_data_list:
-            DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
-            # To-do: change number
+        # def save_notices_to_db(self):
+        #     for i in self.notice_data_list:
+        #         DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+        #         # To-do: change number
