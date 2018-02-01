@@ -120,8 +120,9 @@ class Wiz5Departments:
         if content is None:
             return ""
         stripped = str(content).strip()
-        return re.sub(r'<[^>]*?>', '', stripped)
-
+        stripped = re.sub(r'<[^>]*?>', '', stripped)
+        pattern = re.compile(u'[^\u0000-\uD7FF\uE000-\uFFFF]', re.UNICODE)
+        return pattern.sub(u'\uFFFD', stripped)
 
         # def save_notices_to_db(self):
         #     for i in self.notice_data_list:

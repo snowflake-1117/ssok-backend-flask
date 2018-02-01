@@ -5,7 +5,6 @@ import time
 import re
 from NoticeData import NoticeData
 from UnivDBManager import UnivDBManager
-from pymysql import InternalError
 
 
 class MainNotice:
@@ -73,15 +72,13 @@ class MainNotice:
             if stripped == "":
                 continue
             output += re.sub(r'<[^>]*?>', '', stripped)
-        return output
+        pattern = re.compile(u'[^\u0000-\uD7FF\uE000-\uFFFF]', re.UNICODE)
+        return pattern.sub(u'\uFFFD', output)
 
     def get_page_link(self, current_page):
         return "//a[@href=\"javascript:page_link('" + str(current_page) + "')\"]"
 
     def save_notices_to_db(self):
         for i in self.main_page_notice_list:
-            try:
-                UnivDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
-                # To-do: change number
-            except InternalError:
-                continue
+            UnivDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+            # To-do: change number
