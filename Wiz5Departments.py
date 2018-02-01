@@ -121,7 +121,7 @@ class Wiz5Departments:
         pattern = re.compile(u'[^\u0000-\uD7FF\uE000-\uFFFF]', re.UNICODE)
         return pattern.sub(u'\uFFFD', stripped)
 
-        def save_notices_to_db(self):
-            for i in self.notice_data_list:
-                DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
-                # To-do: change number
+    def save_notices_to_db(self):
+        for i in self.notice_data_list:
+            DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+            # To-do: change number
