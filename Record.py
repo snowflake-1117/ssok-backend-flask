@@ -1,16 +1,19 @@
+from datetime import datetime
+
+
 class Record:
     def __init__(self):
-        self._record_id = 0
+        self._id = 0
         self._category = ""
         self._division = ""
         self._title = ""
         self._content = ""
         self._view = 0
-        self._date = None
+        self._date = datetime.strptime("1900.01.01", "%Y.%m.%d").date()
 
     @property
-    def record_id(self):
-        return self._record_id
+    def id(self):
+        return self._id
 
     @property
     def category(self):
@@ -36,9 +39,9 @@ class Record:
     def date(self):
         return self._date
 
-    @record_id.setter
-    def record_id(self, record_id):
-        self._record_id = record_id
+    @id.setter
+    def id(self, record_id):
+        self._id = record_id
 
     @category.setter
     def category(self, category):

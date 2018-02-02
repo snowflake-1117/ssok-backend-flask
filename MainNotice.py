@@ -3,7 +3,8 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
-from NoticeData import NoticeData
+from datetime import datetime
+from Record import Record
 from DBManager import DBManager
 
 
@@ -23,7 +24,7 @@ class MainNotice:
         last_notice_number = int(self.browser.find_element_by_class_name("num").text)
         last_notice_page = self.get_last_page(last_notice_number, 10)
         self.scrape_current_to_max_page(start_notice_page, last_notice_page)
-        self.save_notices_to_db()
+        # self.save_notices_to_db()
 
     def quit(self):
         self.browser.quit()
@@ -38,30 +39,51 @@ class MainNotice:
         current_page = start_page
         while current_page <= last_page:
             print("page: " + str(current_page))
-            page_notices = self.browser.find_elements_by_css_selector("a.artclLinkView")
-            self.save_notices_data(page_notices)
+            notice_list = self.browser.find_elements_by_css_selector("a.artclLinkView")
+            notice_id_list = self.browser.find_elements_by_css_selector("td.num")
+            self.record_notices_data_to_list(notice_list,notice_id_list)
             self.browser.find_element_by_xpath(self.get_page_link(current_page)).click()
             current_page += 1
 
-    def save_notices_data(self, selected_page):
-        for notice in selected_page:
-            main_page_notice = NoticeData()
-            self.save_title(notice, main_page_notice)
-            self.save_content_and_category(notice, main_page_notice)
+    def record_notices_data_to_list(self, notice_list, notice_id_list):
+        for notice, notice_id in zip(notice_list, notice_id_list):
+            main_page_notice = Record()
+            notice_item_url = notice.get_attribute("href")
+            notice_item_response = urllib.request.urlopen(notice_item_url)
+            soup_notice = BeautifulSoup(notice_item_response, "html.parser")
+
+            self.record_id(notice_id, main_page_notice)
+            self.record_category_and_division(soup_notice, main_page_notice)
+            self.record_title(soup_notice, main_page_notice)
+            self.record_content(soup_notice, main_page_notice)
+            self.record_view(soup_notice, main_page_notice)
+            self.record_date(soup_notice, main_page_notice)
+            DBManager.insert(main_page_notice)
             self.main_page_notice_list.append(main_page_notice)
             time.sleep(1)
 
-    def save_title(self, notice, main_page_notice):
-        main_page_notice.title = notice.text
+    def record_id(self, notice_id, main_page_notice):
+        main_page_notice.id = int(notice_id.text)
 
-    def save_content_and_category(self, notice, main_page_notice):
-        notice_item_url = notice.get_attribute("href")
-        notice_item_response = urllib.request.urlopen(notice_item_url)
-        soup_notice = BeautifulSoup(notice_item_response, "html.parser")
+    def record_title(self, soup_notice, main_page_notice):
+        main_page_notice.title = soup_notice.select_one("div.view_top > dl > dt")
+
+    def record_content(self, soup_notice, main_page_notice):
         notice_content = soup_notice.select_one(".view_contents")
         main_page_notice.content = self.get_content_output(notice_content)
-        notice_large_category = soup_notice.select_one("div.view_top > dl > dd")
-        main_page_notice.large_category = notice_large_category.text
+
+    def record_category_and_division(self, soup_notice, main_page_notice):
+        notice_category = soup_notice.select("div.view_top > dl > dd")[0]
+        main_page_notice.category = notice_category.text
+        main_page_notice.division = notice_category.text
+
+    def record_view(self, soup_notice, main_page_notice):
+        notice_view = soup_notice.select("div.view_top > dl > dd")[1]
+        main_page_notice.view = int(notice_view.text)
+
+    def record_date(self, soup_notice, main_page_notice):
+        notice_date = soup_notice.select("div.view_top > dl > dd")[2]
+        main_page_notice.date = datetime.strptime(notice_date.text, "%Y.%m.%d").date()
 
     def get_content_output(self, content_sentences):
         if content_sentences is None:
@@ -78,7 +100,7 @@ class MainNotice:
     def get_page_link(self, current_page):
         return "//a[@href=\"javascript:page_link('" + str(current_page) + "')\"]"
 
-    def save_notices_to_db(self):
-        for i in self.main_page_notice_list:
-            DBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+    # def save_notices_to_db(self):
+    #     for i in self.main_page_notice_list:
+    #         DBManager.insert(i)
             # To-do: change number
