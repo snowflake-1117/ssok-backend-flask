@@ -1,14 +1,11 @@
 from MainNotice import MainNotice
 from Wiz5Departments import Wiz5Departments
-from UnivDBManager import UnivDBManager
 from DBManager import DBManager
-from DepartmentDBManager import DepartmentDBManager
 
 
 class Main:
     def __init__(self):
-        UnivDBManager()
-        DepartmentDBManager()
+        DBManager()
         return
 
 

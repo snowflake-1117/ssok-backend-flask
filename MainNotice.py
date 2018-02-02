@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import time
 import re
 from NoticeData import NoticeData
-from UnivDBManager import UnivDBManager
+from DBManager import DBManager
 
 
 class MainNotice:
@@ -80,5 +80,5 @@ class MainNotice:
 
     def save_notices_to_db(self):
         for i in self.main_page_notice_list:
-            UnivDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+            DBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
             # To-do: change number

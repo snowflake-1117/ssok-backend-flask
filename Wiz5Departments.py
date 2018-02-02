@@ -6,7 +6,7 @@ import json
 import re
 from DepartmentUrlData import DepartmentUrlData
 from NoticeData import NoticeData
-from DepartmentDBManager import DepartmentDBManager
+from DBManager import DBManager
 
 
 class Wiz5Departments:
@@ -107,7 +107,6 @@ class Wiz5Departments:
                 notice_data.title = self.get_content_output(notice_title)
                 notice_content = soup_notice.select("td > div")
                 notice_data.content = self.get_content_output(notice_content)
-                print(notice_data.content)
                 notice_data.large_category = large_category
                 self.notice_data_list.append(notice_data)
 
@@ -123,5 +122,5 @@ class Wiz5Departments:
 
     def save_notices_to_db(self):
         for i in self.notice_data_list:
-            DepartmentDBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
+            DBManager.insert(1, i.large_category, i.large_category, i.title, i.content)
             # To-do: change number
