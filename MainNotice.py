@@ -66,7 +66,8 @@ class MainNotice:
         main_page_notice.id = int(notice_id.text)
 
     def record_title(self, soup_notice, main_page_notice):
-        main_page_notice.title = soup_notice.select_one("div.view_top > dl > dt")
+        notice_title = soup_notice.select_one("div.view_top > dl > dt")
+        main_page_notice.title = self.get_content_output(notice_title)
 
     def record_content(self, soup_notice, main_page_notice):
         notice_content = soup_notice.select_one(".view_contents")
