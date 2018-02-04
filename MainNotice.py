@@ -24,7 +24,7 @@ class MainNotice:
         last_notice_number = int(self.browser.find_element_by_class_name("num").text)
         last_notice_page = self.get_last_page(last_notice_number, 10)
         self.scrape_current_to_max_page(start_notice_page, last_notice_page)
-        # self.save_notices_to_db()
+        self.save_notices_to_db()
 
     def quit(self):
         self.browser.quit()
@@ -58,7 +58,6 @@ class MainNotice:
             self.record_content(soup_notice, main_page_notice)
             self.record_view(soup_notice, main_page_notice)
             self.record_date(soup_notice, main_page_notice)
-            DBManager.insert(main_page_notice)
             self.main_page_notice_list.append(main_page_notice)
             time.sleep(1)
 
@@ -101,7 +100,6 @@ class MainNotice:
     def get_page_link(self, current_page):
         return "//a[@href=\"javascript:page_link('" + str(current_page) + "')\"]"
 
-    # def save_notices_to_db(self):
-    #     for i in self.main_page_notice_list:
-    #         DBManager.insert(i)
-            # To-do: change number
+    def save_notices_to_db(self):
+        for i in self.main_page_notice_list:
+            DBManager.insert(i)
