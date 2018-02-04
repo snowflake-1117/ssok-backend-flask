@@ -10,7 +10,7 @@ from Record import Record
 from DBManager import DBManager
 
 
-class Wiz5Departments:
+class Wiz5DepartmentsCrawler:
     base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
 
     def __init__(self):

@@ -8,7 +8,7 @@ from Record import Record
 from DBManager import DBManager
 
 
-class MainNotice:
+class MainNoticeCrawler:
     def __init__(self):
         self.url = "http://www.sookmyung.ac.kr"
         self.sub_url = "/bbs/sookmyungkr/66/artclList.do"
