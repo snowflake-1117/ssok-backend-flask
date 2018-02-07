@@ -11,7 +11,7 @@ class MainNoticeCrawler:
         self.sub_url = "/bbs/sookmyungkr/66/artclList.do"
         self.notice_bbs_url = self.url + self.sub_url
 
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         self.browser.get(self.notice_bbs_url)
         self.record_list = []
@@ -29,7 +29,7 @@ class MainNoticeCrawler:
 
     def scrape_current_to_max_page(self, start_page, last_page):
         current_page = start_page
-        while current_page <= last_page:
+        while current_page < last_page:
             current_page += 1
             self.set_notices_data()
             self.browser.find_element_by_xpath(self.get_page_link(current_page)).click()

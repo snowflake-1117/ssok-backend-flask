@@ -27,7 +27,7 @@ class Wiz5DepartmentsCrawler:
     base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
 
     def __init__(self):
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         self.url_key_list = []
         self.category_list = []
