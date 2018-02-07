@@ -18,7 +18,8 @@ class MainNoticeCrawler:
 
     def start(self):
         start_notice_page = 1
-        last_notice_number = int(self.browser.find_element_by_class_name("num").text)
+        number_list = self.browser.find_elements_by_class_name("num")
+        last_notice_number = CrawlerHelper.get_last_notice_number(number_list)
         last_notice_page = CrawlerHelper.get_last_page(last_notice_number, 10)
         self.scrape_current_to_max_page(start_notice_page, last_notice_page)
         CrawlerHelper.save_record_list_to_db(self.record_list)
@@ -29,18 +30,21 @@ class MainNoticeCrawler:
     def scrape_current_to_max_page(self, start_page, last_page):
         current_page = start_page
         while current_page <= last_page:
-            notice_list = self.browser.find_elements_by_css_selector("a.artclLinkView")
-            notice_id_list = self.browser.find_elements_by_css_selector("td.num")
-            self.record_notices_data_to_list(notice_list, notice_id_list)
-            self.browser.find_element_by_xpath(self.get_page_link(current_page)).click()
             current_page += 1
+            self.set_notices_data()
+            self.browser.find_element_by_xpath(self.get_page_link(current_page)).click()
 
-    def record_notices_data_to_list(self, notice_list, notice_id_list):
+    def set_notices_data(self):
+        notice_list = self.browser.find_elements_by_css_selector("a.artclLinkView")
+        notice_notice_id_list = self.browser.find_elements_by_css_selector("td.notice")
+        notice_num_id_list = self.browser.find_elements_by_css_selector("td.num")
+        notice_id_list = notice_notice_id_list + notice_num_id_list
         for notice, notice_id in zip(notice_list, notice_id_list):
-            soup_notice = CrawlerHelper.get_soup(notice)
-            record = self.get_record_data(notice_id, soup_notice)
-            self.record_list.append(record)
-            time.sleep(1)
+            if notice_id.text.isdigit():
+                soup_notice = CrawlerHelper.get_soup(notice)
+                record = self.get_record_data(notice_id, soup_notice)
+                self.record_list.append(record)
+                time.sleep(1)
 
     def get_record_data(self, notice_id, soup):
         record = Record()
