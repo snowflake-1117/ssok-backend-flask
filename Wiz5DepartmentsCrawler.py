@@ -40,12 +40,10 @@ class Wiz5DepartmentsCrawler:
         for url_data, category, division in zip(self.url_key_list, self.category_list, self.division_list):
             url = self.get_url(url_data)
             self.browser.get(url)
-
             number_list = self.browser.find_elements_by_xpath("//div[2]/form/table/tbody/tr/td[2]")
-            last_notice_number = self.get_last_notice_number(number_list)
+            last_notice_number = CrawlerHelper.get_last_notice_number(number_list)
             start_notice_page = url_data.page
             last_notice_page = CrawlerHelper.get_last_page(last_notice_number, 15)
-
             self.scrap_current_to_max_page(start_notice_page, last_notice_page, url_data, category, division)
             CrawlerHelper.save_record_list_to_db(self.record_list)
 
@@ -71,26 +69,19 @@ class Wiz5DepartmentsCrawler:
             self.category_list.append(i["department"])
             self.division_list.append(i["type"])
 
-    def get_last_notice_number(self, number_list):
-        for number in number_list:
-            last_number = number.text
-            if last_number.isdigit():
-                return int(last_number)
-
     def scrap_current_to_max_page(self, start_page, last_page, url_data, category, division):
         current_page = start_page
         while current_page <= last_page:
-            print("page: " + str(current_page))
             current_page += 1
             self.set_notices_data(category, division)
             self.browser.get(self.get_url(url_data, current_page))
 
     def set_notices_data(self, category, division):
         notice_href_list = self.browser.find_elements_by_css_selector("td.title > a")
-        notice_number_list = self.browser.find_elements_by_css_selector(
+        notice_id_list = self.browser.find_elements_by_css_selector(
             "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
-        for notice, number in zip(notice_href_list, notice_number_list):
-            if number.text.isdigit():
+        for notice, notice_id in zip(notice_href_list, notice_id_list):
+            if notice_id.text.isdigit():
                 soup_notice = CrawlerHelper.get_soup(notice)
                 record = self.get_record_data(category, division, soup_notice)
                 self.record_list.append(record)

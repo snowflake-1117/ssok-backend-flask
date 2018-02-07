@@ -12,6 +12,13 @@ class CrawlerHelper:
         return BeautifulSoup(notice_item_response, "html.parser")
 
     @staticmethod
+    def get_last_notice_number(number_list):
+        for number in number_list:
+            last_number = number.text
+            if last_number.isdigit():
+                return int(last_number)
+
+    @staticmethod
     def get_last_page(last_number, page_notices_count):
         if last_number % page_notices_count != 0:
             return last_number // page_notices_count + 1
