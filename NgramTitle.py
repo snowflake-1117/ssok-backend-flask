@@ -42,6 +42,6 @@ class NgramTitle:
     def print_result_upper_50_percent_similarity(self):
         for i in self._ngram_data:
             if i.similarity_between_two_sentences >= 0.5:
-                print("index list: ", i.list_of_two_indices,
-                      "\ntitle list: ", i.list_of_two_titles,
+                print("comparing index list: ", i.list_of_two_indices,
+                      "\ncomparing title list: ", i.list_of_two_titles,
                       "\nsimilarity: ", i.similarity_between_two_sentences)
