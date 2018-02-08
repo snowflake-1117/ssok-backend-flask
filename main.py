@@ -1,20 +1,9 @@
-from MainNotice import MainNotice
-from Wiz5Departments import Wiz5Departments
+from NgramTitle import NgramTitle
 from DBManager import DBManager
 
+DBManager
 
-class Main:
-    def __init__(self):
-        DBManager()
-        return
-
-
-start = Main()
-
-main_notice = MainNotice()
-main_notice.start()
-main_notice.quit()
-
-wiz5_department = Wiz5Departments()
-wiz5_department.start()
-wiz5_department.quit()
+sentence_list = DBManager.select_all_titles()
+ngram_title = NgramTitle(sentence_list, 2)
+ngram_title.compare_sentence_list()
+ngram_title.print_result_upper_50_percent_similarity()
