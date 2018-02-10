@@ -1,19 +1,24 @@
+from DBManager import DBManager
 from bayes import BayesianFilter
+import csv
 bf = BayesianFilter()
 
-# 테스트 학습
-bf.fit("파격 세일 - 오늘까지만 30% 할인","광고")
-bf.fit("쿠폰 선물 & 무료 배송","광고")
-bf.fit("현더계 백화점 세일","광고")
-bf.fit("봄과 함께 찾아온 따뜻한 신제품 소식","광고")
-bf.fit("인기 제품 기간 한정 세일","광고")
-bf.fit("오늘 일정 확인","중요")
-bf.fit("프로젝트 진행 상황 보고","중요")
-bf.fit("제안 잘 부탁드립니다","중요")
-bf.fit("회의 일정이 등록되었습니다","중요")
-bf.fit("오늘 일정이 없습니다.","중요")
+DBManager()
+rows = DBManager.selectEach20()
+for row in rows:
+    bf.fit(row[0], row[1])
 
-# 예측
-pre, scorelist = bf.predict("재고 정리 할인, 무료 배송")
-print("결과 = ",pre)
-print(scorelist)
+rows = DBManager.selectALL()
+equals = 0
+with open('NaivesBayes.csv', 'w') as csvfile:
+    filewriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    filewriter.writerow(['Title', 'Expected', 'Actual'])
+    for row in rows:
+            pre, scorelist = bf.predict(row[0])
+            filewriter.writerow([row[0], row[1], pre])
+            if row[1] == pre :
+                print(pre, row[1])
+                equals += 1
+
+print("정확도:",str(100*equals/len(rows))+"%")
