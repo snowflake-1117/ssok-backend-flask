@@ -6,21 +6,7 @@ class DBManager:
     PW = YOUR_PW
 
     @staticmethod
-    def insert(record):
-        conn = pymysql.connect(host='localhost',
-                               user=DBManager.USER,
-                               password=DBManager.PW,
-                               db='sookmyung',
-                               charset='utf8mb4')
-
-        with conn.cursor() as cursor:
-            sql = 'INSERT INTO univ (id, category, division, title, content,view,date) VALUES (%s,%s,%s,%s,%s,%s,%s)'
-            cursor.execute(sql, (record.id, record.category, record.division, record.title, record.content,record.view,record.date))
-        conn.commit()
-        return
-
-    @staticmethod
-    def selectEach20():
+    def selectExceptNotice():
         rows = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
@@ -29,11 +15,11 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            divisions = ["공지","학사","장학","행사","모집","학생"]
-            sql=""
+            divisions = ["학사", "장학", "행사", "모집", "학생"]
+            sql = ""
             for division in divisions:
-                sql = sql + "(select title, division from univ where division = '"+division+"' order by view limit 20) union all"
-            sql = sql + "(select title, division from univ where division ='시스템' order by view limit 20)"
+                sql = sql + "(select title, division from univ where division = '" + division + "') union all"
+            sql = sql + "(select title, division from univ where division ='시스템')"
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()
@@ -42,7 +28,7 @@ class DBManager:
         return rows
 
     @staticmethod
-    def selectALL():
+    def selectNotice():
         rows = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
@@ -51,24 +37,10 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT title, division FROM univ'
+            sql = "SELECT title, division FROM univ where division='공지'"
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()
             for row in result:
                 rows.append(row)
         return rows
-
-    @staticmethod
-    def delete_all():
-        conn = pymysql.connect(host='localhost',
-                               user=DBManager.USER,
-                               password=DBManager.PW,
-                               db='sookmyung',
-                               charset='utf8mb4')
-
-        with conn.cursor() as cursor:
-            sql = 'DELETE FROM univ'
-            cursor.execute(sql)
-            conn.commit()
-        return
