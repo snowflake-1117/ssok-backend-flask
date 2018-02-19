@@ -46,7 +46,7 @@ model.fit(np.array(X_train),np.array(Y_train))
 
 # 예측하기 --- (※4)
 y = model.predict(np.array(X_test))
-print(y)
+print("result: ", y)
 ac_score = metrics.accuracy_score(Y_test, y)
 cl_report = metrics.classification_report(Y_test, y)
 print("정답률 =", ac_score)

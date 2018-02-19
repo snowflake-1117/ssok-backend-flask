@@ -48,7 +48,7 @@ def count_freq(limit = 0):
     for file in files:
         category = os.path.splitext(file)[0].split('\\')[1]
         print(category)
-        category_idx = category_names.index(str( category ))
+        category_idx = category_names.index(str(category))
         cnt = count_file_freq(file)
         X.append(cnt)
         Y.append(category_idx)
