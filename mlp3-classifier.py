@@ -54,15 +54,17 @@ model.fit(np.array(X_train),np.array(Y_train))
 # 예측하기 --- (※4)
 predicts = model.predict(np.array(X_test))
 print("predict:",len(np.array(X_test)))
-# decode the prediction
-print('Predicted:')
-
-category_names = ["affair", "event", "recruit", "scholarship", "student", "notice"]
-for predict in predicts:
-    Y_predicted = category_names.__getitem__(predict)
-    print(Y_predicted)
 
 ac_score = metrics.accuracy_score(Y_test, predicts)
 cl_report = metrics.classification_report(Y_test, predicts)
 print("정답률 =", ac_score)
 print("리포트 =\n", cl_report)
+
+# decode the prediction
+print('Predicted:')
+category_names = ["affair", "event", "recruit", "scholarship", "student", "notice"]
+for predict in predicts:
+    Y_predicted = category_names.__getitem__(predict)
+    print(Y_predicted)
+
+print("end")
