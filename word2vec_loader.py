@@ -8,7 +8,7 @@ data_file_min = root_dir + "/data-mini.json"
 # 어구를 자르고 ID로 변환하기 ---(※1)
 word_dic = { "_MAX": 0 }
 def text_to_ids(text):
-    text = text.strip()
+    text = text.strip("")
     words = text.split(" ")
     result = []
     for n in words:
@@ -30,12 +30,20 @@ def file_to_ids(fname):
         text = f.read()
         return text_to_ids(text)
 
+# read by line and return array ---(※2)
+def line_to_ids(fname):
+    with open(fname, "r", encoding="utf8") as f:
+        content = f.readlines()
+        lines = [line.strip(' ') for line in content]
+        for line in lines:
+            text_to_ids(line)
+
 
 # 딕셔너리에 단어 모두 등록하기 --- (※3)
 def register_dic():
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
-        file_to_ids(file)
+        line_to_ids(file)
         print(file)
 
 
@@ -45,5 +53,6 @@ if os.path.exists(dic_file):
 else:
     register_dic()
     json.dump(word_dic, open(dic_file,"w"))
+
 
 
