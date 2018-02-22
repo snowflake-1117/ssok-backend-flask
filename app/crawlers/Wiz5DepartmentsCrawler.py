@@ -65,7 +65,7 @@ class Wiz5DepartmentsCrawler:
         return url
 
     def set_department_data_list(self):
-        data = json.load(open('sookpam-backend-flask/wiz5_departments.json'))
+        data = json.load(open('/home/hyemin/PycharmProjects/sookpam-backend-flask/wiz5_departments.json'))
         for i in data:
             department_url_key = get_department_url_data(i)
             self.url_key_list.append(department_url_key)
@@ -107,3 +107,8 @@ class Wiz5DepartmentsCrawler:
         record.date = datetime.strptime(soup_notice.select_one("td.date").text.strip(), "%Y-%m-%d").date()
         record.url = notice_href.get_attribute('href')
         return record
+
+
+wiz5_department = Wiz5DepartmentsCrawler()
+wiz5_department.start()
+wiz5_department.quit()
