@@ -1,4 +1,4 @@
-from .DBManager import DBManager
+from app.crawlers.DBManager import *
 import re
 from bs4 import BeautifulSoup
 import urllib.request

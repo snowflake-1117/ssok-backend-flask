@@ -5,7 +5,7 @@ from .Record import Record
 
 class DBManager:
     USER = "root"
-    PW = ""
+    PW = "1653"
 
     def __init__(self):
         DBManager.createDB()

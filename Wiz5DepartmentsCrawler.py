@@ -3,9 +3,10 @@ import time
 
 from selenium import webdriver
 
-from .CrawlerHelper import *
-from .DepartmentUrlData import *
-from .Record import *
+from CrawlerHelper import CrawlerHelper
+from DepartmentUrlData import DepartmentUrlData
+from app.crawlers.Record import *
+from app.crawlers.DBManager import *
 
 
 def get_department_url_data(item):
@@ -65,7 +66,7 @@ class Wiz5DepartmentsCrawler:
         return url
 
     def set_department_data_list(self):
-        data = json.load(open('/home/hyemin/PycharmProjects/sookpam-backend-flask/wiz5_departments.json'))
+        data = json.load(open('wiz5_departments.json'))
         for i in data:
             department_url_key = get_department_url_data(i)
             self.url_key_list.append(department_url_key)
