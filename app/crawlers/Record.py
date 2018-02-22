@@ -10,6 +10,7 @@ class Record:
         self._content = ""
         self._view = 0
         self._date = datetime.strptime("1900.01.01", "%Y.%m.%d").date()
+        self._url = ""
 
     @property
     def id(self):
@@ -39,6 +40,10 @@ class Record:
     def date(self):
         return self._date
 
+    @property
+    def url(self):
+        return self._url
+
     @id.setter
     def id(self, record_id):
         self._id = record_id
@@ -66,3 +71,7 @@ class Record:
     @date.setter
     def date(self, date):
         self._date = date
+
+    @url.setter
+    def url(self, url):
+        self._url = url

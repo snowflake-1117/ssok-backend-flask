@@ -34,6 +34,7 @@ class Wiz5DepartmentsCrawler:
         self.category_list = []
         self.division_list = []
         self.record_list = []
+        self.is_all_data_saving = False
 
     def start(self):
         self.set_department_data_list()
@@ -46,7 +47,8 @@ class Wiz5DepartmentsCrawler:
             start_notice_page = url_data.page
             last_notice_page = CrawlerHelper.get_last_page(last_notice_number, 15)
             self.scrap_current_to_max_page(start_notice_page, last_notice_page, url_data, category, division)
-            CrawlerHelper.save_record_list_to_db(self.record_list)
+            if self.record_list.__len__() > 0:
+                CrawlerHelper.save_record_list_to_db(self.record_list)
 
     def quit(self):
         self.browser.quit()
@@ -75,20 +77,26 @@ class Wiz5DepartmentsCrawler:
         while current_page <= last_page:
             current_page += 1
             self.set_notices_data(category, division)
-            self.browser.get(self.get_url(url_data, current_page))
+            if self.is_all_data_saving:
+                break
+            else:
+                self.browser.get(self.get_url(url_data, current_page))
 
     def set_notices_data(self, category, division):
         notice_href_list = self.browser.find_elements_by_css_selector("td.title > a")
         notice_id_list = self.browser.find_elements_by_css_selector(
             "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
-        for notice, notice_id in zip(notice_href_list, notice_id_list):
+        for notice_href, notice_id in zip(notice_href_list, notice_id_list):
             if notice_id.text.isdigit():
-                soup_notice = CrawlerHelper.get_soup(notice)
-                record = self.get_record_data(category, division, soup_notice)
+                if DBManager.does_notice_already_saved(notice_href.get_attribute('href')):
+                    self.is_all_data_saving = True
+                    break
+                soup_notice = CrawlerHelper.get_soup(notice_href)
+                record = self.get_record_data(category, division, soup_notice, notice_href)
                 self.record_list.append(record)
                 time.sleep(1)
 
-    def get_record_data(self, category, division, soup_notice):
+    def get_record_data(self, category, division, soup_notice, notice_href):
         record = Record()
         record.id = int(soup_notice.select_one("p.no").text.replace("글번호 : ", ""))
         record.title = CrawlerHelper.get_content_output(soup_notice.select_one("head > title").text)
@@ -97,4 +105,5 @@ class Wiz5DepartmentsCrawler:
         record.division = division
         record.view = int(soup_notice.select_one("td.no").text)
         record.date = datetime.strptime(soup_notice.select_one("td.date").text.strip(), "%Y-%m-%d").date()
+        record.url = notice_href.get_attribute('href')
         return record

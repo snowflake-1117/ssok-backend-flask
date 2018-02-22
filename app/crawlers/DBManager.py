@@ -4,7 +4,7 @@ from pymysql.err import InternalError
 
 class DBManager:
     USER = "root"
-    PW = "1653"
+    PW = ""
 
     def __init__(self):
         DBManager.createDB()
@@ -46,12 +46,12 @@ class DBManager:
                         title varchar(200) NOT NULL,
                         content varchar(20000),
                         view int(10),
-                        date Date
+                        date Date,
+                        url varchar(500)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8
                 '''
             cursor.execute(sql)
         return
-
 
     @staticmethod
     def insert(record):
@@ -62,8 +62,10 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'INSERT INTO univ (id, category, division, title, content,view,date) VALUES (%s,%s,%s,%s,%s,%s,%s)'
-            cursor.execute(sql, (record.id, record.category, record.division, record.title, record.content,record.view,record.date))
+            sql = 'INSERT INTO univ (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+            cursor.execute(sql, (
+                record.id, record.category, record.division, record.title, record.content, record.view, record.date,
+                record.url))
         conn.commit()
         return
 
@@ -93,7 +95,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT title FROM univ'
+            sql = 'SELECT url FROM univ'
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()
@@ -101,6 +103,23 @@ class DBManager:
             for title in result:
                 title_list.append(str(title[0]))
         return title_list
+
+    @staticmethod
+    def does_notice_already_saved(url):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+        with conn.cursor() as cursor:
+            sql = 'SELECT url FROM univ WHERE url=%s'
+            cursor.execute(sql, url)
+            conn.commit()
+            result = cursor.fetchall()
+            if result.__len__() > 0:
+                return True
+            else:
+                return False
 
     @staticmethod
     def delete_all():
