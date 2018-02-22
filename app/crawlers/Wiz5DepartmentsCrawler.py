@@ -1,8 +1,11 @@
-from selenium import webdriver
-import time
 import json
-from datetime import datetime
-from . import *
+import time
+
+from selenium import webdriver
+
+from .CrawlerHelper import *
+from .DepartmentUrlData import *
+from .Record import *
 
 
 def get_department_url_data(item):
@@ -89,7 +92,7 @@ class Wiz5DepartmentsCrawler:
         record = Record()
         record.id = int(soup_notice.select_one("p.no").text.replace("글번호 : ", ""))
         record.title = CrawlerHelper.get_content_output(soup_notice.select_one("head > title").text)
-        record.content = CrawlerHelper.get_content_output(soup_notice.select("td > div").text)
+        record.content = CrawlerHelper.get_content_output(soup_notice.select("td > div"))
         record.category = category
         record.division = division
         record.view = int(soup_notice.select_one("td.no").text)

@@ -85,6 +85,24 @@ class DBManager:
         return
 
     @staticmethod
+    def select_all_titles():
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT title FROM univ'
+            cursor.execute(sql)
+            conn.commit()
+            result = cursor.fetchall()
+            title_list = []
+            for title in result:
+                title_list.append(str(title[0]))
+        return title_list
+
+    @staticmethod
     def delete_all():
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
