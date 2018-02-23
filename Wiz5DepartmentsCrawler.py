@@ -35,7 +35,6 @@ class Wiz5DepartmentsCrawler:
         self.category_list = []
         self.division_list = []
         self.record_list = []
-        self.is_all_data_saving = False
 
     def start(self):
         self.set_department_data_list()
@@ -50,7 +49,6 @@ class Wiz5DepartmentsCrawler:
             self.scrap_current_to_max_page(start_notice_page, last_notice_page, url_data, category, division)
             if self.record_list.__len__() > 0:
                 CrawlerHelper.save_record_list_to_db(self.record_list)
-            self.is_all_data_saving = False
 
     def quit(self):
         self.browser.quit()
@@ -78,8 +76,7 @@ class Wiz5DepartmentsCrawler:
         current_page = start_page
         while current_page <= last_page:
             current_page += 1
-            self.set_notices_data(category, division)
-            if self.is_all_data_saving:
+            if self.set_notices_data(category, division):
                 break
             else:
                 self.browser.get(self.get_url(url_data, current_page))
@@ -91,12 +88,12 @@ class Wiz5DepartmentsCrawler:
         for notice_href, notice_id in zip(notice_href_list, notice_id_list):
             if notice_id.text.isdigit():
                 if DBManager.does_notice_already_saved(notice_href.get_attribute('href')):
-                    self.is_all_data_saving = True
-                    break
+                    return True
                 soup_notice = CrawlerHelper.get_soup(notice_href)
                 record = self.get_record_data(category, division, soup_notice, notice_href)
                 self.record_list.append(record)
                 time.sleep(1)
+        return False
 
     def get_record_data(self, category, division, soup_notice, notice_href):
         record = Record()
