@@ -50,6 +50,7 @@ class Wiz5DepartmentsCrawler:
             self.scrap_current_to_max_page(start_notice_page, last_notice_page, url_data, category, division)
             if self.record_list.__len__() > 0:
                 CrawlerHelper.save_record_list_to_db(self.record_list)
+		self.is_all_data_saving = False
 
     def quit(self):
         self.browser.quit()
