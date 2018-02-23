@@ -10,7 +10,7 @@ from app.crawlers.DBManager import *
 
 
 def get_department_url_data(item):
-    url_data = DepartmentUrlData
+    url_data = DepartmentUrlData()
     url_data.college = item["college"]
     url_data.department = item["department"]
     url_data.domain_name = item["domain_name"]
@@ -108,6 +108,7 @@ class Wiz5DepartmentsCrawler:
         return record
 
 
+DBManager()
 wiz5_department = Wiz5DepartmentsCrawler()
 wiz5_department.start()
 wiz5_department.quit()
