@@ -29,7 +29,7 @@ class Wiz5DepartmentsCrawler:
     base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
 
     def __init__(self):
-        self.browser = webdriver.PhantomJS()
+        self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(3)
         self.url_key_list = []
         self.category_list = []
@@ -74,6 +74,8 @@ class Wiz5DepartmentsCrawler:
 
     def scrap_current_to_max_page(self, start_page, last_page, url_data, category, division):
         current_page = start_page
+        if last_page > 10:
+            last_page = 10
         while current_page <= last_page:
             current_page += 1
             if self.set_notices_data(category, division):
