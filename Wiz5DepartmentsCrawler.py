@@ -1,6 +1,7 @@
 import json
 import time
 
+
 from selenium import webdriver
 
 from CrawlerHelper import CrawlerHelper
@@ -84,7 +85,7 @@ class Wiz5DepartmentsCrawler:
                 self.browser.get(self.get_url(url_data, current_page))
 
     def set_notices_data(self, category, division):
-        notice_href_list = self.browser.find_elements_by_css_selector("td.title > a")
+        notice_href_list = self.browser.find_elements_by_css_selector("td.title > a:nth-child(1)")
         notice_id_list = self.browser.find_elements_by_css_selector(
             "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
         for notice_href, notice_id in zip(notice_href_list, notice_id_list):
@@ -94,7 +95,6 @@ class Wiz5DepartmentsCrawler:
                 soup_notice = CrawlerHelper.get_soup(notice_href)
                 record = self.get_record_data(category, division, soup_notice, notice_href)
                 self.record_list.append(record)
-                time.sleep(1)
         return False
 
     def get_record_data(self, category, division, soup_notice, notice_href):
