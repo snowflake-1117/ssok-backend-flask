@@ -6,8 +6,7 @@ from app.crawlers.DBManager import DBManager
 
 @app.route('/')
 def index():
-    db_manager = DBManager()
-    record_list = db_manager.select_all()
+    record_list = DBManager.select_all()
     json_dictionary = []
     for record in record_list:
         json_dictionary.append({record.category: {record.division: {'id': record.id, 'title': record.title,
