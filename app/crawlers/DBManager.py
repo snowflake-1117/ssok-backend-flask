@@ -5,7 +5,7 @@ from .Record import Record
 
 class DBManager:
     USER = "root"
-    PW = "1653"
+    PW = ""
 
     def __init__(self):
         DBManager.createDB()
@@ -88,7 +88,7 @@ class DBManager:
         return
 
     @staticmethod
-    def select_all():
+    def select_category_of(major):
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -96,8 +96,8 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT * FROM univ'
-            cursor.execute(sql)
+            sql = 'SELECT * FROM univ WHERE category=%s'
+            cursor.execute(sql, major)
             conn.commit()
             results = cursor.fetchall()
             record_list = []
