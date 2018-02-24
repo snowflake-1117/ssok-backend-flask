@@ -1,7 +1,6 @@
 import json
 import time
 
-
 from selenium import webdriver
 
 from CrawlerHelper import CrawlerHelper
@@ -48,8 +47,7 @@ class Wiz5DepartmentsCrawler:
             start_notice_page = url_data.page
             last_notice_page = CrawlerHelper.get_last_page(last_notice_number, 15)
             self.scrap_current_to_max_page(start_notice_page, last_notice_page, url_data, category, division)
-            if self.record_list.__len__() > 0:
-                CrawlerHelper.save_record_list_to_db(self.record_list)
+            CrawlerHelper.save_record_list_to_db(self.record_list)
 
     def quit(self):
         self.browser.quit()
@@ -91,6 +89,7 @@ class Wiz5DepartmentsCrawler:
         for notice_href, notice_id in zip(notice_href_list, notice_id_list):
             if notice_id.text.isdigit():
                 if DBManager.does_notice_already_saved(notice_href.get_attribute('href')):
+                    print(category, "-", division, ": 데이터 이미 존재")
                     return True
                 soup_notice = CrawlerHelper.get_soup(notice_href)
                 record = self.get_record_data(category, division, soup_notice, notice_href)
