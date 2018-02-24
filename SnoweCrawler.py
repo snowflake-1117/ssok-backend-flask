@@ -13,7 +13,6 @@ class SnowCrawler:
         self.titles = None
         self.nums = None
         self.record_list = []
-        self.browser = webdriver.Chrome()
         self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         time.sleep(5)
@@ -57,19 +56,21 @@ class SnowCrawler:
             self.titles = [element_list[j].find_element_by_css_selector('td.title').text for j in
                            range(len(element_list) - 1, notice_len - 1, -1)]
 
-            if self.extract_data():
+            if self.extract_data(selected_url):
                 return
             else:
                 self.browser.get(selected_url + "#" + str(i))
         return
 
-    def extract_data(self):
+    def extract_data(self, select_url):
         k = 0  # index of article numbers and titles
         for url in self.url_list:
             self.browser.implicitly_wait(3)
-            if DBManager.does_notice_already_saved(url):
-                return True
             self.browser.get(url)
+            current_url = self.browser.find_element_by_css_selector(
+                '#content > div.boardWrap.noticeGeneric > div.board_detail > div:nth-child(2) > em').text
+            if DBManager.does_notice_already_saved(current_url):
+                return True
             page_view = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li.pageview').text
             page_view = page_view.replace('조회수 ', '')
@@ -81,8 +82,6 @@ class SnowCrawler:
             date = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li:nth-child(4)').text
             date = date[0:10]
-            url = self.browser.find_element_by_css_selector(
-                '#content > div.boardWrap.noticeGeneric > div.board_detail > div:nth-child(2) > em').text
             title = self.titles[k]
             content = self.browser.find_element_by_css_selector('#_ckeditorContents').text
             article_num = int(self.nums[k])
@@ -91,11 +90,14 @@ class SnowCrawler:
             record.content = ' '.join(content.split())
             record.title = title
             record.id = article_num
-            record.category = '공통'
+            if select_url == 'https://snowe.sookmyung.ac.kr/bbs5/boards/notice':
+                record.category = '공통'
+            else:
+                record.category = '취업'
             record.division = division
             record.view = page_view
             record.date = date
-            record.url = url
+            record.url = current_url
             self.record_list.append(record)
             return False
         return
