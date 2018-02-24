@@ -25,6 +25,7 @@ class SnowCrawler:
         time.sleep(3)
         self.browser.find_element_by_id('userId').send_keys(user_id)
         self.browser.find_element_by_id('userPassword').send_keys(password)
+        self.browser.find_element_by_id('loginButton').click()
         self.browser.implicitly_wait(3)
         return
 
