@@ -6,7 +6,12 @@ from app.crawlers.DBManager import DBManager
 
 @app.route('/')
 def index():
-    record_list = DBManager.select_all()
+    return 'Sookpam main page'
+
+
+@app.route('/major/<category_name>')
+def get_major_category(category_name):
+    record_list = DBManager.select_category_of('%s' % category_name)
     json_dictionary = []
     for record in record_list:
         json_dictionary.append({record.category: {record.division: {'id': record.id, 'title': record.title,
