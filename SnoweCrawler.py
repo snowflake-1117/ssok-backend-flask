@@ -8,22 +8,18 @@ from CrawlerHelper import CrawlerHelper
 
 class SnowCrawler:
     def __init__(self):
-        self.browser = None
-        self.url_list = None
-        self.titles = None
-        self.nums = None
         self.record_list = []
-        self.browser = webdriver.PhantomJS()
+        self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(3)
         time.sleep(5)
         return
 
     def set_info(self, user_id, password):
-        self.browser.set_window_size(1124, 850)
         self.browser.get('https://snowe.sookmyung.ac.kr/bbs5/users/login')
         time.sleep(3)
         self.browser.find_element_by_id('userId').send_keys(user_id)
         self.browser.find_element_by_id('userPassword').send_keys(password)
+        time.sleep(5)
         self.browser.find_element_by_id('loginButton').click()
         self.browser.implicitly_wait(3)
         return
@@ -45,25 +41,22 @@ class SnowCrawler:
         for i in range(2, last_page_num + 1):
             element_list = self.browser.find_elements_by_css_selector('#messageListBody > tr')
             self.browser.implicitly_wait(3)
-            self.url_list = [element_list[j].find_element_by_css_selector('td.title > a').get_attribute("href")
-                             for j in
-                             range(len(element_list) - 1, notice_len - 1, -1)]
+            url_list = [element_list[j].find_element_by_css_selector('td.title > a').get_attribute("href")
+                        for j in
+                        range(len(element_list) - 1, notice_len - 1, -1)]
             num_list = self.browser.find_elements_by_css_selector('#messageListBody > tr > td.num')
-            self.nums = [num_list[j].text for j in range(len(num_list) - 1, -1, -1)]
-            self.titles = [element_list[j].find_element_by_css_selector('td.title').text for j in
-                           range(len(element_list) - 1, notice_len - 1, -1)]
-
-            if self.extract_data(selected_url):
+            num_string_list = [num_list[j].text for j in range(len(num_list) - 1, -1, -1)]
+            if self.extract_data(selected_url, num_string_list, url_list):
                 return
             else:
                 self.browser.get(selected_url + "#" + str(i))
         return
 
-    def extract_data(self, select_url):
-        k = 0  # index of article numbers and titles
-        for url in self.url_list:
+    def extract_data(self, select_url, num_list, url_list):
+        for (num, url) in zip(num_list, url_list):
             self.browser.implicitly_wait(3)
             self.browser.get(url)
+            time.sleep(3)
             current_url = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div:nth-child(2) > em').text
             if DBManager.does_notice_already_saved(current_url):
@@ -79,11 +72,9 @@ class SnowCrawler:
             date = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li:nth-child(4)').text
             date = date[0:10]
-            title = self.titles[k]
+            title = self.browser.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/strong/span[1]').text
             content = self.browser.find_element_by_css_selector('#_ckeditorContents').text
-            article_num = int(self.nums[k])
-            k = k + 1
-            k += 1
+            article_num = int(num)
             record = Record()
             record.content = ' '.join(content.split())
             record.title = title
@@ -114,5 +105,6 @@ class SnowCrawler:
 
 DBManager()
 crawler = SnowCrawler()
+crawler.set_info('', '')
 crawler.start()
 crawler.quit()
