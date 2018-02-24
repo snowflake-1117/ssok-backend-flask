@@ -96,7 +96,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT * FROM univ WHERE category=%s'
+            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s'
             cursor.execute(sql, major)
             conn.commit()
             results = cursor.fetchall()
