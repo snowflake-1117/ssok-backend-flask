@@ -36,7 +36,6 @@ class SnowCrawler:
 
     def crawl_pages(self, selected_url):
         self.browser.implicitly_wait(3)
-        time.sleep(2)
         last_page = str(self.browser.find_element_by_css_selector("#pagingBar > a.next_end").get_attribute('href'))
         last_page_num = int(last_page.replace(selected_url, "").replace("#", ""))
 
@@ -44,10 +43,8 @@ class SnowCrawler:
         notice_len = len(notice_list)
 
         for i in range(2, last_page_num + 1):
-            time.sleep(5)
             element_list = self.browser.find_elements_by_css_selector('#messageListBody > tr')
             self.browser.implicitly_wait(3)
-            time.sleep(2)
             self.url_list = [element_list[j].find_element_by_css_selector('td.title > a').get_attribute("href")
                              for j in
                              range(len(element_list) - 1, notice_len - 1, -1)]
@@ -86,6 +83,7 @@ class SnowCrawler:
             content = self.browser.find_element_by_css_selector('#_ckeditorContents').text
             article_num = int(self.nums[k])
             k = k + 1
+            k += 1
             record = Record()
             record.content = ' '.join(content.split())
             record.title = title
@@ -99,7 +97,6 @@ class SnowCrawler:
             record.date = date
             record.url = current_url
             self.record_list.append(record)
-            return False
         return
 
     def start(self):
