@@ -5,6 +5,7 @@ from selenium import webdriver
 from app.crawlers.DBManager import *
 from CrawlerHelper import CrawlerHelper
 
+
 class SnowCrawler:
     def __init__(self):
         self.browser = None
@@ -54,14 +55,18 @@ class SnowCrawler:
             self.titles = [element_list[j].find_element_by_css_selector('td.title').text for j in
                            range(len(element_list) - 1, notice_len - 1, -1)]
 
-            self.extract_data()
-            self.browser.get(selected_url + "#" + str(i))
+            if self.extract_data():
+                return
+            else:
+                self.browser.get(selected_url + "#" + str(i))
         return
 
     def extract_data(self):
         k = 0  # index of article numbers and titles
         for url in self.url_list:
             self.browser.implicitly_wait(3)
+            if DBManager.does_notice_already_saved(url):
+                return True
             self.browser.get(url)
             page_view = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li.pageview').text
@@ -90,6 +95,7 @@ class SnowCrawler:
             record.date = date
             record.url = url
             self.record_list.append(record)
+            return False
         return
 
     def start(self):
@@ -97,8 +103,9 @@ class SnowCrawler:
                 'https://snowe.sookmyung.ac.kr/bbs5/boards/notice']
         for url in urls:
             crawler.crawl_at(url)
-            CrawlerHelper.save_record_list_to_db(self.record_list)
-            self.record_list.clear()
+            if self.record_list.__len__() > 0:
+                CrawlerHelper.save_record_list_to_db(self.record_list)
+                self.record_list.clear()
 
     def quit(self):
         self.browser.quit()
