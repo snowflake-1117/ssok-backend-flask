@@ -14,16 +14,17 @@ class SnowCrawler:
         self.nums = None
         self.record_list = []
         self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         time.sleep(5)
         return
 
     def set_info(self, user_id, password):
+        self.browser.set_window_size(1124, 850)
         self.browser.get('https://snowe.sookmyung.ac.kr/bbs5/users/login')
         time.sleep(3)
         self.browser.find_element_by_id('userId').send_keys(user_id)
         self.browser.find_element_by_id('userPassword').send_keys(password)
-        self.browser.find_element_by_id('loginButton').click()
         self.browser.implicitly_wait(3)
         return
 
@@ -113,6 +114,5 @@ class SnowCrawler:
 
 DBManager()
 crawler = SnowCrawler()
-crawler.set_info('user_id', 'password')
 crawler.start()
 crawler.quit()
