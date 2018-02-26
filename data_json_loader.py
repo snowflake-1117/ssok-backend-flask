@@ -1,6 +1,6 @@
 import os, glob, json
 
-root_dir = "./data/"
+root_dir = "./data/snowe/"
 dic_file = root_dir + "/word-dic.json"
 train_data = root_dir + "/train_data.json"
 test_data = root_dir + "/test_data.json"
@@ -43,7 +43,7 @@ def count_freq_train(limit = 0):
     Y = []
 
     global category_names
-    category_names = ["affair", "event", "recruit", "scholarship", "student"]
+    category_names = ["snowe_haksa", "snowe_haengsa", "snowe_mojip", "snowe_janghak", "snowe_haksaeng"]
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
         category = os.path.splitext(file)[0].split('\\')[1]
@@ -73,7 +73,7 @@ def count_freq_test(limit = 0):
     Y = []
     category_idx = 0
     # read by lines
-    file = root_dir + "notice.wakati"
+    file = root_dir + "snowe_gongji.wakati"
     # print(file)
     with open(file, encoding="utf8") as f:
         content = f.readlines()
@@ -93,10 +93,8 @@ def count_freq_test(limit = 0):
 # 벡터를 파일로 출력하기 --- (※7)
 # 전체 데이터를 기반으로 데이터 만들기
 X, Y = count_freq_train(30) # 전체는 void
-print("end of count_freq")
 json.dump({"X": X, "Y": Y}, open(train_data, "w"))
 X, Y = count_freq_test(30) # 전체는 void
-print("end of count_freq")
 json.dump({"X": X, "Y": Y}, open(test_data, "w"))
 
 print("ok")

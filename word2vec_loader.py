@@ -1,6 +1,6 @@
 import os, glob, json
 
-root_dir = "./data/"
+root_dir = "./data/snowe/"
 dic_file = root_dir + "/word-dic.json"
 data_file = root_dir + "/data.json"
 data_file_min = root_dir + "/data-mini.json"
