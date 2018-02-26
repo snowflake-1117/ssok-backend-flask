@@ -5,6 +5,7 @@ from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 from sklearn import model_selection, metrics
 import os, glob, json
+import csv
 import numpy as np
 import json
 
@@ -16,7 +17,7 @@ max_words = word_dic["_MAX"]
 
 # get numbers of class by counting files
 files = glob.glob(root_dir + "*.wakati", recursive=True)
-nb_classes = len(files)
+nb_classes = len(files)-1
 print("nb_classes:",nb_classes)
 
 batch_size = 64
@@ -35,36 +36,43 @@ def build_model():
         metrics=['accuracy'])
     return model
 
-data = json.load(open("./data/data.json"))
+
 # 데이터 읽어 들이기--- (※2)
+data = json.load(open("./data/train_data.json"))
 X = data["X"] # 텍스트를 나타내는 데이터
 Y = data["Y"] # 카테고리 데이터
 
 # 학습하기 --- (※3)
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y)
-Y_train = np_utils.to_categorical(Y_train, nb_classes)
-print("train:",len(X_train),len(Y_train))
+# X_train, X_test, Y_train, Y_test = train_test_split(X, Y)
+Y_train = np_utils.to_categorical(Y, nb_classes)
+print("train:",len(X),len(Y))
 model = KerasClassifier(
     build_fn=build_model,
     nb_epoch=nb_epoch,
     batch_size=batch_size)
-model.fit(np.array(X_train),np.array(Y_train))
+model.fit(np.array(X),np.array(Y))
 
 
 # 예측하기 --- (※4)
-predicts = model.predict(np.array(X_test))
-print("predict:",len(np.array(X_test)))
+# 데이터 읽어 들이기--- (※5)
+data = json.load(open("./data/train_data.json"))
+X = data["X"] # 텍스트를 나타내는 데이터
+Y = data["Y"] # 카테고리 데이터
+predicts = model.predict(np.array(X))
+print("predict:",len(np.array(X)))
 
-ac_score = metrics.accuracy_score(Y_test, predicts)
-cl_report = metrics.classification_report(Y_test, predicts)
+ac_score = metrics.accuracy_score(Y, predicts)
+cl_report = metrics.classification_report(Y, predicts)
 print("정답률 =", ac_score)
 print("리포트 =\n", cl_report)
 
 # decode the prediction
 print('Predicted:')
-category_names = ["affair", "event", "recruit", "scholarship", "student", "notice"]
-for predict in predicts:
-    Y_predicted = category_names.__getitem__(predict)
-    print(Y_predicted)
-
+category_names = ["affair", "event", "recruit", "scholarship", "student"]
+with open('mlp3-classifier.csv',"w",encoding="utf8") as csvfile:
+    filewriter = csv.writer(csvfile, delimiter=',')
+    filewriter.writerow(['Division'])
+    for position, predict in enumerate(predicts):
+        Y_predicted = category_names.__getitem__(predict)
+        filewriter.writerow([Y_predicted])
 print("end")

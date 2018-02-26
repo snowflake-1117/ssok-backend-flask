@@ -43,8 +43,8 @@ def line_to_ids(fname):
 def register_dic():
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
-        line_to_ids(file)
-        print(file)
+            line_to_ids(file)
+            print(file)
 
 
 # 단어 딕셔너리 만들기 --- (※5)
