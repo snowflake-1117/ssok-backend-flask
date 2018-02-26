@@ -8,6 +8,7 @@ import os, glob, json
 import csv
 import numpy as np
 import json
+from get_original_line import get_original_line
 
 root_dir = "./data/"
 dic_file = root_dir + "/word-dic.json"
@@ -68,11 +69,11 @@ print("리포트 =\n", cl_report)
 
 # decode the prediction
 print('Predicted:')
-category_names = ["affair", "event", "recruit", "scholarship", "student"]
+category_names = ["학사", "행사", "모집", "장학", "학생"]
 with open('mlp3-classifier.csv',"w",encoding="utf8") as csvfile:
     filewriter = csv.writer(csvfile, delimiter=',')
-    filewriter.writerow(['Division'])
+    filewriter.writerow(['Title','Division'])
     for position, predict in enumerate(predicts):
         Y_predicted = category_names.__getitem__(predict)
-        filewriter.writerow([Y_predicted])
+        filewriter.writerow([get_original_line("./data/gongji.txt", position), Y_predicted])
 print("end")
