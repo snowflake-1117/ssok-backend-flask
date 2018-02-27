@@ -12,8 +12,11 @@ for row in train_set:
 test_set = DBManager.selectTestData()
 equals = 0
 
+def conTainsQuotes(title):
+    return "\'" in title or "\"" in title
+
 for row in test_set:
     pre, scorelist = bf.predict(row[0])
-    title = row[0].replaceAll("\'","\'\'")
-    title = title.replaceAll("\"", "\"\"")
+    title = row[0].replace("\'", "\'\'")
+    title = title.replace("\"", "\"\"")
     DBManager.updateAt( title , pre)
