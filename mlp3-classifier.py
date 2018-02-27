@@ -1,4 +1,5 @@
 from keras.models import Sequential
+from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Dropout, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
@@ -7,9 +8,8 @@ from pymysql import ProgrammingError
 from db_manager import DBManager
 from get_original_line import get_original_line
 from keras.models import load_model
-import os, glob, json
+import glob, json
 import numpy as np
-import json
 
 
 root_dir = "./data/snowe/"
@@ -50,16 +50,28 @@ print("train:", len(X), len(Y))
 
 # if model already exist, load
 try:
-    model = load_model(MODEL)
-    model.compile(loss='categorical_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
+    # model = load_model(MODEL)
+    # model.compile(loss='categorical_crossentropy',
+    #               optimizer='adam',
+    #               metrics=['accuracy'])
+    # model = KerasClassifier(
+    #     build_fn=model,
+    #     nb_epoch=nb_epoch,
+    #     batch_size=batch_size)
+    chk = ModelCheckpoint(MODEL, monitor='val_loss', save_best_only=False)
+    # add that callback to the list of callbacks to pass
+    callbacks_list = [chk]
+    # create your model
+    model = KerasClassifier(build_fn=build_model, nb_epoch=150, batch_size=10)
+    # fit your model with your data. Pass the callback(s) here
+    # fit your model with your data. Pass the callback(s) here
+    model.fit(np.array(X), np.array(Y_train), callbacks=callbacks_list)
 except OSError:
     model = KerasClassifier(
         build_fn=build_model,
         nb_epoch=nb_epoch,
         batch_size=batch_size)
-model.fit(np.array(X), np.array(Y_train))
+    model.fit(np.array(X), np.array(Y_train))
 
 data = json.load(open(root_dir + "/test_data.json"))
 X = data["X"]  # 텍스트를 나타내는 데이터
@@ -72,9 +84,10 @@ del model
 # decode the prediction
 category_names = ["학사", "행사", "모집", "장학", "학생"]
 cnt = 0
-np.reshape(predicts, (predicts.shape[0], -1))
+# np.reshape(predicts, (predicts.shape[0], -1))
 for position, predict in enumerate(predicts):
     try:
+        print(predict)
         Y_predicted = category_names.__getitem__(predict)
         DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
     except ProgrammingError:
