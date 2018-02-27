@@ -17,6 +17,4 @@ def conTainsQuotes(title):
 
 for row in test_set:
     pre, scorelist = bf.predict(row[0])
-    row[0].replace("\'", "\'\'")
-    row[0].replace("\"", "\"\"")
     DBManager.updateAt(row[0], pre)
