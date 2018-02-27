@@ -5,7 +5,7 @@ from keras.utils import np_utils
 from keras import backend as K
 from pymysql import ProgrammingError
 from sklearn import model_selection, metrics
-from MlpDBManager import DBManager
+from db_manager import DBManager
 from get_original_line import get_original_line
 from keras.models import load_model
 import os, glob, json
