@@ -7,7 +7,6 @@ from keras import backend as K
 from pymysql import ProgrammingError
 from db_manager import DBManager
 from get_original_line import get_original_line
-from keras.models import load_model
 import glob, json
 import numpy as np
 
@@ -23,9 +22,8 @@ MODEL = 'classifier-model.h5py'
 files = glob.glob(root_dir + "*.wakati", recursive=True)
 nb_classes = len(files) - 1
 print("nb_classes:", nb_classes)
-
 batch_size = 64
-nb_epoch = 20
+nb_epoch = 10
 
 
 # MLP 모델 생성하기 --- (※1)
@@ -48,23 +46,11 @@ Y = data["Y"]  # 카테고리 데이터
 Y_train = np_utils.to_categorical(Y, nb_classes)
 print("train:", len(X), len(Y))
 
-# if model already exist, load
+# if model already exist, use modelCheckpoint for kerasClassifier
 try:
-    # model = load_model(MODEL)
-    # model.compile(loss='categorical_crossentropy',
-    #               optimizer='adam',
-    #               metrics=['accuracy'])
-    # model = KerasClassifier(
-    #     build_fn=model,
-    #     nb_epoch=nb_epoch,
-    #     batch_size=batch_size)
-    chk = ModelCheckpoint(MODEL, monitor='val_loss', save_best_only=False)
-    # add that callback to the list of callbacks to pass
-    callbacks_list = [chk]
-    # create your model
-    model = KerasClassifier(build_fn=build_model, nb_epoch=150, batch_size=10)
-    # fit your model with your data. Pass the callback(s) here
-    # fit your model with your data. Pass the callback(s) here
+    check = ModelCheckpoint(MODEL, monitor='val_loss', save_best_only=False)
+    callbacks_list = [check]
+    model = KerasClassifier(build_fn=build_model, nb_epoch=nb_epoch, batch_size=batch_size)
     model.fit(np.array(X), np.array(Y_train), callbacks=callbacks_list)
 except OSError:
     model = KerasClassifier(
@@ -74,8 +60,8 @@ except OSError:
     model.fit(np.array(X), np.array(Y_train))
 
 data = json.load(open(root_dir + "/test_data.json"))
-X = data["X"]  # 텍스트를 나타내는 데이터
-Y = data["Y"]  # 카테고리 데이터
+X = data["X"]
+Y = data["Y"]
 predicts = model.predict(np.array(X))
 
 model.model.save(MODEL)
@@ -83,15 +69,13 @@ del model
 
 # decode the prediction
 category_names = ["학사", "행사", "모집", "장학", "학생"]
-cnt = 0
-# np.reshape(predicts, (predicts.shape[0], -1))
 for position, predict in enumerate(predicts):
     try:
-        print(predict)
         Y_predicted = category_names.__getitem__(predict)
         DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
     except ProgrammingError:
-        cnt += 1
+        # the line is not in table
+        pass
 
 K.clear_session()
 print("end")
