@@ -1,5 +1,75 @@
 
+<<<<<<< HEAD
 # Created by https://www.gitignore.io/api/python
+=======
+# Created by https://www.gitignore.io/api/python,intellij
+
+### Intellij ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff:
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-debug/
+
+# Mongo Explorer plugin:
+.idea/**/mongoSettings.xml
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Ruby plugin and RubyMine
+/.rakeTasks
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+### Intellij Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Sonarlint plugin
+.idea/sonarlint
+
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -11,8 +81,11 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+<<<<<<< HEAD
 env/
 
+=======
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 build/
 develop-eggs/
 dist/
@@ -45,7 +118,10 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+<<<<<<< HEAD
 
+=======
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 .pytest_cache/
 nosetests.xml
 coverage.xml
@@ -56,10 +132,13 @@ coverage.xml
 *.mo
 *.pot
 
+<<<<<<< HEAD
 # Django stuff:
 *.log
 local_settings.py
 
+=======
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 # Flask stuff:
 instance/
 .webassets-cache
@@ -80,19 +159,25 @@ target/
 .python-version
 
 # celery beat schedule file
+<<<<<<< HEAD
 
 celerybeat-schedule
 
+=======
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 celerybeat-schedule.*
 
 # SageMath parsed files
 *.sage.py
 
+<<<<<<< HEAD
 
 # virtualenv
 .venv
 
 ENV/
+=======
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
 # Environments
 .env
 .venv
@@ -116,7 +201,11 @@ venv.bak/
 .mypy_cache/
 
 
+<<<<<<< HEAD
 #.idea
 .idea
 
 # End of https://www.gitignore.io/api/python
+=======
+# End of https://www.gitignore.io/api/python,intellij
+>>>>>>> fb590476e4026705925084910963bd4a3844f3c4
