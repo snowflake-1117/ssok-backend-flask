@@ -64,7 +64,7 @@ class DBManager:
                 sql = sql + "category='" +  category[0] + "' or "
 
             sql = sql[:len(sql) - 4]
-            print("sql_train:",sql)
+            print("sql_test:",sql)
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()

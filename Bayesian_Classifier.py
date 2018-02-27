@@ -14,4 +14,6 @@ equals = 0
 
 for row in test_set:
     pre, scorelist = bf.predict(row[0])
-    DBManager.updateAt(row[0], pre)
+    title = row[0].replaceAll("\'","\'\'")
+    title = title.replaceAll("\"", "\"\"")
+    DBManager.updateAt( title , pre)
