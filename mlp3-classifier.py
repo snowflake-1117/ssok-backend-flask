@@ -1,16 +1,15 @@
 from keras.models import Sequential
+from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Dropout, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
 from keras import backend as K
 from pymysql import ProgrammingError
-from sklearn import model_selection, metrics
-from MlpDBManager import DBManager
+from db_manager import DBManager
 from get_original_line import get_original_line
-from keras.models import load_model
-import os, glob, json
+import glob, json
 import numpy as np
-import json
+
 
 root_dir = "./data/snowe/"
 dic_file = root_dir + "/word-dic.json"
@@ -23,9 +22,8 @@ MODEL = 'classifier-model.h5py'
 files = glob.glob(root_dir + "*.wakati", recursive=True)
 nb_classes = len(files) - 1
 print("nb_classes:", nb_classes)
-
 batch_size = 64
-nb_epoch = 20
+nb_epoch = 10
 
 
 # MLP 모델 생성하기 --- (※1)
@@ -42,50 +40,42 @@ def build_model():
     return model
 
 
-# 데이터 읽어 들이기--- (※2)
 data = json.load(open(root_dir + "train_data.json"))
 X = data["X"]  # 텍스트를 나타내는 데이터
 Y = data["Y"]  # 카테고리 데이터
 Y_train = np_utils.to_categorical(Y, nb_classes)
 print("train:", len(X), len(Y))
 
-# if model already exist, load
+# if model already exist, use modelCheckpoint for kerasClassifier
 try:
-    model = load_model(MODEL)
+    check = ModelCheckpoint(MODEL, monitor='val_loss', save_best_only=False)
+    callbacks_list = [check]
+    model = KerasClassifier(build_fn=build_model, nb_epoch=nb_epoch, batch_size=batch_size)
+    model.fit(np.array(X), np.array(Y_train), callbacks=callbacks_list)
 except OSError:
     model = KerasClassifier(
         build_fn=build_model,
         nb_epoch=nb_epoch,
         batch_size=batch_size)
-model.fit(np.array(X), np.array(Y))
+    model.fit(np.array(X), np.array(Y_train))
 
-# 예측하기 --- (※4)
-# read test_data--- (※5)
 data = json.load(open(root_dir + "/test_data.json"))
-X = data["X"]  # 텍스트를 나타내는 데이터
-Y = data["Y"]  # 카테고리 데이터
+X = data["X"]
+Y = data["Y"]
 predicts = model.predict(np.array(X))
-print("predict:", len(np.array(X)))
-
-ac_score = metrics.accuracy_score(Y, predicts)
-cl_report = metrics.classification_report(Y, predicts)
-print("정답률 =", ac_score)
-print("리포트 =\n", cl_report)
 
 model.model.save(MODEL)
 del model
 
 # decode the prediction
-print('Predicted:')
 category_names = ["학사", "행사", "모집", "장학", "학생"]
-cnt = 0
 for position, predict in enumerate(predicts):
     try:
         Y_predicted = category_names.__getitem__(predict)
         DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
     except ProgrammingError:
-        cnt += 1
-        # the line is not in database
+        # the line is not in table
+        pass
 
 K.clear_session()
 print("end")
