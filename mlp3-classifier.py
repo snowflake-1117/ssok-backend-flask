@@ -2,27 +2,31 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
-from sklearn.model_selection import train_test_split
+from keras import backend as K
+from pymysql import ProgrammingError
 from sklearn import model_selection, metrics
+from MlpDBManager import DBManager
+from get_original_line import get_original_line
+from keras.models import load_model
 import os, glob, json
-import csv
 import numpy as np
 import json
-from get_original_line import get_original_line
 
 root_dir = "./data/snowe/"
 dic_file = root_dir + "/word-dic.json"
 
 word_dic = json.load(open(dic_file))
 max_words = word_dic["_MAX"]
+MODEL = 'classifier-model.h5py'
 
 # get numbers of class by counting files
 files = glob.glob(root_dir + "*.wakati", recursive=True)
-nb_classes = len(files)-1
-print("nb_classes:",nb_classes)
+nb_classes = len(files) - 1
+print("nb_classes:", nb_classes)
 
 batch_size = 64
 nb_epoch = 20
+
 
 # MLP 모델 생성하기 --- (※1)
 def build_model():
@@ -33,47 +37,55 @@ def build_model():
     model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy',
-        optimizer='adam',
-        metrics=['accuracy'])
+                  optimizer='adam',
+                  metrics=['accuracy'])
     return model
 
 
 # 데이터 읽어 들이기--- (※2)
-data = json.load(open(root_dir+"train_data.json"))
-X = data["X"] # 텍스트를 나타내는 데이터
-Y = data["Y"] # 카테고리 데이터
-
-# 학습하기 --- (※3)
-# X_train, X_test, Y_train, Y_test = train_test_split(X, Y)
+data = json.load(open(root_dir + "train_data.json"))
+X = data["X"]  # 텍스트를 나타내는 데이터
+Y = data["Y"]  # 카테고리 데이터
 Y_train = np_utils.to_categorical(Y, nb_classes)
-print("train:",len(X),len(Y))
-model = KerasClassifier(
-    build_fn=build_model,
-    nb_epoch=nb_epoch,
-    batch_size=batch_size)
-model.fit(np.array(X),np.array(Y))
+print("train:", len(X), len(Y))
 
+# if model already exist, load
+try:
+    model = load_model(MODEL)
+except OSError:
+    model = KerasClassifier(
+        build_fn=build_model,
+        nb_epoch=nb_epoch,
+        batch_size=batch_size)
+model.fit(np.array(X), np.array(Y))
 
 # 예측하기 --- (※4)
-# 데이터 읽어 들이기--- (※5)
-data = json.load(open(root_dir+"/train_data.json"))
-X = data["X"] # 텍스트를 나타내는 데이터
-Y = data["Y"] # 카테고리 데이터
+# read test_data--- (※5)
+data = json.load(open(root_dir + "/test_data.json"))
+X = data["X"]  # 텍스트를 나타내는 데이터
+Y = data["Y"]  # 카테고리 데이터
 predicts = model.predict(np.array(X))
-print("predict:",len(np.array(X)))
+print("predict:", len(np.array(X)))
 
 ac_score = metrics.accuracy_score(Y, predicts)
 cl_report = metrics.classification_report(Y, predicts)
 print("정답률 =", ac_score)
 print("리포트 =\n", cl_report)
 
+model.model.save(MODEL)
+del model
+
 # decode the prediction
 print('Predicted:')
 category_names = ["학사", "행사", "모집", "장학", "학생"]
-with open(root_dir+'mlp3-classifier.csv',"w",encoding="utf8") as csvfile:
-    filewriter = csv.writer(csvfile, delimiter=',')
-    filewriter.writerow(['Title','Division'])
-    for position, predict in enumerate(predicts):
+cnt = 0
+for position, predict in enumerate(predicts):
+    try:
         Y_predicted = category_names.__getitem__(predict)
-        filewriter.writerow([get_original_line(root_dir+"/gongji.txt", position), Y_predicted])
+        DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
+    except ProgrammingError:
+        cnt += 1
+        # the line is not in database
+
+K.clear_session()
 print("end")
