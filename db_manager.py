@@ -7,6 +7,8 @@ class DBManager:
 
     @staticmethod
     def updateAt(title, division):
+        title.replace("\'","\'\'")
+        title.replace("\"", "\"\"")
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
