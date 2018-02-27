@@ -90,11 +90,8 @@ def count_freq_test(limit = 0):
     return X,Y
 
 
-# 벡터를 파일로 출력하기 --- (※7)
-# 전체 데이터를 기반으로 데이터 만들기
-X, Y = count_freq_train(30) # 전체는 void
-json.dump({"X": X, "Y": Y}, open(train_data, "w"))
-X, Y = count_freq_test(30) # 전체는 void
-json.dump({"X": X, "Y": Y}, open(test_data, "w"))
-
-print("ok")
+if not os.path.exists(train_data):
+    X, Y = count_freq_train(30)  # 전체는 void
+    json.dump({"X": X, "Y": Y}, open(train_data, "w"))
+    X, Y = count_freq_test(30)  # 전체는 void
+    json.dump({"X": X, "Y": Y}, open(test_data, "w"))
