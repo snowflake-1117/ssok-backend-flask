@@ -9,12 +9,13 @@ from CrawlerHelper import CrawlerHelper
 class SnowCrawler:
     def __init__(self):
         self.record_list = []
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         time.sleep(5)
         return
 
     def set_info(self, user_id, password):
+        self.browser.set_window_size(1000, 500)
         self.browser.get('https://snowe.sookmyung.ac.kr/bbs5/users/login')
         time.sleep(3)
         self.browser.find_element_by_id('userId').send_keys(user_id)
@@ -35,18 +36,23 @@ class SnowCrawler:
         last_page = str(self.browser.find_element_by_css_selector("#pagingBar > a.next_end").get_attribute('href'))
         last_page_num = int(last_page.replace(selected_url, "").replace("#", ""))
 
-        notice_list = self.browser.find_elements_by_css_selector('#messageListBody > tr.notice')
-        notice_len = len(notice_list)
-
         for i in range(2, last_page_num + 1):
-            element_list = self.browser.find_elements_by_css_selector('#messageListBody > tr')
             self.browser.implicitly_wait(3)
-            url_list = [element_list[j].find_element_by_css_selector('td.title > a').get_attribute("href")
-                        for j in
-                        range(len(element_list) - 1, notice_len - 1, -1)]
+            time.sleep(3)
+            notice_list = self.browser.find_elements_by_css_selector('#messageListBody > tr.notice')
+            notice_len = len(notice_list)
+            url_list = self.browser.find_elements_by_css_selector('#messageListBody > tr > td.title > a')
+            url_href_list = []
+            for url in url_list:
+                if notice_len > 0:
+                    notice_len -= 1
+                else:
+                    url_href_list.append(url.get_attribute("href"))
             num_list = self.browser.find_elements_by_css_selector('#messageListBody > tr > td.num')
-            num_string_list = [num_list[j].text for j in range(len(num_list) - 1, -1, -1)]
-            if self.extract_data(selected_url, num_string_list, url_list):
+            num_string_list = []
+            for num in num_list:
+                num_string_list.append(num.text)
+            if self.extract_data(selected_url, num_string_list, url_href_list):
                 return
             else:
                 self.browser.get(selected_url + "#" + str(i))
@@ -59,7 +65,7 @@ class SnowCrawler:
             time.sleep(3)
             current_url = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div:nth-child(2) > em').text
-            if DBManager.does_notice_already_saved(current_url):
+            if DBManager.is_notice_url_already_saved(current_url):
                 return True
             page_view = self.browser.find_element_by_css_selector(
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li.pageview').text

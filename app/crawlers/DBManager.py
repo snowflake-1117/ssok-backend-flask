@@ -88,7 +88,7 @@ class DBManager:
         return
 
     @staticmethod
-    def select_category_of(major):
+    def select_category_and_division_of(category, division):
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -96,8 +96,8 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s'
-            cursor.execute(sql, major)
+            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s AND division=%s'
+            cursor.execute(sql, (category, division))
             conn.commit()
             results = cursor.fetchall()
             record_list = []
@@ -115,7 +115,7 @@ class DBManager:
         return record_list
 
     @staticmethod
-    def does_notice_already_saved(url):
+    def is_notice_url_already_saved(url):
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -124,6 +124,23 @@ class DBManager:
         with conn.cursor() as cursor:
             sql = 'SELECT url FROM univ WHERE url=%s'
             cursor.execute(sql, url)
+            conn.commit()
+            result = cursor.fetchall()
+            if result.__len__() > 0:
+                return True
+            else:
+                return False
+
+    @staticmethod
+    def is_notice_already_saved(title, category):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+        with conn.cursor() as cursor:
+            sql = 'SELECT title FROM univ WHERE title=%s AND category=%s'
+            cursor.execute(sql, (title, category))
             conn.commit()
             result = cursor.fetchall()
             if result.__len__() > 0:

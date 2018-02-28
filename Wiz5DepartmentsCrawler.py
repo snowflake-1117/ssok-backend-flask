@@ -28,7 +28,7 @@ class Wiz5DepartmentsCrawler:
     base_url = ".sookmyung.ac.kr/wiz5/wizard/frames/server_sub.html?"
 
     def __init__(self):
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.PhantomJS()
         self.browser.implicitly_wait(3)
         self.url_key_list = []
         self.category_list = []
@@ -40,6 +40,7 @@ class Wiz5DepartmentsCrawler:
 
         for url_data, category, division in zip(self.url_key_list, self.category_list, self.division_list):
             url = self.get_url(url_data)
+            self.browser.set_window_size(1000, 500)
             self.browser.get(url)
             number_list = self.browser.find_elements_by_xpath("//div[2]/form/table/tbody/tr/td[2]")
             last_notice_number = CrawlerHelper.get_last_notice_number(number_list)
@@ -89,8 +90,7 @@ class Wiz5DepartmentsCrawler:
             "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
         for notice_href, notice_id in zip(notice_href_list, notice_id_list):
             if notice_id.text.isdigit():
-                if DBManager.does_notice_already_saved(notice_href.get_attribute('href')):
-                    print(category, "-", division, ": 데이터 이미 존재")
+                if DBManager.is_notice_url_already_saved(notice_href.get_attribute('href')):
                     return True
                 soup_notice = CrawlerHelper.get_soup(notice_href)
                 record = self.get_record_data(category, division, soup_notice, notice_href)
