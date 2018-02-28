@@ -37,31 +37,34 @@ def count_line_freq(text):
     return cnt
 
 
-# 카테고리마다 파일 읽어 들이기 --- (※5)
+def get_division_list():
+    files = glob.glob(root_dir + "*.wakati", recursive=True)
+    division_list = []
+    for file in files:
+        division = os.path.splitext(file)[0].split('\\')[1]
+        division_list.append(division)
+    return division_list
+
+
 def count_freq_train(limit = 0):
     X = []
     Y = []
-
-    global category_names
-    category_names = ["snowe_haksa", "snowe_haengsa", "snowe_mojip", "snowe_janghak", "snowe_haksaeng"]
+    division_list = get_division_list()
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
-        category = os.path.splitext(file)[0].split('\\')[1]
-        print("category: ", category)
-        if category in category_names:
-            category_idx = category_names.index(str(category))
-            # read by lines
+        division = os.path.splitext(file)[0].split('\\')[1]
+        if  "_gongji" not in division:
+            print("division: ", division)
+            division_idx = division_list.index(str(division))
             file = os.path.abspath(file)
-            # print(file)
             with open(file,encoding="utf8") as f:
                 content = f.readlines()
                 lines = [line.strip(' ') for line in content]
                 capacity = 0
                 for line in lines:
-                    #print(lines.index(line),". ")
                     cnt = count_line_freq(line)
                     X.append(cnt)
-                    Y.append(category_idx)
+                    Y.append(division_idx)
                     if limit > 0:
                         if capacity > limit: break
                         capacity += 1
