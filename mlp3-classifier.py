@@ -5,6 +5,8 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
 from keras import backend as K
 from pymysql import ProgrammingError
+
+from data.department_convertor import idx_to_kor
 from db_manager import DBManager
 import glob, json
 import numpy as np
@@ -78,10 +80,10 @@ def get_original_line(fname, idx):
 
 
 # decode the prediction
-category_names = ["학사", "행사", "모집", "장학", "학생"]
 for position, predict in enumerate(predicts):
     try:
-        Y_predicted = category_names.__getitem__(predict)
+        Y_predicted = idx_to_kor[predict]
+        print(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
         DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
     except ProgrammingError:
         # the line is not in table

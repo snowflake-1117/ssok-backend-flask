@@ -1,5 +1,7 @@
 import os, glob, json
 
+from data.department_convertor import eng_to_idx
+
 root_dir = "./data/snowe/"
 dic_file = root_dir + "/word-dic.json"
 train_data = root_dir + "/train_data.json"
@@ -49,13 +51,12 @@ def get_division_list():
 def count_freq_train(limit = 0):
     X = []
     Y = []
-    division_list = get_division_list()
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
         division = os.path.splitext(file)[0].split('\\')[1]
         if  "_gongji" not in division:
             print("division: ", division)
-            division_idx = division_list.index(str(division))
+            division_idx = eng_to_idx[str(division)]
             file = os.path.abspath(file)
             with open(file,encoding="utf8") as f:
                 content = f.readlines()
@@ -68,6 +69,7 @@ def count_freq_train(limit = 0):
                     if limit > 0:
                         if capacity > limit: break
                         capacity += 1
+    print("end of train data creation")
     return X,Y
 
 # noice.wakati 읽어 들이기 --- (※6)
@@ -90,11 +92,12 @@ def count_freq_test(limit = 0):
             if limit > 0:
                 if capacity > limit: break
                 capacity += 1
+    print("end of test data creation")
     return X,Y
 
 
 if not os.path.exists(train_data):
-    X, Y = count_freq_train(30)  # 전체는 void
+    X, Y = count_freq_train(100)  # 전체는 void
     json.dump({"X": X, "Y": Y}, open(train_data, "w"))
-    X, Y = count_freq_test(30)  # 전체는 void
+    X, Y = count_freq_test(100)  # 전체는 void
     json.dump({"X": X, "Y": Y}, open(test_data, "w"))
