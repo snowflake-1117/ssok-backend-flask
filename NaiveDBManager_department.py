@@ -6,6 +6,11 @@ class DBManager:
     PW = YOUR_PW
 
     @staticmethod
+    def isDepartment(category):
+        return category != "공통" and category != "취업" and category!="국제"
+
+
+    @staticmethod
     def selectTrainData():
         rows = []
         conn = pymysql.connect(host='localhost',
@@ -18,7 +23,7 @@ class DBManager:
             categoryList = DBManager.getTrainCategoryList()
             sql = "select title, division, category from univ where "
             for category in categoryList:
-                if category[0] != "공통" and category[0] != "취업":
+                if DBManager.isDepartment(category[0]):
                     sql = sql +  "category='"+ category[0] +"' or "
             sql = sql[:len(sql)-4]
             print("sql_train:", sql)
@@ -63,7 +68,7 @@ class DBManager:
             if len(categoryList) > 0 :
                 sql = "select title, division, category from univ where "
                 for category in categoryList:
-                    if category[0] != "공통" and  category[0] != "취업":
+                    if DBManager.isDepartment(category):
                         sql = sql + "category='" +  category[0] + "' or "
 
                 sql = sql[:len(sql) - 4]
