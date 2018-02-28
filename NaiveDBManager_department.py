@@ -18,7 +18,8 @@ class DBManager:
             categoryList = DBManager.getTrainCategoryList()
             sql = "select title, division, category from univ where "
             for category in categoryList:
-                sql = sql +  "category='"+ category[0] +"' or "
+                if category[0] != "공통" and category[0] != "취업":
+                    sql = sql +  "category='"+ category[0] +"' or "
             sql = sql[:len(sql)-4]
             print("sql_train:", sql)
             cursor.execute(sql)
@@ -59,17 +60,21 @@ class DBManager:
 
         with conn.cursor() as cursor:
             categoryList = DBManager.getTestCategoryList()
-            sql = "select title, division, category from univ where "
-            for category in categoryList:
-                sql = sql + "category='" +  category[0] + "' or "
+            if len(categoryList) > 0 :
+                sql = "select title, division, category from univ where "
+                for category in categoryList:
+                    if category[0] != "공통" and  category[0] != "취업":
+                        sql = sql + "category='" +  category[0] + "' or "
 
-            sql = sql[:len(sql) - 4]
-            print("sql_test:",sql)
-            cursor.execute(sql)
-            conn.commit()
-            result = cursor.fetchall()
-            for row in result:
-                rows.append(row)
+                sql = sql[:len(sql) - 4]
+                print("sql_test:",sql)
+                cursor.execute(sql)
+                conn.commit()
+                result = cursor.fetchall()
+                for row in result:
+                    rows.append(row)
+            else :
+                print("sql_test:","already classified data")
         return rows
 
     @staticmethod
