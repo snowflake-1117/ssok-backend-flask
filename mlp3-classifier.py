@@ -6,7 +6,6 @@ from keras.utils import np_utils
 from keras import backend as K
 from pymysql import ProgrammingError
 from db_manager import DBManager
-from get_original_line import get_original_line
 import glob, json
 import numpy as np
 
@@ -66,6 +65,17 @@ predicts = model.predict(np.array(X))
 
 model.model.save(MODEL)
 del model
+
+
+def get_original_line(fname, idx):
+    original = []
+    with open(fname, "r", encoding="utf8") as f:
+        content = f.readlines()
+        for line in content:
+            original.append(line)
+
+    return original.__getitem__(idx)
+
 
 # decode the prediction
 category_names = ["학사", "행사", "모집", "장학", "학생"]
