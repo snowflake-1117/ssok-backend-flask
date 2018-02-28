@@ -34,9 +34,13 @@ class SnowCrawler:
     def crawl_pages(self, selected_url):
         self.browser.implicitly_wait(3)
         last_page = str(self.browser.find_element_by_css_selector("#pagingBar > a.next_end").get_attribute('href'))
-        last_page_num = int(last_page.replace(selected_url, "").replace("#", ""))
+        last_page_num_str = last_page.replace(selected_url, "").replace("#", "")
+        if last_page_num_str != "":
+            last_page_num_int = int(last_page_num_str)
+        else:
+            last_page_num_int = 1
 
-        for i in range(2, last_page_num + 1):
+        for i in range(2, last_page_num_int + 1):
             self.browser.implicitly_wait(3)
             time.sleep(3)
             notice_list = self.browser.find_elements_by_css_selector('#messageListBody > tr.notice')
