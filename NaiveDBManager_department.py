@@ -1,14 +1,21 @@
-from pymysql.err import InternalError
 import pymysql.cursors
 
+
 class DBManager:
-    PW = YOUR_PW
     USER = "root"
+    PW = ""
 
     @staticmethod
     def isDepartment(category):
-        return category != "공통" and category != "취업" and category!="국제"
+        return category != "공통" and category != "취업" and category != "국제"
 
+    @staticmethod
+    def isDepartmentAlreadyDivided(category):
+        return category != "중어중문학부" and category != "일본학과" and category != "프랑스언어문화학과" \
+               and category != "한국어문학부" and category != "문화관광학전공" and category != "수학과" \
+               and category != "아동복지학부" and category != "법학부" and category != "경영학부" and category != "영어영문학부" \
+               and category != "교육학부" and category != "화학과" and category != "생명시스템학부" and category != "무용과" \
+               and category != "IT공학전공" and category != "의류학과" and category != "회화과"
 
     @staticmethod
     def selectTrainData():
@@ -24,8 +31,8 @@ class DBManager:
             sql = "select title, division, category from univ where "
             for category in categoryList:
                 if DBManager.isDepartment(category[0]):
-                    sql = sql +  "category='"+ category[0] +"' or "
-            sql = sql[:len(sql)-4]
+                    sql = sql + "category='" + category[0] + "' or "
+            sql = sql[:len(sql) - 4]
             print("sql_train:", sql)
             cursor.execute(sql)
             conn.commit()
@@ -65,21 +72,21 @@ class DBManager:
 
         with conn.cursor() as cursor:
             categoryList = DBManager.getTestCategoryList()
-            if len(categoryList) > 0 :
+            if len(categoryList) > 0:
                 sql = "select title, division, category from univ where "
                 for category in categoryList:
-                    if DBManager.isDepartment(category):
-                        sql = sql + "category='" +  category[0] + "' or "
+                    if DBManager.isDepartment(category[0]) and DBManager.isDepartmentAlreadyDivided(category[0]):
+                        sql = sql + "category='" + category[0] + "' or "
 
                 sql = sql[:len(sql) - 4]
-                print("sql_test:",sql)
+                print("sql_test:", sql)
                 cursor.execute(sql)
                 conn.commit()
                 result = cursor.fetchall()
                 for row in result:
                     rows.append(row)
-            else :
-                print("sql_test:","already classified data")
+            else:
+                print("sql_test:", "already classified data")
         return rows
 
     @staticmethod
@@ -93,8 +100,7 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = " select distinct(category) from univ "
-            sql = sql + "group by category "
-            sql = sql + "having count(distinct(division))=1;"
+            sql = sql + "group by category;"
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()
@@ -102,11 +108,8 @@ class DBManager:
                 rows.append(row)
         return rows
 
-
     @staticmethod
     def updateAt(title, division):
-        title.replace("\'", "\'\'")
-        title.replace("\"", "\"\"")
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
