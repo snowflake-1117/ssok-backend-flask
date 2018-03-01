@@ -40,7 +40,7 @@ class SnowCrawler:
         else:
             last_page_num_int = 1
 
-        for i in range(2, last_page_num_int + 1):
+        for i in range(1, last_page_num_int+1):
             self.browser.implicitly_wait(3)
             time.sleep(3)
             notice_list = self.browser.find_elements_by_css_selector('#messageListBody > tr.notice')
