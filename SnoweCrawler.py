@@ -86,7 +86,7 @@ class SnowCrawler:
             content = self.browser.find_element_by_css_selector('#_ckeditorContents').text
             article_num = int(num)
             record = Record()
-            record.content = ' '.join(content.split())
+            record.content = content
             record.title = title
             record.id = article_num
             if select_url == 'https://snowe.sookmyung.ac.kr/bbs5/boards/notice':

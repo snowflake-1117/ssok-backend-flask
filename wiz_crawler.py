@@ -81,7 +81,7 @@ class WizCrawler:
             content = WizCrawler.browser.find_element_by_id('contentsDiv').text
             record.category = WizCrawler.department
             record.division = WizCrawler.type
-            record.content = ' '.join(content.split())
+            record.content = content
             record.date = WizCrawler.browser.find_element_by_css_selector(
                 'body > table:nth-child(1) > tbody > tr > td > table > tbody > tr > td:nth-child(2) > font').text.split(
                 ' ')[0]
