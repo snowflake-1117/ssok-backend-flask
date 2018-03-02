@@ -100,3 +100,11 @@ ENV/
 # mypy
 .mypy_cache/
 .idea/
+data/job/test_data.json
+data/job/train_data.json
+data/job/word-dic.json
+data/snowe/test_data.json
+data/snowe/train_data.json
+data/snowe/word-dic.json
+job_model.h5py
+snowe-model.h5py
