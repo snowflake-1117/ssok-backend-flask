@@ -2,7 +2,8 @@ import os, glob, json
 
 from data.department_convertor import eng_to_idx
 
-root_dir = "./data/snowe/"
+category = "job"
+root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 train_data = root_dir + "/train_data.json"
 test_data = root_dir + "/test_data.json"
@@ -28,14 +29,12 @@ def text_to_ids(text):
     return result
 
 
-# 파일 내부의 단어 세기 --- (※4)
+
 def count_line_freq(text):
     cnt = [0 for n in range(word_dic["_MAX"])]
-    #print(text)
     ids = text_to_ids(text)
     for wid in ids:
         cnt[wid] += 1
-    # print(cnt)
     return cnt
 
 
@@ -72,13 +71,13 @@ def count_freq_train(limit = 0):
     print("end of train data creation")
     return X,Y
 
-# noice.wakati 읽어 들이기 --- (※6)
+
 def count_freq_test(limit = 0):
     X = []
     Y = []
     category_idx = 0
     # read by lines
-    file = root_dir + "snowe_gongji.wakati"
+    file = root_dir + category +"_gongji.wakati"
     # print(file)
     with open(file, encoding="utf8") as f:
         content = f.readlines()

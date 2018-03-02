@@ -12,7 +12,8 @@ import glob, json
 import numpy as np
 
 
-root_dir = "./data/snowe/"
+category = "job"
+root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 
 word_dic = json.load(open(dic_file))
@@ -20,8 +21,8 @@ max_words = word_dic["_MAX"]
 MODEL = 'classifier-model.h5py'
 
 # get numbers of class by counting files
-files = glob.glob(root_dir + "*.wakati", recursive=True)
-nb_classes = len(files) - 1
+# files = glob.glob(root_dir + "*.wakati", recursive=True)
+nb_classes = 10
 print("nb_classes:", nb_classes)
 batch_size = 64
 nb_epoch = 10

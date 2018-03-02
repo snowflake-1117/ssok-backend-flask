@@ -1,6 +1,7 @@
 import os, glob, json
 
-root_dir = "./data/snowe/"
+category = "job"
+root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 
 # 어구를 자르고 ID로 변환하기 ---(※1)

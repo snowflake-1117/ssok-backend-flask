@@ -7,8 +7,6 @@ class DBManager:
 
     @staticmethod
     def updateAt(title, division):
-        title.replace("\'","\'\'")
-        title.replace("\"", "\"\"")
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -16,9 +14,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = " update univ "
-            sql = sql + "set division='"+division+"' "
-            sql = sql + "where title='"+title+"';"
-            cursor.execute(sql)
+            sql = "update univ set division=%s where title=%s;"
+            cursor.execute(sql, (division, title))
             conn.commit()
         return
