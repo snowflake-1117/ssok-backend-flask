@@ -3,7 +3,7 @@ import pymysql.cursors
 
 class DBManager:
     USER = "root"
-    PW = ""
+    PW = YOUR_PW
 
     @staticmethod
     def isDepartment(category):
@@ -75,8 +75,8 @@ class DBManager:
             if len(categoryList) > 0:
                 sql = "select title, division, category from univ where "
                 for category in categoryList:
-                    if DBManager.isDepartment(category[0]) and DBManager.isDepartmentAlreadyDivided(category[0]):
-                        sql = sql + "category='" + category[0] + "' or "
+                    if DBManager.isDepartment(category):
+                        sql = sql + "category='" +  category + "' or "
 
                 sql = sql[:len(sql) - 4]
                 print("sql_test:", sql)
@@ -91,21 +91,9 @@ class DBManager:
 
     @staticmethod
     def getTestCategoryList():
-        rows = []
-        conn = pymysql.connect(host='localhost',
-                               user=DBManager.USER,
-                               password=DBManager.PW,
-                               db='sookmyung',
-                               charset='utf8mb4')
-
-        with conn.cursor() as cursor:
-            sql = " select distinct(category) from univ "
-            sql = sql + "group by category;"
-            cursor.execute(sql)
-            conn.commit()
-            result = cursor.fetchall()
-            for row in result:
-                rows.append(row)
+        rows = ["역사문화학과", "독일언어문화학과", "프랑스언어문화학과", "문헌정보학과", "체육교육과", "응용물리전공", "소프트웨어학부",
+                "식품영양학과", "정치외교학과", "행정학과", "환경디자인학과", "글로벌서비스학부", "테슬", "화학과", "생명시스템학부", "회화과"
+                , "무용과", "화공생명학부", "전자공학전공", "기계시스템학부", "가족자원경영학과", "소비자경제학과", "미디어학부", "약햑대학"]
         return rows
 
     @staticmethod
