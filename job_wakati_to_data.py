@@ -2,7 +2,7 @@ import os, glob, json
 
 from department_convertor import eng_to_idx
 
-category = "snowe"
+category = "job"
 root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 train_data = root_dir + "/train_data.json"

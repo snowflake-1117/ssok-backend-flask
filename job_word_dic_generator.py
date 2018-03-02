@@ -1,6 +1,6 @@
 import os, glob, json
 
-category = "snowe"
+category = "job"
 root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 

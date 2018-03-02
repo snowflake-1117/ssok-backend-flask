@@ -12,13 +12,13 @@ import json
 import numpy as np
 
 
-category = "snowe"
+category = "job"
 root_dir = "./data/" + category + "/"
 dic_file = root_dir + "/word-dic.json"
 
 word_dic = json.load(open(dic_file))
 max_words = word_dic["_MAX"]
-MODEL = 'snowe-model.h5py'
+MODEL = 'job_model.h5py'
 
 # get numbers of class by counting files
 # files = glob.glob(root_dir + "*.wakati", recursive=True)
