@@ -96,7 +96,7 @@ def count_freq_test(limit = 0):
 
 
 if not os.path.exists(train_data):
-    X, Y = count_freq_train(100)  # 전체는 void
+    X, Y = count_freq_train()  # 전체는 void
     json.dump({"X": X, "Y": Y}, open(train_data, "w"))
-    X, Y = count_freq_test(100)  # 전체는 void
+    X, Y = count_freq_test()  # 전체는 void
     json.dump({"X": X, "Y": Y}, open(test_data, "w"))
