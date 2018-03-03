@@ -3,7 +3,7 @@ sookpam-backend-flask
 # MLP - university faculties
 #### needed data
     - job
-
+        * gongji.txt : 공지
         * job_chuiup.wakati
         * job_gongji.wakati
         * job_gyoyuk.wakati
