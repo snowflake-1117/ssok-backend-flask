@@ -115,6 +115,37 @@ class DBManager:
         return record_list
 
     @staticmethod
+    def select_recommend_list_by(student_number, student_year, major1, major2, school_scholar, government_scholar,
+                                 external_scholar, student_status, interest_scholarship, interest_academic,
+                                 interest_entrance, interest_recruit, interest_system, interest_global, interest_career,
+                                 interest_student):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+        with conn.cursor() as cursor:
+            sql = 'SELECT DISTINCT * FROM univ ' \
+                  'WHERE DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())' \
+                  'ORDER BY date DESC'
+            cursor.execute(sql)
+            conn.commit()
+            results = cursor.fetchall()
+            record_list = []
+            for result in results:
+                record = Record()
+                record.id = str(result[0])
+                record.category = str(result[1])
+                record.division = str(result[2])
+                record.title = str(result[3])
+                record.content = str(result[4])
+                record.view = str(result[5])
+                record.date = str(result[6])
+                record.url = str(result[7])
+                record_list.append(record)
+        return record_list
+
+    @staticmethod
     def is_notice_url_already_saved(url):
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
