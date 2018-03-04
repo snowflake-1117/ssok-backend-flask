@@ -1,7 +1,7 @@
 import pymysql.cursors
 from pymysql.err import InternalError
 from .Record import Record
-from RecommendCondition import RecommendCondition
+from RecommendHelper import RecommendHelper
 
 
 class DBManager:
@@ -124,9 +124,12 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ ' \
-                  'WHERE DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())' \
-                  'ORDER BY date DESC'
+            sql = 'SELECT DISTINCT * FROM univ WHERE '
+            recommend_helper = RecommendHelper()
+            sql = recommend_helper.add_date_condition_within_10days(sql)
+            sql = recommend_helper.add_category_condition(recommend_condition, sql)
+            sql = recommend_helper.add_student_info_condition(recommend_condition, sql)
+            sql += ' ORDER BY date DESC'
             cursor.execute(sql)
             conn.commit()
             results = cursor.fetchall()

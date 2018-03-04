@@ -3,7 +3,7 @@ from app import app
 import json
 from app.crawlers.DBManager import DBManager
 from RecommendCondition import RecommendCondition
-
+from RecommendHelper import RecommendHelper
 
 @app.route('/')
 def index():
@@ -11,7 +11,7 @@ def index():
 
 
 @app.route('/<category_name>/<division_name>')
-def get_major_category(category_name, division_name):
+def get_major_category_list(category_name, division_name):
     record_list = DBManager.select_category_and_division_of(category_name, division_name)
     json_dictionary = []
     for record in record_list:
@@ -39,20 +39,21 @@ def get_major_category(category_name, division_name):
            'interest_global=<interest_global>&'
            'interest_career=<interest_career>&'
            'interest_student=<interest_student>')
-def get_10_recommend_contents(student_grade, student_year,
-                              major1, major2, school_scholar,
-                              government_scholar, external_scholar, student_status,
-                              interest_scholarship, interest_academic, interest_entrance, interest_recruit,
-                              interest_system, interest_global, interest_career, interest_student):
+def get_10_recommend_list(student_grade, student_year,
+                          major1, major2, school_scholar,
+                          government_scholar, external_scholar, student_status,
+                          interest_scholarship, interest_academic, interest_entrance, interest_recruit,
+                          interest_system, interest_global, interest_career, interest_student):
     recommend_condition = RecommendCondition(student_grade, student_year,
                                              major1, major2, school_scholar,
                                              government_scholar, external_scholar, student_status,
                                              interest_scholarship, interest_academic, interest_entrance,
                                              interest_recruit,
                                              interest_system, interest_global, interest_career, interest_student)
-    record_list = DBManager.select_recommend_list_by(recommend_condition)
+    filtered_record_list = DBManager.select_recommend_list_by(recommend_condition)
+    #selected_record_list = RecommendHelper.select_recommend_list_from(filtered_record_list)
     json_dictionary = []
-    for record in record_list:
+    for record in filtered_record_list:
         json_dictionary.append(
             {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
              'content': record.content, 'view': record.view,
