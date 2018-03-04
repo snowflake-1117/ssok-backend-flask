@@ -1,6 +1,7 @@
 import pymysql.cursors
 from pymysql.err import InternalError
 from .Record import Record
+from RecommendCondition import RecommendCondition
 
 
 class DBManager:
@@ -115,15 +116,13 @@ class DBManager:
         return record_list
 
     @staticmethod
-    def select_recommend_list_by(student_number, student_year, major1, major2, school_scholar, government_scholar,
-                                 external_scholar, student_status, interest_scholarship, interest_academic,
-                                 interest_entrance, interest_recruit, interest_system, interest_global, interest_career,
-                                 interest_student):
+    def select_recommend_list_by(recommend_condition):
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
                                db='sookmyung',
                                charset='utf8mb4')
+
         with conn.cursor() as cursor:
             sql = 'SELECT DISTINCT * FROM univ ' \
                   'WHERE DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())' \
