@@ -1,34 +1,43 @@
 class RecommendCondition:
-    STATUS_IN = 0
-    STATUS_OUT = 1
+    STATUS_IN = True
+    STATUS_OUT = False
 
     CATEGORY_NORMAL = 0
     CATEGORY_INTERESTING = 1
     CATEGORY_UNINTERESTING = 2
+
+    INTEREST_SCHOLARSHIP = "장학"
+    INTEREST_ACADEMIC = "학사"
+    INTEREST_ENTRANCE = "입학"
+    INTEREST_RECRUIT = "모집"
+    INTEREST_SYSTEM = "시스템"
+    INTEREST_GLOBAL = "국제"
+    INTEREST_CAREER = "취업"
+    INTEREST_STUDENT = "학생"
 
     def __init__(self, student_grade=0, student_year=0,
                  major1="", major2="", school_scholar=False,
                  government_scholar=False, external_scholar=False, student_status=STATUS_IN,
                  interest_scholarship=CATEGORY_NORMAL, interest_academic=CATEGORY_NORMAL,
                  interest_entrance=CATEGORY_NORMAL, interest_recruit=CATEGORY_NORMAL,
-                 interest_system=CATEGORY_NORMAL, interest_globa=CATEGORY_NORMAL,
+                 interest_system=CATEGORY_NORMAL, interest_global=CATEGORY_NORMAL,
                  interest_career=CATEGORY_NORMAL, interest_student=CATEGORY_NORMAL):
-        self._student_year = student_year
-        self._student_grade = student_grade
+        self._student_year = int(student_year)
+        self._student_grade = int(student_grade)
         self._major1 = major1
         self._major2 = major2
-        self._school_scholar = school_scholar
-        self._government_scholar = government_scholar
-        self._external_scholar = external_scholar
-        self._student_status = student_status
-        self._interest_scholarship = interest_scholarship
-        self._interest_academic = interest_academic
-        self._interest_entrance = interest_entrance
-        self._interest_recruit = interest_recruit
-        self._interest_system = interest_system
-        self._interest_global = interest_globa
-        self._interest_career = interest_career
-        self._interest_student = interest_student
+        self._school_scholar = school_scholar in ['True', 'true']
+        self._government_scholar = government_scholar in ['True', 'true']
+        self._external_scholar = external_scholar in ['True', 'true']
+        self._student_status = student_status in ['True', 'true']
+        self._interest_scholarship = int(interest_scholarship)
+        self._interest_academic = int(interest_academic)
+        self._interest_entrance = int(interest_entrance)
+        self._interest_recruit = int(interest_recruit)
+        self._interest_system = int(interest_system)
+        self._interest_global = int(interest_global)
+        self._interest_career = int(interest_career)
+        self._interest_student = int(interest_student)
 
     @property
     def student_year(self):
