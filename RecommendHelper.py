@@ -26,10 +26,6 @@ class RecommendHelper:
             division_list.append(recommend_condition.INTEREST_STUDENT)
         else:
             uninteresting_division_list.append(recommend_condition.INTEREST_STUDENT)
-        if recommend_condition.interest_career is not 2:
-            division_list.append(recommend_condition.INTEREST_CAREER)
-        else:
-            uninteresting_division_list.append(recommend_condition.INTEREST_CAREER)
         if recommend_condition.interest_system is not 2:
             division_list.append(recommend_condition.INTEREST_SYSTEM)
         else:
@@ -54,7 +50,7 @@ class RecommendHelper:
     @classmethod
     def filter_by_uninteresting_division(cls, uninteresting_division_list, sql):
         if uninteresting_division_list.__len__() > 0:
-            sql += ' AND (not division in ('
+            sql += ' AND not division in ('
             for index, uninteresting_division in enumerate(uninteresting_division_list):
                 sql += "\"" + uninteresting_division + "\""
                 if index < uninteresting_division_list.__len__() - 1:
@@ -77,40 +73,15 @@ class RecommendHelper:
     @classmethod
     def find_by_major_category(cls, recommend_condition, sql):
         sql += ' OR category in ('
-        major_list = [recommend_condition.major1, recommend_condition.major2]
-        for index, major in enumerate(major_list):
+        category_list = [recommend_condition.major1, recommend_condition.major2]
+        if recommend_condition.interest_career is not 2:
+            category_list.extend([recommend_condition.INTEREST_CAREER])
+        for index, major in enumerate(category_list):
             sql += "\"" + major + "\""
-            if index < major_list.__len__() - 1:
+            if index < category_list.__len__() - 1:
                 sql += ", "
             else:
                 sql += '))'
-        return sql
-
-    @classmethod
-    def filter_by_student_status(cls, recommend_condition, sql):
-        if recommend_condition.student_status is recommend_condition.STATUS_IN:
-            sql += ' OR (title LIKE \"%재학생%\")'
-        else:
-            sql += ' OR (title LIKE \"%휴학%\" OR title LIKE \"%복학%\")'
-        return sql
-
-    @classmethod
-    def filter_by_student_grade(cls, recommend_condition, sql):
-        if recommend_condition.student_grade is 1:
-            sql += ' OR (title LIKE \"%신입생%\" OR title LIKE \"%새내기%\" OR title LIKE \"%GELT%\" OR content LIKE \"% 1학년%\")'
-        elif recommend_condition.student_grade is 2:
-            sql += ' OR (title LIKE \"% 2학년%\" OR title LIKE \"%전과%\"  OR content LIKE \"%3학기%\" OR content LIKE \"%4학기%\" OR title LIKE \"%복수전공%\" OR title LIKE \"%부전공%\" OR title LIKE \"%교환학생%\")'
-        elif recommend_condition.student_grade is 3:
-            sql += ' OR (title LIKE \"%3학년%\" OR title LIKE \"%조기졸업%\" OR content LIKE \"%5학기%\" OR content LIKE \"%6학기%\" OR title LIKE \"%교환학생%\")'
-        else:
-            sql += ' OR (title LIKE \"%수료%\" OR title LIKE \"%졸업%\" OR title LIKE \"%학위수여%\")'
-        return sql
-
-    @classmethod
-    def add_student_info_condition(cls, recommend_condition, sql):
-        sql = cls.filter_by_student_status(recommend_condition, sql)
-        sql = cls.filter_by_student_grade(recommend_condition, sql)
-        sql += ' OR (content LIKE \"%' + str(recommend_condition.student_year) + '학번%\"))'
         return sql
 
     @classmethod
@@ -123,34 +94,75 @@ class RecommendHelper:
                 filtered_recommend_item_with_score = FilteredRecommendItemWithScore(recommend_item, 0)
                 selected_recommend_list.append(filtered_recommend_item_with_score)
 
-            interesting_division = cls.get_interesting_categories(recommend_condition)
+            interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
             for recommend_item in selected_recommend_list:
                 cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
-
-            return selected_recommend_list
+                cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
+            result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
+            return result_recommend_list
 
     @classmethod
-    def get_interesting_categories(cls, recommend_condition):
-        interesting_divisions = []
+    def get_interesting_categories_and_divisions(cls, recommend_condition):
+        interesting_majors_and_divisions = []
         if recommend_condition.interest_scholarship is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_SCHOLARSHIP)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_SCHOLARSHIP)
         if recommend_condition.interest_student is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_STUDENT)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_STUDENT)
         if recommend_condition.interest_career is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_CAREER)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_CAREER)
         if recommend_condition.interest_system is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_SYSTEM)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_SYSTEM)
         if recommend_condition.interest_recruit is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_RECRUIT)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_RECRUIT)
         if recommend_condition.interest_academic is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_ACADEMIC)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_ACADEMIC)
         if recommend_condition.interest_global is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_GLOBAL)
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_GLOBAL)
         if recommend_condition.interest_entrance is 1:
-            interesting_divisions.append(recommend_condition.INTEREST_ENTRANCE)
-        return interesting_divisions
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_ENTRANCE)
+        interesting_majors_and_divisions.append(recommend_condition.major1)
+        interesting_majors_and_divisions.append(recommend_condition.major2)
+        return interesting_majors_and_divisions
 
     @classmethod
-    def add_score_which_has_interesting_division(cls, recommend_item, interesting_divisions):
-        if recommend_item.record.division in interesting_divisions:
+    def add_score_which_has_interesting_division(cls, recommend_item, interesting_majors_and_divisions):
+        if recommend_item.record.division in interesting_majors_and_divisions:
             recommend_item.score += 1
+        elif recommend_item.record.category in interesting_majors_and_divisions:
+            recommend_item.score += 1
+
+    @classmethod
+    def add_score_which_has_relative_word(cls, recommend_item, recommend_condition):
+        relative_words_with_user = {
+            1: ["신입", "새내기", "GELT", " 1학년", "학사일정", "수강신청", "수강 신청", "오리엔테이션"],
+            2: [" 2학년", "전과", "교환학생", "복수전공", "부전공", "3학기", "4학기"],
+            3: [" 3학년", "조기졸업", "복수전공", "부전공" "5학기", "6학기", "교환학생"],
+            4: [" 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "학·석사"]
+        }.get(recommend_condition.student_grade)
+
+        relative_words_with_user.extend([str(recommend_condition.student_year) + "학번"])
+
+        if recommend_condition.student_status is recommend_condition.STATUS_IN:
+            relative_words_with_user.extend(["재학생"])
+        else:
+            relative_words_with_user.extend(["휴학", "복학"])
+
+        if recommend_condition.interest_scholarship:
+            if recommend_condition.government_scholar:
+                relative_words_with_user.extend(["국가장학금"])
+            if recommend_condition.school_scholar:
+                relative_words_with_user.extend(["자기계발장학", "숙명특별장학", "행정조교", "연구인턴", "고시장학", "숙명장학", "새빛장학", "청파장학"])
+            if recommend_condition.external_scholar:
+                relative_words_with_user.extend(["장학회", "장학재단", "장학생 선발"])
+
+        if relative_words_with_user is not None:
+            for word in relative_words_with_user:
+                if word in recommend_item.record.title:
+                    recommend_item.score += 2
+                elif word in recommend_item.record.content:
+                    recommend_item.score += 1
+
+    @classmethod
+    def sort_by_score_desc(cls, selected_recommend_list):
+        return sorted(selected_recommend_list, key=lambda selected_recommend_item: selected_recommend_item.score,
+                      reverse=True)

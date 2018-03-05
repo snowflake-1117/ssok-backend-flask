@@ -6,7 +6,7 @@ from RecommendHelper import RecommendHelper
 
 class DBManager:
     USER = "root"
-    PW = ""
+    PW = "1653"
 
     def __init__(self):
         DBManager.createDB()
@@ -127,8 +127,7 @@ class DBManager:
             sql = 'SELECT DISTINCT * FROM univ WHERE '
             recommend_helper = RecommendHelper()
             sql = recommend_helper.add_date_condition_within_10days(sql)
-            sql = recommend_helper.add_category_condition(recommend_condition, sql)
-            sql = recommend_helper.add_student_info_condition(recommend_condition, sql)
+            sql = recommend_helper.add_category_and_division_condition(recommend_condition, sql)
             sql += ' ORDER BY date DESC'
             cursor.execute(sql)
             conn.commit()
