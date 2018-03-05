@@ -193,3 +193,36 @@ class DBManager:
             cursor.execute(sql)
             conn.commit()
         return
+
+    @classmethod
+    def select_search_by(cls, words):
+        word_list = words.split('-')
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT DISTINCT * FROM univ WHERE '
+            for index, word in enumerate(word_list):
+                if index < len(word_list) - 1:
+                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") AND '
+                else:
+                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\");'
+            cursor.execute(sql)
+            conn.commit()
+            results = cursor.fetchall()
+            record_list = []
+            for result in results:
+                record = Record()
+                record.id = str(result[0])
+                record.category = str(result[1])
+                record.division = str(result[2])
+                record.title = str(result[3])
+                record.content = str(result[4])
+                record.view = str(result[5])
+                record.date = str(result[6])
+                record.url = str(result[7])
+                record_list.append(record)
+        return record_list

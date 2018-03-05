@@ -25,6 +25,22 @@ def get_major_category_list(category_name, division_name):
     return ''.join(json_data)
 
 
+@app.route('/search/<words>')
+def get_search_list_by_words(words):
+    search_list = DBManager.select_search_by(words)
+    json_dictionary = []
+    if search_list is None:
+        return ''
+    for record in search_list:
+        json_dictionary.append(
+            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
+             'content': record.content, 'view': record.view,
+             'date': record.date,
+             'url': record.url})
+    json_data = json.dumps(json_dictionary, ensure_ascii=False)
+    return ''.join(json_data)
+
+
 @app.route('/recommend/student_grade=<student_grade>&'
            'student_year=<student_year>&'
            'major1=<major1>&major2=<major2>&'
