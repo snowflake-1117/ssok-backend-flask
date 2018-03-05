@@ -1,10 +1,13 @@
+from FilteredRecommendItemWithScore import FilteredRecommendItemWithScore
+
+
 class RecommendHelper:
     @classmethod
     def add_date_condition_within_10days(cls, sql):
         return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 10 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
-    def add_category_condition(cls, recommend_condition, sql):
+    def add_category_and_division_condition(cls, recommend_condition, sql):
         division_list = []
         uninteresting_division_list = []
         cls.set_division_two_list_by(recommend_condition, division_list, uninteresting_division_list)
@@ -117,5 +120,37 @@ class RecommendHelper:
         else:
             selected_recommend_list = []
             for recommend_item in filtered_recommend_list:
-                selected_recommend_list.append()
+                filtered_recommend_item_with_score = FilteredRecommendItemWithScore(recommend_item, 0)
+                selected_recommend_list.append(filtered_recommend_item_with_score)
+
+            interesting_division = cls.get_interesting_categories(recommend_condition)
+            for recommend_item in selected_recommend_list:
+                cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
+
             return selected_recommend_list
+
+    @classmethod
+    def get_interesting_categories(cls, recommend_condition):
+        interesting_divisions = []
+        if recommend_condition.interest_scholarship is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_SCHOLARSHIP)
+        if recommend_condition.interest_student is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_STUDENT)
+        if recommend_condition.interest_career is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_CAREER)
+        if recommend_condition.interest_system is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_SYSTEM)
+        if recommend_condition.interest_recruit is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_RECRUIT)
+        if recommend_condition.interest_academic is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_ACADEMIC)
+        if recommend_condition.interest_global is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_GLOBAL)
+        if recommend_condition.interest_entrance is 1:
+            interesting_divisions.append(recommend_condition.INTEREST_ENTRANCE)
+        return interesting_divisions
+
+    @classmethod
+    def add_score_which_has_interesting_division(cls, recommend_item, interesting_divisions):
+        if recommend_item.record.division in interesting_divisions:
+            recommend_item.score += 1
