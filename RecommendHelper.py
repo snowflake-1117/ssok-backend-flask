@@ -82,6 +82,9 @@ class RecommendHelper:
                 sql += ", "
             else:
                 sql += '))'
+        # set major career visibility invisible when user is uninterested in career
+        if recommend_condition.interest_career is 2:
+            sql += 'AND division not in (\"'+recommend_condition.INTEREST_CAREER+'\")'
         return sql
 
     @classmethod
@@ -147,7 +150,7 @@ class RecommendHelper:
         else:
             relative_words_with_user.extend(["휴학", "복학"])
 
-        if recommend_condition.interest_scholarship:
+        if recommend_condition.interest_scholarship is not 2:
             if recommend_condition.government_scholar:
                 relative_words_with_user.extend(["국가장학금"])
             if recommend_condition.school_scholar:
