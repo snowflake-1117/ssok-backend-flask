@@ -103,6 +103,7 @@ class RecommendHelper:
                 cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
                 cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
                 cls.add_score_close_today(recommend_item)
+                cls.subtract_score_which_has_unrelated_word(recommend_item, recommend_condition)
             result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
             return result_recommend_list
 
@@ -139,10 +140,10 @@ class RecommendHelper:
     @classmethod
     def add_score_which_has_relative_word(cls, recommend_item, recommend_condition):
         relative_words_with_user = {
-            1: ["신입", "새내기", "GELT", " 1학년", "학사일정", "수강신청", "수강 신청", "오리엔테이션"],
-            2: [" 2학년", "전과", "교환학생", "복수전공", "부전공", "3학기", "4학기"],
-            3: [" 3학년", "조기졸업", "복수전공", "부전공" "5학기", "6학기", "교환학생"],
-            4: [" 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "학·석사"]
+            1: ["저학년", "신입", "새내기", "GELT", " 1학년", "학사일정", "수강신청", "수강 신청", "오리엔테이션"],
+            2: ["저학년", " 2학년", "전과", "교환학생", "복수전공", "부전공", "3학기", "4학기"],
+            3: ["고학년", " 3학년", "조기졸업", "복수전공", "부전공" "5학기", "6학기", "교환학생"],
+            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "학·석사", "대학원"]
         }.get(recommend_condition.student_grade)
 
         relative_words_with_user.extend([str(recommend_condition.student_year) + "학번"])
@@ -150,7 +151,7 @@ class RecommendHelper:
         if recommend_condition.student_status is recommend_condition.STATUS_IN:
             relative_words_with_user.extend(["재학생"])
         else:
-            relative_words_with_user.extend(["휴학", "복학"])
+            relative_words_with_user.extend(["휴학", "복학", "등록"])
 
         if recommend_condition.interest_scholarship is not 2:
             if recommend_condition.government_scholar:
@@ -163,9 +164,9 @@ class RecommendHelper:
         if relative_words_with_user is not None:
             for word in relative_words_with_user:
                 if word in recommend_item.record.title:
-                    recommend_item.score += 2
-                elif word in recommend_item.record.content:
                     recommend_item.score += 1
+                elif word in recommend_item.record.content:
+                    recommend_item.score += 0.5
 
     @classmethod
     def sort_by_score_desc(cls, selected_recommend_list):
@@ -178,3 +179,25 @@ class RecommendHelper:
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
         recommend_item.score += 1 / (date_distance.days + 1)
+
+    @classmethod
+    def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
+        unrelated_words_with_user = {
+            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원"],
+            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원"],
+            3: ["저학년", "신입", "새내기", "오리엔테이션"],
+            4: ["저학년", "전과", "신입", "새내기", "오리엔테이션"]
+        }.get(recommend_condition.student_grade)
+
+        if recommend_condition.student_status is recommend_condition.STATUS_IN:
+            unrelated_words_with_user.extend(["복학"])
+        else:
+            unrelated_words_with_user.extend(["휴학생 제외"])
+
+        if unrelated_words_with_user is not None:
+            for word in unrelated_words_with_user:
+                if word in recommend_item.record.title:
+                    recommend_item.score -= 1
+                elif word in recommend_item.record.content:
+                    recommend_item.score -= 0.5
+
