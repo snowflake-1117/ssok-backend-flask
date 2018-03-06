@@ -97,7 +97,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s AND division=%s'
+            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s AND division=%s ORDER BY date DESC'
             cursor.execute(sql, (category, division))
             conn.commit()
             results = cursor.fetchall()
@@ -209,7 +209,7 @@ class DBManager:
                 if index < len(word_list) - 1:
                     sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") AND '
                 else:
-                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\");'
+                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") ORDER BY date DESC;'
             cursor.execute(sql)
             conn.commit()
             results = cursor.fetchall()
