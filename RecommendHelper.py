@@ -1,4 +1,5 @@
 from FilteredRecommendItemWithScore import FilteredRecommendItemWithScore
+from datetime import datetime
 
 
 class RecommendHelper:
@@ -84,7 +85,7 @@ class RecommendHelper:
                 sql += '))'
         # set major career visibility invisible when user is uninterested in career
         if recommend_condition.interest_career is 2:
-            sql += 'AND division not in (\"'+recommend_condition.INTEREST_CAREER+'\")'
+            sql += 'AND division not in (\"' + recommend_condition.INTEREST_CAREER + '\")'
         return sql
 
     @classmethod
@@ -101,6 +102,7 @@ class RecommendHelper:
             for recommend_item in selected_recommend_list:
                 cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
                 cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
+                cls.add_score_close_today(recommend_item)
             result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
             return result_recommend_list
 
@@ -169,3 +171,10 @@ class RecommendHelper:
     def sort_by_score_desc(cls, selected_recommend_list):
         return sorted(selected_recommend_list, key=lambda selected_recommend_item: selected_recommend_item.score,
                       reverse=True)
+
+    @classmethod
+    def add_score_close_today(cls, recommend_item):
+        today = datetime.today()
+        item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
+        date_distance = today - item_posted_date
+        recommend_item.score += 1 / (date_distance.days + 1)
