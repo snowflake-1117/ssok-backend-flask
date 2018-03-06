@@ -111,6 +111,7 @@ class SnowCrawler:
 
     def quit(self):
         self.browser.quit()
+        DBManager.delete_duplicated_rows()
 
 
 DBManager()

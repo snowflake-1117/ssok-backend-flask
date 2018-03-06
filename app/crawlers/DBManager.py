@@ -64,7 +64,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'INSERT INTO univ (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+            sql = 'INSERT INTO univ (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);'
             cursor.execute(sql, (
                 record.id, record.category, record.division, record.title, record.content, record.view, record.date,
                 record.url))
@@ -192,6 +192,19 @@ class DBManager:
             sql = 'DELETE FROM univ'
             cursor.execute(sql)
             conn.commit()
+        return
+
+    @staticmethod
+    def delete_duplicated_rows():
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+        with conn.cursor() as cursor:
+            sql = 'DELETE u1 FROM univ u1, univ u2 WHERE  u1.date > u2.date AND u1.title = u2.title AND u1.content = u2.content;'
+        cursor.execute(sql)
+        conn.commit()
         return
 
     @classmethod
