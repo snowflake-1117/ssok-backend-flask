@@ -105,7 +105,11 @@ class RecommendHelper:
                 cls.add_score_close_today(recommend_item)
                 cls.subtract_score_which_has_unrelated_word(recommend_item, recommend_condition)
             result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
-            return result_recommend_list
+
+            if result_recommend_list.__len__() < 10:
+                return result_recommend_list
+            else:
+                return result_recommend_list[0:10]
 
     @classmethod
     def get_interesting_categories_and_divisions(cls, recommend_condition):
@@ -200,4 +204,3 @@ class RecommendHelper:
                     recommend_item.score -= 1
                 elif word in recommend_item.record.content:
                     recommend_item.score -= 0.5
-
