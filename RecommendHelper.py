@@ -187,10 +187,10 @@ class RecommendHelper:
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
         unrelated_words_with_user = {
-            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원"],
+            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원", "신입사원"],
             2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원"],
-            3: ["저학년", "신입", "새내기", "오리엔테이션"],
-            4: ["저학년", "전과", "신입", "새내기", "오리엔테이션"]
+            3: ["저학년", "신입생", "새내기", "오리엔테이션"],
+            4: ["저학년", "전과", "신입생", "새내기", "오리엔테이션"]
         }.get(recommend_condition.student_grade)
 
         if recommend_condition.student_status is recommend_condition.STATUS_IN:
@@ -201,6 +201,9 @@ class RecommendHelper:
         if unrelated_words_with_user is not None:
             for word in unrelated_words_with_user:
                 if word in recommend_item.record.title:
-                    recommend_item.score -= 1
+                    recommend_item.score -= 2
                 elif word in recommend_item.record.content:
-                    recommend_item.score -= 0.5
+                    recommend_item.score -= 1
+
+        if "마감" in recommend_item.record.title:
+            recommend_item.score -= 3
