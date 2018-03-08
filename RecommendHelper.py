@@ -90,26 +90,23 @@ class RecommendHelper:
 
     @classmethod
     def select_recommend_list_from(cls, filtered_recommend_list, recommend_condition):
-        if filtered_recommend_list.__len__() < 10:
-            return filtered_recommend_list
+        selected_recommend_list = []
+        for recommend_item in filtered_recommend_list:
+            filtered_recommend_item_with_score = FilteredRecommendItemWithScore(recommend_item, 0)
+            selected_recommend_list.append(filtered_recommend_item_with_score)
+
+        interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
+        for recommend_item in selected_recommend_list:
+            cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
+            cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
+            cls.add_score_close_today(recommend_item)
+            cls.subtract_score_which_has_unrelated_word(recommend_item, recommend_condition)
+        result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
+
+        if result_recommend_list.__len__() < 10:
+            return result_recommend_list
         else:
-            selected_recommend_list = []
-            for recommend_item in filtered_recommend_list:
-                filtered_recommend_item_with_score = FilteredRecommendItemWithScore(recommend_item, 0)
-                selected_recommend_list.append(filtered_recommend_item_with_score)
-
-            interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
-            for recommend_item in selected_recommend_list:
-                cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
-                cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
-                cls.add_score_close_today(recommend_item)
-                cls.subtract_score_which_has_unrelated_word(recommend_item, recommend_condition)
-            result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
-
-            if result_recommend_list.__len__() < 10:
-                return result_recommend_list
-            else:
-                return result_recommend_list[0:10]
+            return result_recommend_list[0:10]
 
     @classmethod
     def get_interesting_categories_and_divisions(cls, recommend_condition):
