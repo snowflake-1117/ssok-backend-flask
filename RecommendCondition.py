@@ -8,7 +8,7 @@ class RecommendCondition:
 
     INTEREST_SCHOLARSHIP = "장학"
     INTEREST_ACADEMIC = "학사"
-    INTEREST_ENTRANCE = "입학"
+    INTEREST_EVENT = "행사"
     INTEREST_RECRUIT = "모집"
     INTEREST_SYSTEM = "시스템"
     INTEREST_GLOBAL = "국제"
@@ -19,7 +19,7 @@ class RecommendCondition:
                  major1="", major2="", school_scholar=False,
                  government_scholar=False, external_scholar=False, student_status=STATUS_IN,
                  interest_scholarship=CATEGORY_NORMAL, interest_academic=CATEGORY_NORMAL,
-                 interest_entrance=CATEGORY_NORMAL, interest_recruit=CATEGORY_NORMAL,
+                 interest_event=CATEGORY_NORMAL, interest_recruit=CATEGORY_NORMAL,
                  interest_system=CATEGORY_NORMAL, interest_global=CATEGORY_NORMAL,
                  interest_career=CATEGORY_NORMAL, interest_student=CATEGORY_NORMAL):
         self._student_year = int(student_year)
@@ -32,7 +32,7 @@ class RecommendCondition:
         self._student_status = student_status in ['True', 'true']
         self._interest_scholarship = int(interest_scholarship)
         self._interest_academic = int(interest_academic)
-        self._interest_entrance = int(interest_entrance)
+        self._interest_event = int(interest_event)
         self._interest_recruit = int(interest_recruit)
         self._interest_system = int(interest_system)
         self._interest_global = int(interest_global)
@@ -80,8 +80,8 @@ class RecommendCondition:
         return self._interest_academic
 
     @property
-    def interest_entrance(self):
-        return self._interest_entrance
+    def interest_event(self):
+        return self._interest_event
 
     @property
     def interest_recruit(self):
@@ -143,9 +143,9 @@ class RecommendCondition:
     def interest_academic(self, interest_academic):
         self._interest_academic = interest_academic
 
-    @interest_entrance.setter
-    def interest_entrance(self, interest_entrance):
-        self._interest_entrance = interest_entrance
+    @interest_event.setter
+    def interest_event(self, interest_event):
+        self._interest_event = interest_event
 
     @interest_recruit.setter
     def interest_recruit(self, interest_recruit):

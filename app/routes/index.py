@@ -50,7 +50,7 @@ def get_search_list_by_words(words):
            'student_status=<student_status>&'
            'interest_scholarship=<interest_scholarship>&'
            'interest_academic=<interest_academic>&'
-           'interest_entrance=<interest_entrance>&'
+           'interest_event=<interest_event>&'
            'interest_recruit=<interest_recruit>&'
            'interest_system=<interest_system>&'
            'interest_global=<interest_global>&'
@@ -59,12 +59,12 @@ def get_search_list_by_words(words):
 def get_10_recommend_list(student_grade, student_year,
                           major1, major2, school_scholar,
                           government_scholar, external_scholar, student_status,
-                          interest_scholarship, interest_academic, interest_entrance, interest_recruit,
+                          interest_scholarship, interest_academic, interest_event, interest_recruit,
                           interest_system, interest_global, interest_career, interest_student):
     recommend_condition = RecommendCondition(student_grade, student_year,
                                              major1, major2, school_scholar,
                                              government_scholar, external_scholar, student_status,
-                                             interest_scholarship, interest_academic, interest_entrance,
+                                             interest_scholarship, interest_academic, interest_event,
                                              interest_recruit,
                                              interest_system, interest_global, interest_career, interest_student)
     filtered_record_list = DBManager.select_recommend_list_by(recommend_condition)

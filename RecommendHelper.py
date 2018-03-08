@@ -43,10 +43,10 @@ class RecommendHelper:
             division_list.append(recommend_condition.INTEREST_GLOBAL)
         else:
             uninteresting_division_list.append(recommend_condition.INTEREST_GLOBAL)
-        if recommend_condition.interest_entrance is not 2:
-            division_list.append(recommend_condition.INTEREST_ENTRANCE)
+        if recommend_condition.interest_event is not 2:
+            division_list.append(recommend_condition.INTEREST_EVENT)
         else:
-            uninteresting_division_list.append(recommend_condition.INTEREST_ENTRANCE)
+            uninteresting_division_list.append(recommend_condition.INTEREST_EVENT)
 
     @classmethod
     def filter_by_uninteresting_division(cls, uninteresting_division_list, sql):
@@ -128,8 +128,8 @@ class RecommendHelper:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_ACADEMIC)
         if recommend_condition.interest_global is 1:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_GLOBAL)
-        if recommend_condition.interest_entrance is 1:
-            interesting_majors_and_divisions.append(recommend_condition.INTEREST_ENTRANCE)
+        if recommend_condition.interest_event is 1:
+            interesting_majors_and_divisions.append(recommend_condition.INTEREST_EVENT)
         interesting_majors_and_divisions.append(recommend_condition.major1)
         interesting_majors_and_divisions.append(recommend_condition.major2)
         return interesting_majors_and_divisions
