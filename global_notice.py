@@ -30,7 +30,7 @@ def set_record_list(length, url_list):
                 record.id = num
                 record.date = date
                 record.view = view
-                record.category = '국제'
+                record.category = '공통'
                 record.division = '국제'
                 record.url = url
                 record_list.append(record)
