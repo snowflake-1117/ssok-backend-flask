@@ -10,6 +10,19 @@ from RecommendHelper import RecommendHelper
 def index():
     return 'Sookpam main page'
 
+@app.route('/공통/취업')
+def get_career_list():
+    record_list = DBManager.select_category_of("취업")
+    json_dictionary = []
+    for record in record_list:
+        json_dictionary.append(
+            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
+             'content': record.content, 'view': record.view,
+             'date': record.date,
+             'url': record.url})
+    json_data = json.dumps(json_dictionary, ensure_ascii=False)
+    return ''.join(json_data)
+
 
 @app.route('/<category_name>/<division_name>')
 def get_major_category_list(category_name, division_name):
