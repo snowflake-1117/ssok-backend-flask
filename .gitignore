@@ -65,9 +65,7 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
-
 ### Python ###
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -80,6 +78,8 @@ __pycache__/
 .Python
 
 env/
+env/
+
 build/
 develop-eggs/
 dist/
@@ -121,8 +121,6 @@ coverage.xml
 # Translations
 *.mo
 *.pot
-
-
 # Django stuff:
 *.log
 local_settings.py
@@ -153,14 +151,14 @@ celerybeat-schedule
 
 celerybeat-schedule.*
 
+celerybeat-schedule
+
+celerybeat-schedule.*
 
 # SageMath parsed files
 *.sage.py
-
-
 # dotenv
 .env
-
 # virtualenv
 .venv
 venv/
@@ -174,7 +172,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
 
 # Spyder project settings
 .spyderproject
@@ -200,6 +197,7 @@ job_model.h5py
 snowe-model.h5py
 
 
+#.idea
+.idea
 
-# End of https://www.gitignore.io/api/python,intellij
-
+# End of https://www.gitignore.io/api/python

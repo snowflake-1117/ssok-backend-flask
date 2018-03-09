@@ -1,4 +1,4 @@
-sookpam-backend-flask
+﻿sookpam-backend-flask
 
 # MLP - university faculties
 #### needed data
@@ -27,5 +27,4 @@ sookpam-backend-flask
 + word-dic.json : words mapped with numbers( I guess ), this is a output of word_dic_generator.py and will be needed when decoding to classify the data.json
 + data.json : encoded data json file
 + model.h5py : model for keras (since keras classifier did not work out with h5, had to import h5py)
-
 
