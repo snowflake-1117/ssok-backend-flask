@@ -14,7 +14,7 @@ def set_record_list(length, url_list):
             browser.get(url)
             time.sleep(3)
             title = browser.find_element_by_class_name('tit').text
-            content = browser.find_element_by_id('contentsDiv').text
+            content = browser.find_element_by_id('contentsDiv').get_attribute('innerHTML')
             num = num + 1
             date = browser.find_element_by_css_selector(
                 '#board-container > div.view > table > tbody > tr:nth-child(1) > td.date').text

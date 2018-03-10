@@ -101,8 +101,7 @@ class Wiz5DepartmentsCrawler:
         record = Record()
         record.id = int(soup_notice.select_one("p.no").text.replace("글번호 : ", ""))
         record.title = CrawlerHelper.get_content_output(soup_notice.select_one("head > title").text)
-        record.content = CrawlerHelper.get_content_output(soup_notice.select("td > div")).replace("\r", "").replace(
-            "\t", "").replace("\n\n", "\n")
+        record.content = soup_notice.select("td > div")
         record.category = category
         record.division = division
         record.view = int(soup_notice.select_one("td.no").text)

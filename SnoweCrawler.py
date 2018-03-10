@@ -83,7 +83,7 @@ class SnowCrawler:
                 '#content > div.boardWrap.noticeGeneric > div.board_detail > div.titleWrap > ul > li:nth-child(4)').text
             date = date[0:10]
             title = self.browser.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/strong/span[1]').text
-            content = self.browser.find_element_by_css_selector('#_ckeditorContents').text
+            content = self.browser.find_element_by_css_selector('#_ckeditorContents').get_attribute('innerHTML')
             article_num = int(num)
             record = Record()
             record.content = content
@@ -111,7 +111,6 @@ class SnowCrawler:
 
     def quit(self):
         self.browser.quit()
-        DBManager.delete_duplicated_rows()
 
 
 DBManager()
@@ -119,3 +118,4 @@ crawler = SnowCrawler()
 crawler.set_info('', '')
 crawler.start()
 crawler.quit()
+DBManager.delete_duplicated_rows()

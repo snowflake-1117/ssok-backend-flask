@@ -78,7 +78,7 @@ class WizCrawler:
             a.click()
             WizCrawler.browser.implicitly_wait(3)
             time.sleep(2)
-            content = WizCrawler.browser.find_element_by_id('contentsDiv').text
+            content = WizCrawler.browser.find_element_by_id('contentsDiv').get_attribute('innerHTML')
             record.category = WizCrawler.department
             record.division = WizCrawler.type
             record.content = content
