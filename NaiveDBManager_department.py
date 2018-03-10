@@ -1,9 +1,9 @@
+#-*-coding:utf-8-*-
 import pymysql.cursors
-
 
 class DBManager:
     USER = "root"
-    PW = YOUR_PW
+    PW = ""
 
     @staticmethod
     def isDepartment(category):
