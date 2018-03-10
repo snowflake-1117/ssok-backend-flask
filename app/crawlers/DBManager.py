@@ -10,7 +10,7 @@ class DBManager:
 
     def __init__(self):
         DBManager.createDB()
-        DBManager.createUniv()
+        DBManager.createWeb()
         return
 
     @staticmethod
@@ -32,7 +32,7 @@ class DBManager:
         return
 
     @staticmethod
-    def createUniv():
+    def createWeb():
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -46,7 +46,7 @@ class DBManager:
                         category varchar(50) NOT NULL,
                         division varchar(50) NOT NULL, 
                         title varchar(200) NOT NULL,
-                        content varchar(20000),
+                        content TEXT ,
                         view int(10),
                         date Date,
                         url varchar(500)
