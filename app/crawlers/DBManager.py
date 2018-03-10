@@ -41,7 +41,7 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = '''
-                       CREATE TABLE IF NOT EXISTS univ( 
+                       CREATE TABLE IF NOT EXISTS web( 
                         id int(11) NOT NULL,
                         category varchar(50) NOT NULL,
                         division varchar(50) NOT NULL, 
@@ -64,7 +64,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'INSERT INTO univ (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);'
+            sql = 'INSERT INTO web (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);'
             cursor.execute(sql, (
                 record.id, record.category, record.division, record.title, record.content, record.view, record.date,
                 record.url))
@@ -80,7 +80,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT * FROM univ'
+            sql = 'SELECT * FROM web'
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchall()
@@ -97,7 +97,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s AND division=%s ORDER BY date DESC'
+            sql = 'SELECT DISTINCT * FROM web WHERE category=%s AND division=%s ORDER BY date DESC'
             cursor.execute(sql, (category, division))
             conn.commit()
             results = cursor.fetchall()
@@ -124,7 +124,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE category=%s ORDER BY date DESC'
+            sql = 'SELECT DISTINCT * FROM web WHERE category=%s ORDER BY date DESC'
             cursor.execute(sql, category)
             conn.commit()
             results = cursor.fetchall()
@@ -151,7 +151,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE '
+            sql = 'SELECT DISTINCT * FROM web WHERE '
             recommend_helper = RecommendHelper()
             sql = recommend_helper.add_date_condition_within_10days(sql)
             sql = recommend_helper.add_category_and_division_condition(recommend_condition, sql)
@@ -181,7 +181,7 @@ class DBManager:
                                db='sookmyung',
                                charset='utf8mb4')
         with conn.cursor() as cursor:
-            sql = 'SELECT url FROM univ WHERE url=%s'
+            sql = 'SELECT url FROM web WHERE url=%s'
             cursor.execute(sql, url)
             conn.commit()
             result = cursor.fetchall()
@@ -198,7 +198,7 @@ class DBManager:
                                db='sookmyung',
                                charset='utf8mb4')
         with conn.cursor() as cursor:
-            sql = 'SELECT title FROM univ WHERE title=%s AND category=%s'
+            sql = 'SELECT title FROM web WHERE title=%s AND category=%s'
             cursor.execute(sql, (title, category))
             conn.commit()
             result = cursor.fetchall()
@@ -216,7 +216,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'DELETE FROM univ'
+            sql = 'DELETE FROM web'
             cursor.execute(sql)
             conn.commit()
         return
@@ -229,7 +229,7 @@ class DBManager:
                                db='sookmyung',
                                charset='utf8mb4')
         with conn.cursor() as cursor:
-            sql = 'DELETE u1 FROM univ u1, univ u2 WHERE  u1.date > u2.date AND u1.title = u2.title AND u1.content = u2.content;'
+            sql = 'DELETE u1 FROM web u1, web u2 WHERE  u1.date > u2.date AND u1.title = u2.title AND u1.content = u2.content;'
         cursor.execute(sql)
         conn.commit()
         return
@@ -244,7 +244,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT * FROM univ WHERE '
+            sql = 'SELECT DISTINCT * FROM web WHERE '
             for index, word in enumerate(word_list):
                 if index < len(word_list) - 1:
                     sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") AND '
