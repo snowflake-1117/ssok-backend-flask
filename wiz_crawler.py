@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+#-*-coding:utf-8-*-
 from pymysql import InternalError
 from selenium import webdriver
 from app.crawlers.DBManager import DBManager

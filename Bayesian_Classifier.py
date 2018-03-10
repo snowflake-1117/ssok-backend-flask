@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+#-*-coding:utf-8-*-
 from NaiveDBManager_department import DBManager
 from BayesianFilter import BayesianFilter
 import csv
