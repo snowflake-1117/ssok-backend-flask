@@ -1,10 +1,10 @@
-from gensim.models import word2vec
 import codecs
 from konlpy.tag import Twitter
 
-class Snowe2Vec:
+class WakatiMaker:
 
-    def get_text(self, file_name):
+    def read_file(self, file_name):
+        text = ""
         fp = codecs.open(file_name, "r", encoding="utf-8")
         while True:
             line = fp.readline()
@@ -13,8 +13,8 @@ class Snowe2Vec:
         fp.close()
         return text
 
-    def do_parse(self, text):
-        results = ""
+    def parse(self, text):
+        results = []
         twitter = Twitter()
         lines = text.split("\n")
         for line in lines:
@@ -32,15 +32,9 @@ class Snowe2Vec:
             fp.write("\n".join(results))
         return wakati_name
 
-    def make_model(self, wakati_file, model_name):
-        data = word2vec.LineSentence(wakati_file)
-        model = word2vec.Word2Vec(data, size=200, window=10, hs=1, min_count=2, sg=1)
-        model.save_word2vec_format()
-        model.save(model_name)
-
-    def do_snowe2vec(self, file_name, wakati_name, model_name):
-        text = self.get_text(file_name)
-        results = self.do_parse(text)
+    def do_snowe2vec(self, file_name, wakati_name):
+        text = self.read_file(file_name)
+        results = self.parse(text)
         wakati_name = self.make_wakati(results, wakati_name)
-        model_name = self.make_model(wakati_name, model_name)
-        return wakati_name, model_name
+        return wakati_name
+
