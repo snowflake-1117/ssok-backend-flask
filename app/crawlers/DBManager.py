@@ -113,6 +113,7 @@ class DBManager:
                 record.view = str(result[5])
                 record.date = str(result[6])
                 record.url = str(result[7])
+                record.attach = str(result[8])
                 record_list.append(record)
         return record_list
 
@@ -140,6 +141,7 @@ class DBManager:
                 record.view = str(result[5])
                 record.date = str(result[6])
                 record.url = str(result[7])
+                record.attach = str(result[8])
                 record_list.append(record)
         return record_list
 
@@ -171,6 +173,7 @@ class DBManager:
                 record.view = str(result[5])
                 record.date = str(result[6])
                 record.url = str(result[7])
+                record.attach = str(result[8])
                 record_list.append(record)
         return record_list
 
@@ -265,5 +268,6 @@ class DBManager:
                 record.view = str(result[5])
                 record.date = str(result[6])
                 record.url = str(result[7])
+                record.attach = str(result[8])
                 record_list.append(record)
         return record_list
