@@ -50,7 +50,7 @@ def get_search_list_by_words(words):
             {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
              'content': record.content, 'view': record.view,
              'date': record.date,
-             'url': record.url})
+             'url': record.url, 'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
 
@@ -89,6 +89,6 @@ def get_10_recommend_list(student_grade, student_year,
             {"category": selected_item.record.category, "division": selected_item.record.division,
              'id': selected_item.record.id, 'title': selected_item.record.title,
              'content': selected_item.record.content, 'view': selected_item.record.view,
-             'date': selected_item.record.date, 'url': selected_item.record.url, 'attach': selected_item.attach})
+             'date': selected_item.record.date, 'url': selected_item.record.url, 'attach': selected_item.record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
