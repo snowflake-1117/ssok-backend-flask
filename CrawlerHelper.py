@@ -8,7 +8,7 @@ import urllib.request
 class CrawlerHelper:
     @staticmethod
     def get_soup(notice):
-        notice_item_url = notice.get_attribute("href")
+        notice_item_url = notice
         notice_item_response = urllib.request.urlopen(notice_item_url)
         return BeautifulSoup(notice_item_response, "html.parser")
 

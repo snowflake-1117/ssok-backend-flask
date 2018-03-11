@@ -11,6 +11,7 @@ class Record:
         self._view = 0
         self._date = datetime.strptime("1900.01.01", "%Y.%m.%d").date()
         self._url = ""
+        self._attach = ""
 
     @property
     def id(self):
@@ -44,6 +45,10 @@ class Record:
     def url(self):
         return self._url
 
+    @property
+    def attach(self):
+        return self._attach
+
     @id.setter
     def id(self, record_id):
         self._id = record_id
@@ -75,3 +80,7 @@ class Record:
     @url.setter
     def url(self, url):
         self._url = url
+
+    @attach.setter
+    def attach(self, attach):
+        self._attach = attach

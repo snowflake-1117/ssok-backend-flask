@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 import json
 
 from selenium import webdriver
@@ -77,8 +77,8 @@ class Wiz5DepartmentsCrawler:
 
     def scrap_current_to_max_page(self, start_page, last_page, url_data, category, division):
         current_page = start_page
-        if last_page > 10:
-            last_page = 10
+        if last_page > 5:
+            last_page = 5
         while current_page <= last_page:
             current_page += 1
             if self.set_notices_data(category, division):
@@ -87,12 +87,18 @@ class Wiz5DepartmentsCrawler:
                 self.browser.get(self.get_url(url_data, current_page))
 
     def set_notices_data(self, category, division):
-        notice_href_list = self.browser.find_elements_by_css_selector("td.title > a:nth-child(1)")
-        notice_id_list = self.browser.find_elements_by_css_selector(
+        notice_href_object_list = self.browser.find_elements_by_css_selector("td.title > a:nth-child(1)")
+        notice_id_object_list = self.browser.find_elements_by_css_selector(
             "#board-container > div.list > form > table > tbody > tr > td:nth-child(2)")
-        for notice_href, notice_id in zip(notice_href_list, notice_id_list):
-            if notice_id.text.isdigit():
-                if DBManager.is_notice_url_already_saved(notice_href.get_attribute('href')):
+        notice_href_string_list = []
+        notice_id_string_list = []
+        for notice_href, notice_id in zip(notice_href_object_list, notice_id_object_list):
+            notice_href_string_list.append(notice_href.get_attribute('href'))
+            notice_id_string_list.append(notice_id.text)
+
+        for notice_href, notice_id in zip(notice_href_string_list, notice_id_string_list):
+            if notice_id.isdigit():
+                if DBManager.is_notice_url_already_saved(notice_href):
                     return True
                 soup_notice = CrawlerHelper.get_soup(notice_href)
                 record = self.get_record_data(category, division, soup_notice, notice_href)
@@ -101,15 +107,29 @@ class Wiz5DepartmentsCrawler:
 
     def get_record_data(self, category, division, soup_notice, notice_href):
         record = Record()
+        self.browser.get(notice_href)
         record.id = int(soup_notice.select_one("p.no").text.replace("글번호 : ", ""))
         record.title = CrawlerHelper.get_content_output(soup_notice.select_one("head > title").text)
-        record.content = soup_notice.select("td > div")
+        record.content = self.browser.find_element_by_css_selector("#contentsDiv").get_attribute('innerHTML')
         record.category = category
         record.division = division
         record.view = int(soup_notice.select_one("td.no").text)
         record.date = datetime.strptime(soup_notice.select_one("td.date").text.strip(), "%Y-%m-%d").date()
-        record.url = notice_href.get_attribute('href')
+        record.url = notice_href
+        record.attach = self.get_attach_pairs()
         return record
+
+    def get_attach_pairs(self):
+        attach_pairs = ""
+        attaches = self.browser.find_elements_by_css_selector(
+            "#board-container > div.view > table > tbody > tr:nth-child(2) > td > a:nth-child(2n)")
+        for index, attach in enumerate(attaches):
+            if index % 2 == 0:
+                attach_pairs += attach.get_attribute("text").strip().replace("다운로드", "") + "," + attach.get_attribute(
+                    "href").strip()
+                if index < attaches.__len__() - 2:
+                    attach_pairs += ","
+        return attach_pairs
 
 
 DBManager()

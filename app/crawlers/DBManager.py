@@ -46,10 +46,11 @@ class DBManager:
                         category varchar(50) NOT NULL,
                         division varchar(50) NOT NULL, 
                         title varchar(200) NOT NULL,
-                        content TEXT ,
+                        content MEDIUMTEXT ,
                         view int(10),
                         date Date,
-                        url varchar(500)
+                        url varchar(500),
+                        attach varchar(10000)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8
                 '''
             cursor.execute(sql)
@@ -64,10 +65,10 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'INSERT INTO web (id, category, division, title, content,view, date, url) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);'
+            sql = 'INSERT INTO web (id, category, division, title, content,view, date, url, attach) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);'
             cursor.execute(sql, (
                 record.id, record.category, record.division, record.title, record.content, record.view, record.date,
-                record.url))
+                record.url, record.attach))
         conn.commit()
         return
 
@@ -229,8 +230,8 @@ class DBManager:
                                db='sookmyung',
                                charset='utf8mb4')
         with conn.cursor() as cursor:
-            sql = 'DELETE u1 FROM web u1, web u2 WHERE  u1.date > u2.date AND u1.title = u2.title AND u1.content = u2.content;'
-        cursor.execute(sql)
+            sql = 'DELETE u1 FROM web u1, web u2 WHERE  u1.date > u2.date AND u1.title = u2.title AND u1.content = u2.content AND u1.category = u2.category;'
+            cursor.execute(sql)
         conn.commit()
         return
 

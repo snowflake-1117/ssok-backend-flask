@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 import time
 
 from selenium import webdriver
@@ -42,7 +42,7 @@ class SnowCrawler:
         else:
             last_page_num_int = 1
 
-        for i in range(1, last_page_num_int+1):
+        for i in range(1, last_page_num_int + 1):
             self.browser.implicitly_wait(3)
             time.sleep(3)
             notice_list = self.browser.find_elements_by_css_selector('#messageListBody > tr.notice')
@@ -87,6 +87,7 @@ class SnowCrawler:
             title = self.browser.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/strong/span[1]').text
             content = self.browser.find_element_by_css_selector('#_ckeditorContents').get_attribute('innerHTML')
             article_num = int(num)
+            attach_pairs = self.get_attach_pairs()
             record = Record()
             record.content = content
             record.title = title
@@ -99,6 +100,7 @@ class SnowCrawler:
             record.view = page_view
             record.date = date
             record.url = current_url
+            record.attach = attach_pairs
             self.record_list.append(record)
         return
 
@@ -114,10 +116,20 @@ class SnowCrawler:
     def quit(self):
         self.browser.quit()
 
+    def get_attach_pairs(self):
+        attach_pairs = ""
+        attaches = self.browser.find_elements_by_css_selector(
+            '#content > div.boardWrap.noticeGeneric > div.board_detail > div.articleBtnWrap > div > div > ul > li.item > a')
+        for index, attach in enumerate(attaches):
+            attach_pairs += attach.get_attribute("title").replace(" 다운로드", "") + "," + attach.get_attribute("href")
+            if index < attaches.__len__() - 1:
+                attach_pairs += ","
+        return attach_pairs
+
 
 DBManager()
 crawler = SnowCrawler()
 crawler.set_info('', '')
 crawler.start()
 crawler.quit()
-DBManager.delete_duplicated_rows()
+DBManager().delete_duplicated_rows()
