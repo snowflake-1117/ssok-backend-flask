@@ -2,10 +2,13 @@ import codecs
 import pymysql
 from konlpy.tag import Twitter
 from app.crawlers.DBManager import DBManager
+import os
 
 class WakatiMaker:
 
     def make_file(self, category, division, file_name):
+        if os.path.isfile(file_name):
+            os.remove(file_name)
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
