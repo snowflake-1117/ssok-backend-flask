@@ -1,9 +1,9 @@
 from wakati_maker import WakatiMaker
 
-#readme
-#you can use WakatiMaker class by calling do_snowe2vec(category, division, text_file_name, wakati_file_name)
-#it exports sql data to txt, parse it, and make wakati.
-#in server-side, you may need to set this -> http://sssunho.tistory.com/56 for exporting sql data to txt
+#  readme
+#  you can use WakatiMaker class by calling do_snowe2vec(category, division, text_file_name, wakati_file_name)
+#  it exports sql data to txt, parse it, and make wakati.
+#  in server-side, you may need to set this -> http://sssunho.tistory.com/56 for exporting sql data to txt
 
 wm = WakatiMaker()
 
@@ -15,6 +15,7 @@ all_divisions = job_divisions, snowe_division
 snowe_outfile_names = "snowe_gongji", "snowe_mojip", "snowe_haksa", "snowe_haengsa", "snowe_haksaeng", "snowe_janghak", "snowe_system"
 job_outfile_names = "job_gongji", "job_chuiup", "job_internship", "job_gyoyuk", "job_mentor", "job_haengsa"
 all_outfile_names = job_outfile_names, snowe_outfile_names
+
 txt = ".txt"
 wakati = ".wakati"
 
