@@ -1,5 +1,10 @@
 from wakati_maker import WakatiMaker
 
+#readme
+#you can use WakatiMaker class by calling do_snowe2vec(category, division, text_file_name, wakati_file_name)
+#it exports sql data to txt, parse it, and make wakati.
+#in server-side, you may need to set this -> http://sssunho.tistory.com/56 for exporting sql data to txt
+
 wm = WakatiMaker()
 
 categories = "취업", "공지"
