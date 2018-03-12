@@ -45,12 +45,9 @@ class WakatiMaker:
     def make_wakati(self, results, wakati_name):
         with open(wakati_name, 'w', encoding="utf-8") as fp:
             fp.write("\n".join(results))
-        return wakati_name
 
     def do_snowe2vec(self, category, division, file_name, wakati_name):
         self.make_file(category, division, file_name)
         text = self.read_file(file_name)
         results = self.parse(text)
-        wakati_name = self.make_wakati(results, wakati_name)
-        return wakati_name
-
+        self.make_wakati(results, wakati_name)
