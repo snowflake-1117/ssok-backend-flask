@@ -18,10 +18,9 @@ sookpam-backend-flask
         * snowe_haksaeng.wakati
         * snowe_janghak.wakati
         * snowe_mojip.wakati
+        * snowe_system.wakati
 
  > please make sure the outputs of word2vec named as exactly as names mentioned above
-
-@hyemin님 **MLP_script_runner.py** 를 돌리면 됩니다.
 
 #### Output
 + word-dic.json : words mapped with numbers( I guess ), this is a output of word_dic_generator.py and will be needed when decoding to classify the data.json
