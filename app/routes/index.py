@@ -8,7 +8,7 @@ from RecommendHelper import RecommendHelper
 
 @app.route('/')
 def index():
-    return 'Sookpam main page'
+    return 'Ssok main page'
 
 
 @app.route('/공통/취업')
@@ -19,8 +19,7 @@ def get_career_list():
         json_dictionary.append(
             {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
              'content': record.content, 'view': record.view,
-             'date': record.date,
-             'url': record.url, 'attach': record.attach})
+             'date': record.date, 'url': record.url, 'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
 
@@ -33,8 +32,7 @@ def get_major_category_list(category_name, division_name):
         json_dictionary.append(
             {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
              'content': record.content, 'view': record.view,
-             'date': record.date,
-             'url': record.url, 'attach': record.attach})
+             'date': record.date, 'url': record.url, 'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
 
@@ -48,16 +46,15 @@ def get_search_list_by_words(words):
     for record in search_list:
         json_dictionary.append(
             {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
-             'content': record.content, 'view': record.view,
-             'date': record.date,
-             'url': record.url, 'attach': record.attach})
+             'content': record.content, 'view': record.view, 'date': record.date, 'url': record.url,
+             'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
 
 
 @app.route('/recommend/student_grade=<student_grade>&'
            'student_year=<student_year>&'
-           'major1=<major1>&major2=<major2>&'
+           'majors=<majors>&'
            'school_scholar=<school_scholar>&'
            'government_scholar=<government_scholar>&'
            'external_scholar=<external_scholar>&'
@@ -71,12 +68,12 @@ def get_search_list_by_words(words):
            'interest_career=<interest_career>&'
            'interest_student=<interest_student>')
 def get_10_recommend_list(student_grade, student_year,
-                          major1, major2, school_scholar,
+                          majors, school_scholar,
                           government_scholar, external_scholar, student_status,
                           interest_scholarship, interest_academic, interest_event, interest_recruit,
                           interest_system, interest_global, interest_career, interest_student):
     recommend_condition = RecommendCondition(student_grade, student_year,
-                                             major1, major2, school_scholar,
+                                             majors, school_scholar,
                                              government_scholar, external_scholar, student_status,
                                              interest_scholarship, interest_academic, interest_event,
                                              interest_recruit,

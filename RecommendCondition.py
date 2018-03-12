@@ -16,7 +16,7 @@ class RecommendCondition:
     INTEREST_STUDENT = "학생"
 
     def __init__(self, student_grade=0, student_year=0,
-                 major1="", major2="", school_scholar=False,
+                 majors="", school_scholar=False,
                  government_scholar=False, external_scholar=False, student_status=STATUS_IN,
                  interest_scholarship=CATEGORY_NORMAL, interest_academic=CATEGORY_NORMAL,
                  interest_event=CATEGORY_NORMAL, interest_recruit=CATEGORY_NORMAL,
@@ -24,8 +24,7 @@ class RecommendCondition:
                  interest_career=CATEGORY_NORMAL, interest_student=CATEGORY_NORMAL):
         self._student_year = int(student_year)
         self._student_grade = int(student_grade)
-        self._major1 = major1
-        self._major2 = major2
+        self._majors = majors
         self._school_scholar = school_scholar in ['True', 'true']
         self._government_scholar = government_scholar in ['True', 'true']
         self._external_scholar = external_scholar in ['True', 'true']
@@ -48,12 +47,8 @@ class RecommendCondition:
         return self._student_grade
 
     @property
-    def major1(self):
-        return self._major1
-
-    @property
-    def major2(self):
-        return self._major2
+    def majors(self):
+        return self._majors
 
     @property
     def school_scholar(self):
@@ -115,13 +110,9 @@ class RecommendCondition:
     def student_status(self, student_status):
         self._student_status = student_status
 
-    @major1.setter
-    def major1(self, major1):
-        self._major1 = major1
-
-    @major2.setter
-    def major2(self, major2):
-        self._major2 = major2
+    @majors.setter
+    def major1(self, majors):
+        self._majors = majors
 
     @school_scholar.setter
     def school_scholar(self, school_scholar):
