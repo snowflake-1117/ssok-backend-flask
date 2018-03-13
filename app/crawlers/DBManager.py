@@ -6,7 +6,7 @@ from RecommendHelper import RecommendHelper
 
 class DBManager:
     USER = "root"
-    PW = ""
+    PW = "id3"
 
     def __init__(self):
         DBManager.createDB()

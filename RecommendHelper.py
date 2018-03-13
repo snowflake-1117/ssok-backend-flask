@@ -5,7 +5,7 @@ from datetime import datetime
 class RecommendHelper:
     @classmethod
     def add_date_condition_within_10days(cls, sql):
-        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 10 DAY)) AND DATE (date) <= DATE(now())'
+        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
     def add_category_and_division_condition(cls, recommend_condition, sql):

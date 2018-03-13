@@ -131,7 +131,7 @@ class SnowCrawler:
 
 DBManager()
 crawler = SnowCrawler()
-crawler.set_info('', '')
+crawler.set_info('riddle1117', '06101105aa!')
 crawler.start()
 crawler.quit()
 DBManager().delete_duplicated_rows()

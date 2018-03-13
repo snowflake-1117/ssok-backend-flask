@@ -4,3 +4,4 @@ cd ~/sookpam-backend-flask
 ./Wiz5DepartmentsCrawler.py
 ./SnoweCrawler.py
 ./Bayesian_Classifier.py
+pkill phantomjs

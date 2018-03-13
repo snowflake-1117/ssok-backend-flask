@@ -78,8 +78,11 @@ def get_10_recommend_list(student_grade, student_year,
                                              interest_scholarship, interest_academic, interest_event,
                                              interest_recruit,
                                              interest_system, interest_global, interest_career, interest_student)
-    filtered_record_list = DBManager.select_recommend_list_by(recommend_condition)
-    selected_record_list = RecommendHelper.select_recommend_list_from(filtered_record_list, recommend_condition)
+    print("interest_scholarship: ",interest_scholarship)
+    db_manager = DBManager()
+    recommend_helper = RecommendHelper()
+    filtered_record_list = db_manager.select_recommend_list_by(recommend_condition)
+    selected_record_list = recommend_helper.select_recommend_list_from(filtered_record_list, recommend_condition)
     json_dictionary = []
     for selected_item in selected_record_list:
         json_dictionary.append(
