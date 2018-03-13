@@ -164,7 +164,7 @@ class RecommendHelper:
             relative_words_with_user.extend(["복학", "휴학"])
 
         # 장학
-        if recommend_condition.interest_scholarship is not 2:
+        if recommend_condition.interest_scholarship is 1:
             if recommend_condition.government_scholar:
                 relative_words_with_user.extend(["국가장학금"])
             if recommend_condition.school_scholar:
@@ -189,7 +189,7 @@ class RecommendHelper:
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        recommend_item.score += 1 / (date_distance.days + 1)
+        recommend_item.score += 1.5 / (date_distance.days + 1)
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
