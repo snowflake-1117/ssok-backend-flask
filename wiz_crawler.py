@@ -134,12 +134,13 @@ class WizCrawler:
     @classmethod
     def get_attach_pairs(cls):
         attach_pairs = ""
-        if cls.domain_name is 'uct' or cls.domain_name is 'fn':
-            attaches = WizCrawler.browser.find_elements_by_css_selector(
-                'body > table:nth-child(2) > tbody > tr:nth-child(14) > td > font > a')
+        attaches = []
+        if cls.domain_name in ['uct', 'fn']:
+            attaches.extend(WizCrawler.browser.find_elements_by_css_selector(
+                'body > table:nth-child(2) > tbody > tr:nth-child(14) > td > font > a'))
         else:
-            attaches = WizCrawler.browser.find_elements_by_css_selector(
-                'body > table:nth-child(2) > tbody > tr:nth-child(13) > td > font > a')
+            attaches.extend(WizCrawler.browser.find_elements_by_css_selector(
+                'body > table:nth-child(2) > tbody > tr:nth-child(13) > td > font > a'))
         for index, attach in enumerate(attaches):
             if index % 2 == 0:
                 attach_pairs += attach.text.strip().replace("다운로드",
@@ -149,26 +150,27 @@ class WizCrawler:
                     attach_pairs += ","
         return attach_pairs
 
+    @classmethod
+    def read_wiz(cls):
+        data = json.load(open('wiz_departments.json', "r", encoding="utf8"))
 
-def read_wiz():
-    data = json.load(open('wiz_departments.json', "r", encoding="utf8"))
+        crawler = WizCrawler()
 
-    crawler = WizCrawler()
-    for count in range(0, len(data)):
-        department = data[count]['department']
-        domain_name = data[count]['domain_name']
-        home_id = data[count]['home_id']
-        handle = str(data[count]['handle'])
-        type = data[count]['type']
-        crawler.setFields(department, type)
-        wiz = '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='
-        url = 'http://' + domain_name + wiz + home_id + '&handle=' + handle
-        WizCrawler.attach_base_url = 'http://' + domain_name + ".sookmyung.ac.kr/wiz/contents/board/download.php?home_id=" + home_id
-        WizCrawler.attach_major = 'domain_name'
-        crawler.crawl_site(url)
-    exit()
-    return
+        for count in range(0, len(data)):
+            department = data[count]['department']
+            cls.domain_name = data[count]['domain_name']
+            home_id = data[count]['home_id']
+            handle = str(data[count]['handle'])
+            type = data[count]['type']
+            crawler.setFields(department, type)
+            wiz = '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='
+            url = 'http://' + cls.domain_name + wiz + home_id + '&handle=' + handle
+            WizCrawler.attach_base_url = 'http://' + cls.domain_name + ".sookmyung.ac.kr/wiz/contents/board/download.php?home_id=" + home_id
+            WizCrawler.attach_major = 'domain_name'
+            crawler.crawl_site(url)
+        exit()
+        return
 
 
 DBManager()
-read_wiz()
+WizCrawler.read_wiz()
