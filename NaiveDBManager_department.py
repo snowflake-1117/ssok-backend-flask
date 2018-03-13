@@ -28,7 +28,7 @@ class DBManager:
 
         with conn.cursor() as cursor:
             categoryList = DBManager.getTrainCategoryList()
-            sql = "select title, division, category from univ where "
+            sql = "select title, division, category from web where "
             for category in categoryList:
                 if DBManager.isDepartment(category[0]):
                     sql = sql + "category='" + category[0] + "' or "
@@ -51,7 +51,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = " select distinct(category) from univ "
+            sql = " select distinct(category) from web "
             sql = sql + "group by category "
             sql = sql + "having count(distinct(division))>1;"
             cursor.execute(sql)
@@ -73,7 +73,7 @@ class DBManager:
         with conn.cursor() as cursor:
             categoryList = DBManager.getTestCategoryList()
             if len(categoryList) > 0:
-                sql = "select title, division, category from univ where "
+                sql = "select title, division, category from web where "
                 for category in categoryList:
                     if DBManager.isDepartment(category):
                         sql = sql + "category='" +  category + "' or "
@@ -105,7 +105,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = "update univ set division=%s where title=%s;"
+            sql = "update web set division=%s where title=%s;"
             cursor.execute(sql, (division, title))
             conn.commit()
         return

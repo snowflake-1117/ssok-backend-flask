@@ -74,7 +74,7 @@ class RecommendHelper:
     @classmethod
     def find_by_major_category(cls, recommend_condition, sql):
         sql += ' OR category in ('
-        category_list = [recommend_condition.major1, recommend_condition.major2]
+        category_list = recommend_condition.majors.split('-')
         if recommend_condition.interest_career is not 2:
             category_list.extend([recommend_condition.INTEREST_CAREER])
         for index, major in enumerate(category_list):
@@ -127,8 +127,7 @@ class RecommendHelper:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_GLOBAL)
         if recommend_condition.interest_event is 1:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_EVENT)
-        interesting_majors_and_divisions.append(recommend_condition.major1)
-        interesting_majors_and_divisions.append(recommend_condition.major2)
+        interesting_majors_and_divisions.append(recommend_condition.majors.split('-'))
         return interesting_majors_and_divisions
 
     @classmethod

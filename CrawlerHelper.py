@@ -1,5 +1,6 @@
 from app.crawlers.DBManager import *
 import re
+from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 import urllib.request
 
@@ -7,7 +8,7 @@ import urllib.request
 class CrawlerHelper:
     @staticmethod
     def get_soup(notice):
-        notice_item_url = notice.get_attribute("href")
+        notice_item_url = notice
         notice_item_response = urllib.request.urlopen(notice_item_url)
         return BeautifulSoup(notice_item_response, "html.parser")
 
@@ -20,10 +21,13 @@ class CrawlerHelper:
 
     @staticmethod
     def get_last_page(last_number, page_notices_count):
-        if last_number % page_notices_count != 0:
-            return last_number // page_notices_count + 1
-        else:
-            return last_number // page_notices_count
+        try:
+            if last_number % page_notices_count != 0:
+                return last_number // page_notices_count + 1
+            else:
+                return last_number // page_notices_count
+        except NoSuchElementException:
+            print("페이지 로드 에러")
 
     @staticmethod
     def get_content_output(content):

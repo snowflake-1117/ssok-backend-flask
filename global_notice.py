@@ -4,7 +4,7 @@ from selenium import webdriver
 from app.crawlers.DBManager import DBManager
 from app.crawlers.Record import Record
 import time
-
+import signal
 
 def set_record_list(length, url_list):
     global num
@@ -16,12 +16,19 @@ def set_record_list(length, url_list):
             browser.get(url)
             time.sleep(3)
             title = browser.find_element_by_class_name('tit').text
-            content = browser.find_element_by_id('contentsDiv').text
+            content = browser.find_element_by_id('contentsDiv').get_attribute('innerHTML')
             num = num + 1
             date = browser.find_element_by_css_selector(
                 '#board-container > div.view > table > tbody > tr:nth-child(1) > td.date').text
             view = browser.find_element_by_css_selector('td.no').text
             view = int(view)
+            attach_pairs = ""
+            attaches = browser.find_elements_by_css_selector(
+                "#board-container > div.view > table > tbody > tr:nth-child(2) > td > a:nth-child(2n)")
+            for index, attach in enumerate(attaches):
+                attach_pairs += attach.get_attribute("text").strip() + "," + attach.get_attribute("href")
+                if index < attaches.__len__() - 1:
+                    attach_pairs += ","
 
             if DBManager.is_notice_url_already_saved(url):
                 return True
@@ -35,6 +42,7 @@ def set_record_list(length, url_list):
                 record.category = '공통'
                 record.division = '국제'
                 record.url = url
+                record.attach = attach_pairs
                 record_list.append(record)
     return False
 
@@ -52,7 +60,6 @@ def move_page():
         if set_record_list(notice_len, url_list):
             return
 
-
 DBManager()
 
 global_url = 'http://cms.sookmyung.ac.kr/wiz5/contents/board/board_action.php?home_id=exchange&handle=7&scale=15&categoryId=1&categoryDepth=&parent='
@@ -62,7 +69,7 @@ browser.get(global_url)
 last_page_num = len(browser.find_elements_by_tag_name('li'))
 
 notice_list = browser.find_elements_by_css_selector(
-    '#board-container > div.list > form > table > tbody > tr > td > img')
+    '#board-container > div.list > form > table > tbody > tr > td:nth-child(2) > img')
 notice_len = len(notice_list)
 
 record_list = []
@@ -74,4 +81,5 @@ if record_list.__len__() > 0:
     for record_data in record_list:
         DBManager.insert(record_data)
 
+browser.service.process.send_signal(signal.SIGTERM)
 browser.quit()

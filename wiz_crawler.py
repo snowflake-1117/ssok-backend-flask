@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 from pymysql import InternalError
 from selenium import webdriver
 from app.crawlers.DBManager import DBManager
@@ -7,6 +7,7 @@ from app.crawlers.Record import Record
 from selenium.common.exceptions import NoSuchElementException
 import time
 import json
+import signal
 
 
 class WizCrawler:
@@ -16,6 +17,8 @@ class WizCrawler:
     type = None
     page_count = 0
     site_default_url = None
+    attach_base_url = ""
+    domain_name = ""
 
     def __init__(self):
         WizCrawler.browser = webdriver.PhantomJS()
@@ -32,9 +35,10 @@ class WizCrawler:
     def print_list(cls):
         row_col = WizCrawler.browser.find_elements_by_css_selector('td.list_td1')
         NUMBER_COLUMN = len(WizCrawler.browser.find_elements_by_css_selector('td.title_bg1'))
-        if NUMBER_COLUMN!=0:
+        if NUMBER_COLUMN != 0:
             list_len = len(row_col) // NUMBER_COLUMN
-        else: list_len = len(row_col)
+        else:
+            list_len = len(row_col)
         for count in range(0, list_len):
             record = Record()
             try:
@@ -57,7 +61,7 @@ class WizCrawler:
     @classmethod
     def move_to_next_page(cls):
         WizCrawler.page_count += 1
-        if WizCrawler.page_count > 8:
+        if WizCrawler.page_count > 5:
             return
         if WizCrawler.print_list():
             return
@@ -80,7 +84,7 @@ class WizCrawler:
             a.click()
             WizCrawler.browser.implicitly_wait(3)
             time.sleep(2)
-            content = WizCrawler.browser.find_element_by_id('contentsDiv').text
+            content = WizCrawler.browser.find_element_by_css_selector('#contentsWidth').get_attribute('innerHTML')
             record.category = WizCrawler.department
             record.division = WizCrawler.type
             record.content = content
@@ -88,6 +92,7 @@ class WizCrawler:
                 'body > table:nth-child(1) > tbody > tr > td > table > tbody > tr > td:nth-child(2) > font').text.split(
                 ' ')[0]
             record.url = WizCrawler.site_default_url
+            record.attach = cls.get_attach_pairs()
             WizCrawler.record_list.append(record)
             WizCrawler.browser.execute_script("javascript:jf_list()")
             WizCrawler.browser.implicitly_wait(3)
@@ -122,27 +127,50 @@ class WizCrawler:
         return
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        WizCrawler.browser.service.process.send_signal(signal.SIGTERM)
         WizCrawler.browser.quit()
         return
 
+    @classmethod
+    def get_attach_pairs(cls):
+        attach_pairs = ""
+        attaches = []
+        if cls.domain_name in ['uct', 'fn']:
+            attaches.extend(WizCrawler.browser.find_elements_by_css_selector(
+                'body > table:nth-child(2) > tbody > tr:nth-child(14) > td > font > a'))
+        else:
+            attaches.extend(WizCrawler.browser.find_elements_by_css_selector(
+                'body > table:nth-child(2) > tbody > tr:nth-child(13) > td > font > a'))
+        for index, attach in enumerate(attaches):
+            if index % 2 == 0:
+                attach_pairs += attach.text.strip().replace("다운로드",
+                                                            "") + "," + WizCrawler.attach_base_url + "&board_seq=" + \
+                                attach.get_attribute('href').split("'")[1] + "&ftype=N"
+                if index < attaches.__len__() - 2:
+                    attach_pairs += ","
+        return attach_pairs
 
-def read_wiz():
-    data = json.load(open('wiz_departments.json', "r", encoding="utf8"))
+    @classmethod
+    def read_wiz(cls):
+        data = json.load(open('wiz_departments.json', "r", encoding="utf8"))
 
-    crawler = WizCrawler()
-    for count in range(0, len(data)):
-        department = data[count]['department']
-        domain_name = data[count]['domain_name']
-        home_id = data[count]['home_id']
-        handle = str(data[count]['handle'])
-        type = data[count]['type']
-        crawler.setFields(department, type)
-        wiz = '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='
-        url = 'http://' + domain_name + wiz + home_id + '&handle=' + handle
-        crawler.crawl_site(url)
-    exit()
-    return
+        crawler = WizCrawler()
+
+        for count in range(0, len(data)):
+            department = data[count]['department']
+            cls.domain_name = data[count]['domain_name']
+            home_id = data[count]['home_id']
+            handle = str(data[count]['handle'])
+            type = data[count]['type']
+            crawler.setFields(department, type)
+            wiz = '.sookmyung.ac.kr/wiz/contents/board/board.php?home_id='
+            url = 'http://' + cls.domain_name + wiz + home_id + '&handle=' + handle
+            WizCrawler.attach_base_url = 'http://' + cls.domain_name + ".sookmyung.ac.kr/wiz/contents/board/download.php?home_id=" + home_id
+            WizCrawler.attach_major = 'domain_name'
+            crawler.crawl_site(url)
+        exit()
+        return
 
 
 DBManager()
-read_wiz()
+WizCrawler.read_wiz()
