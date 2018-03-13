@@ -212,8 +212,3 @@ class RecommendHelper:
                     recommend_item.score -= 2
                 elif word in recommend_item.record.content:
                     recommend_item.score -= 1
-
-        minus_elements = ["[마감]", "[조기마감]", "(조기마감)", "(모집마감)", "*마감*", "★조기마감★"]
-        for minus_element in minus_elements:
-            if minus_element in recommend_item.record.title:
-                recommend_item.score -= 3
