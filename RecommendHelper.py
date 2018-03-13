@@ -189,7 +189,7 @@ class RecommendHelper:
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        recommend_item.score += 1.5 / (date_distance.days + 1)
+        recommend_item.score += 1 - date_distance.days / 10
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
