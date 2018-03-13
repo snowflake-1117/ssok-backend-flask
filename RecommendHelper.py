@@ -127,7 +127,7 @@ class RecommendHelper:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_GLOBAL)
         if recommend_condition.interest_event is 1:
             interesting_majors_and_divisions.append(recommend_condition.INTEREST_EVENT)
-        interesting_majors_and_divisions.append(recommend_condition.majors.split('-'))
+        interesting_majors_and_divisions.extend(recommend_condition.majors.split('-'))
         return interesting_majors_and_divisions
 
     @classmethod
@@ -139,20 +139,31 @@ class RecommendHelper:
 
     @classmethod
     def add_score_which_has_relative_word(cls, recommend_item, recommend_condition):
+        # 학년
         relative_words_with_user = {
-            1: ["저학년", "신입", "새내기", "GELT", " 1학년", "학사일정", "수강신청", "수강 신청", "오리엔테이션"],
-            2: ["저학년", " 2학년", "전과", "교환학생", "복수전공", "부전공", "3학기", "4학기"],
-            3: ["고학년", " 3학년", "조기졸업", "복수전공", "부전공" "5학기", "6학기", "교환학생"],
-            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "학·석사", "대학원"]
+            1: ["저학년", "신입", "새내기", "입학식", "2-3학기", "1학년"],
+            2: ["저학년", " 2학년", "전과", "교환학생", "전공선택", "3학기", "4학기", "학·석사"],
+            3: ["고학년", " 3학년", "조기졸업", "전공선택" "5학기", "6학기", "교환학생", "학·석사"],
+            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "대학원", "졸준위"]
         }.get(recommend_condition.student_grade)
 
+        # 공통
+        relative_words_with_user.extend(["등록"])
+
+        # 전공
+        relative_words_with_user.extend(recommend_condition.majors.split('-'))
+
+        # 학번
         relative_words_with_user.extend([str(recommend_condition.student_year) + "학번"])
 
+        # 재/휴학
         if recommend_condition.student_status is recommend_condition.STATUS_IN:
-            relative_words_with_user.extend(["재학생"])
+            relative_words_with_user.extend(
+                ["재학생", "수강신청", "수강정정", "학사일정", "수업평가", "성적", "대체공휴일", "학생지도의 날", "계절학기", "소멸과목"])
         else:
-            relative_words_with_user.extend(["휴학", "복학", "등록"])
+            relative_words_with_user.extend(["복학", "휴학"])
 
+        # 장학
         if recommend_condition.interest_scholarship is not 2:
             if recommend_condition.government_scholar:
                 relative_words_with_user.extend(["국가장학금"])
@@ -182,17 +193,18 @@ class RecommendHelper:
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
+        # 학년
         unrelated_words_with_user = {
-            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원", "신입사원"],
-            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원"],
-            3: ["저학년", "신입생", "새내기", "오리엔테이션"],
-            4: ["저학년", "전과", "신입생", "새내기", "오리엔테이션"]
+            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원", "신입사원", "졸준위"],
+            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "대학원", "신입생", "새내기"],
+            3: ["저학년", "수료생", "신입생", "새내기"],
+            4: ["저학년", "전과", "신입생", "새내기"]
         }.get(recommend_condition.student_grade)
 
         if recommend_condition.student_status is recommend_condition.STATUS_IN:
             unrelated_words_with_user.extend(["복학"])
         else:
-            unrelated_words_with_user.extend(["휴학생 제외"])
+            unrelated_words_with_user.extend(["수강신청", "수강정정", "학사일정", "수업평가", "성적", "대체공휴일", "학생지도의 날", "휴학생 제외"])
 
         if unrelated_words_with_user is not None:
             for word in unrelated_words_with_user:
@@ -201,5 +213,7 @@ class RecommendHelper:
                 elif word in recommend_item.record.content:
                     recommend_item.score -= 1
 
-        if "마감" in recommend_item.record.title:
-            recommend_item.score -= 3
+        minus_elements = ["[마감]", "[조기마감]", "(조기마감)", "(모집마감)", "*마감*", "★조기마감★"]
+        for minus_element in minus_elements:
+            if minus_element in recommend_item.record.title:
+                recommend_item.score -= 3
