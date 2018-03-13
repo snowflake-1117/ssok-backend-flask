@@ -7,6 +7,7 @@ from app.crawlers.Record import Record
 from selenium.common.exceptions import NoSuchElementException
 import time
 import json
+import signal
 
 
 class WizCrawler:
@@ -126,6 +127,7 @@ class WizCrawler:
         return
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        WizCrawler.browser.service.process.send_signal(signal.SIGTERM)
         WizCrawler.browser.quit()
         return
 
@@ -137,7 +139,7 @@ class WizCrawler:
                 'body > table:nth-child(2) > tbody > tr:nth-child(14) > td > font > a')
         else:
             attaches = WizCrawler.browser.find_elements_by_css_selector(
-            'body > table:nth-child(2) > tbody > tr:nth-child(13) > td > font > a')
+                'body > table:nth-child(2) > tbody > tr:nth-child(13) > td > font > a')
         for index, attach in enumerate(attaches):
             if index % 2 == 0:
                 attach_pairs += attach.text.strip().replace("다운로드",

@@ -4,7 +4,7 @@ from selenium import webdriver
 from app.crawlers.DBManager import DBManager
 from app.crawlers.Record import Record
 import time
-
+import signal
 
 def set_record_list(length, url_list):
     global num
@@ -81,4 +81,5 @@ if record_list.__len__() > 0:
     for record_data in record_list:
         DBManager.insert(record_data)
 
+browser.service.process.send_signal(signal.SIGTERM)
 browser.quit()

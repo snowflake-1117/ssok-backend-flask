@@ -8,6 +8,7 @@ from CrawlerHelper import CrawlerHelper
 from DepartmentUrlData import DepartmentUrlData
 from app.crawlers.Record import *
 from app.crawlers.DBManager import *
+import signal
 
 
 def get_department_url_data(item):
@@ -54,6 +55,7 @@ class Wiz5DepartmentsCrawler:
                 self.record_list.clear()
 
     def quit(self):
+        self.browser.service.process.send_signal(signal.SIGTERM)
         self.browser.quit()
 
     def get_url(self, url_data, page=1):

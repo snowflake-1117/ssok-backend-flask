@@ -6,6 +6,7 @@ from selenium import webdriver
 
 from app.crawlers.DBManager import *
 from CrawlerHelper import CrawlerHelper
+import signal
 
 
 class SnowCrawler:
@@ -114,6 +115,7 @@ class SnowCrawler:
                 self.record_list.clear()
 
     def quit(self):
+        self.browser.service.process.send_signal(signal.SIGTERM)
         self.browser.quit()
 
     def get_attach_pairs(self):
