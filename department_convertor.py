@@ -1,0 +1,21 @@
+eng_to_idx = {'snowe_haengsa':0,
+              'snowe_haksa':1,
+              'snowe_haksaeng':2,
+              'snowe_janghak':3,
+              'snowe_mojip':4,
+              'job_chuiup':5,
+              'job_gyoyuk':6,
+              'job_haengsa':7,
+              'job_internship':8,
+              'job_mentor':9}
+
+idx_to_kor = {0:"행사",
+              1:"학사",
+              2:"학생",
+              3:"장학",
+              4:"모집",
+              5:"취업",
+              6:"교육",
+              7:"행사",
+              8:"인턴쉽",
+              9:"멘토"}
