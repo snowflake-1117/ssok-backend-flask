@@ -1,0 +1,94 @@
+from keras.models import Sequential
+from keras.callbacks import ModelCheckpoint
+from keras.layers import Dense, Dropout, Activation
+from keras.wrappers.scikit_learn import KerasClassifier
+from keras.utils import np_utils
+from keras import backend as K
+from pymysql import ProgrammingError
+
+from department_convertor import idx_to_kor
+from db_manager import DBManager
+import json
+import numpy as np
+
+
+category = "snowe"
+root_dir = "./data/" + category + "/"
+dic_file = root_dir + "/word-dic.json"
+
+word_dic = json.load(open(dic_file))
+max_words = word_dic["_MAX"]
+MODEL = 'snowe-model.h5py'
+
+# get numbers of class by counting files
+# files = glob.glob(root_dir + "*.wakati", recursive=True)
+nb_classes = 10
+print("nb_classes:", nb_classes)
+batch_size = 64
+nb_epoch = 10
+
+
+# MLP 모델 생성하기 --- (※1)
+def build_model():
+    model = Sequential()
+    model.add(Dense(512, input_shape=(max_words,)))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(nb_classes))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
+    return model
+
+
+data = json.load(open(root_dir + "train_data.json"))
+X = data["X"]  # 텍스트를 나타내는 데이터
+Y = data["Y"]  # 카테고리 데이터
+Y_train = np_utils.to_categorical(Y, nb_classes)
+print("train:", len(X), len(Y))
+
+# if model already exist, use modelCheckpoint for kerasClassifier
+try:
+    check = ModelCheckpoint(MODEL, monitor='val_loss', save_best_only=False)
+    callbacks_list = [check]
+    model = KerasClassifier(build_fn=build_model, nb_epoch=nb_epoch, batch_size=batch_size)
+    model.fit(np.array(X), np.array(Y_train), callbacks=callbacks_list)
+except OSError:
+    model = KerasClassifier(
+        build_fn=build_model,
+        nb_epoch=nb_epoch,
+        batch_size=batch_size)
+    model.fit(np.array(X), np.array(Y_train))
+
+data = json.load(open(root_dir + "/test_data.json"))
+X = data["X"]
+Y = data["Y"]
+predicts = model.predict(np.array(X))
+
+model.model.save(MODEL)
+del model
+
+
+def get_original_line(fname, idx):
+    original = []
+    with open(fname, "r", encoding="utf8") as f:
+        content = f.readlines()
+        for line in content:
+            original.append(line)
+
+    return original.__getitem__(idx)
+
+
+# decode the prediction
+for position, predict in enumerate(predicts):
+    try:
+        Y_predicted = idx_to_kor[predict]
+        print(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
+        DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
+    except ProgrammingError:
+        # the line is not in table
+        pass
+
+K.clear_session()
+print("end")
