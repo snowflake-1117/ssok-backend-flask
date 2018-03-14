@@ -96,7 +96,8 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = 'SELECT * FROM univ WHERE title=%s or title=%s'
-            cursor.execute(sql, ( title_list[0].subject_line, title_list[1].subject_line) )
+            if title_list.size > 1:
+                cursor.execute(sql, (title_list[0].subject_line, title_list[1].subject_line))
             conn.commit()
             result = cursor.fetchall()
             for row in result:

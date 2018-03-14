@@ -1,5 +1,4 @@
 from DBManager import DBManager
-import random
 
 sentence_list = DBManager.select_all_titles()
 
@@ -7,16 +6,17 @@ n_number = 2
 data_list = []
 
 
-class RecommendDatum():
-    def __init__(cls, sentence, similarity):
-        cls.subject_line = sentence
-        cls.similarity = similarity
+class RecommendDatum:
+    def __init__(self, sentence, similarity):
+        self.subject_line = sentence
+        self.similarity = similarity
 
 
 object_sentence = None
 
 
 def compare_with(sentence):
+    sentence_list = DBManager.select_all_titles()
     object_sentence = sentence
     object_split_list = get_spilt_list_of(object_sentence)
     for subject_index, subject_sentence in enumerate(sentence_list):
@@ -50,10 +50,6 @@ def print_all_subject_data():
 def get_max():
     sorted_list = sorted(data_list, key=lambda item: item.similarity, reverse=True)
     response = filter(sorted_list)
-    for record in response:
-        print("comparing title list: ", record.subject_line,
-              "\nsimilarity: ", record.similarity)
-    print("item length > ",response.__len__())
     response_list = DBManager.select_max_list(response)
     print("response>")
     for record in response_list[:2]:
