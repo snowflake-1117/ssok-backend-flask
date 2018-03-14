@@ -5,7 +5,6 @@ from app.crawlers.DBManager import DBManager
 from RecommendCondition import RecommendCondition
 from RecommendHelper import RecommendHelper
 import RelevantContentCommender
-from DBManager import DBManager
 
 @app.route('/')
 def index():

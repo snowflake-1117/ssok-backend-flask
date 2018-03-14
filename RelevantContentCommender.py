@@ -1,4 +1,4 @@
-from DBManager import DBManager
+from app.crawlers.DBManager import DBManager
 
 
 class RecommendDatum:

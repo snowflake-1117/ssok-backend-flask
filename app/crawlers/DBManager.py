@@ -271,3 +271,54 @@ class DBManager:
                 record.attach = str(result[8])
                 record_list.append(record)
         return record_list
+
+    @staticmethod
+    def select_all_titles():
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT title FROM web;'
+            cursor.execute(sql)
+            conn.commit()
+            result = cursor.fetchall()
+            title_list = []
+            for title in result:
+                title_list.append(str(title[0]))
+        return title_list
+
+    @staticmethod
+    def select_max_list(title_list):
+        record_list = []
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT * FROM web WHERE title=%s or title=%s;'
+            cursor.execute(sql, (title_list[0].subject_line, title_list[1].subject_line))
+            conn.commit()
+            result = cursor.fetchall()
+            for row in result:
+                record_list.append(row)
+        return record_list
+
+    @staticmethod
+    def selectDatumBy(title):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT * FROM web where title='+ title +";"
+            cursor.execute(sql)
+            conn.commit()
+            result = cursor.fetchone()
+        return result
