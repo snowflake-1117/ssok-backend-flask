@@ -1,6 +1,5 @@
 from DBManager import DBManager
 import random
-import heapq
 
 sentence_list = DBManager.select_all_titles()
 random_sentence = random.choice(sentence_list)
@@ -17,7 +16,11 @@ class RecommendDatum():
         cls.similarity = similarity
 
 
-def compare_with(object_sentence):
+object_sentence = None
+
+
+def compare_with(sentence):
+    object_sentence = sentence
     object_split_list = get_spilt_list_of(object_sentence)
     for subject_index, subject_sentence in enumerate(sentence_list):
         if subject_sentence != object_sentence :
@@ -48,15 +51,25 @@ def print_all_subject_data():
 
 
 def get_max():
-    response = heapq.nlargest(n_number, data_list, lambda item: item.similarity)
+    sorted_list = sorted(data_list, key=lambda item: item.similarity, reverse=True)
+    response = filter(sorted_list)
     for record in response:
-        print("comparing title list: ", record.subject_line,
-              "\nsimilarity: ", record.similarity)
+        print("comparing title list: ", record.subject_line, "\nsimilarity: ", record.similarity)
 
+
+def filter(sorted_list):
+    max_data =[]
+    for datum in sorted_list:
+        for operand in max_data:
+            if operand.subject_line == datum.subject_line:
+                break
+        if max_data.__len__() < n_number:
+            max_data.append(datum)
+        else:
+            break
+    return max_data
 
 
 compare_with(random_sentence)
-print("ALL")
-print_all_subject_data()
-print("MAX")
+print("Max> ")
 get_max()
