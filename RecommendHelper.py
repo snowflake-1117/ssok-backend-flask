@@ -14,7 +14,7 @@ class RecommendHelper:
 
         interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
         for index, recommend_item in enumerate(cls.selected_recommend_list):
-            cls.add_score_which_has_interesting_division(index, recommend_item, interesting_division)
+            cls.add_score_which_has_interesting_division(index, recommend_condition, recommend_item, interesting_division)
             cls.add_score_which_has_relative_word(index, recommend_item, recommend_condition)
             cls.add_score_close_today(index, recommend_item)
             cls.subtract_score_which_has_unrelated_word(index, recommend_item, recommend_condition)
@@ -138,16 +138,15 @@ class RecommendHelper:
         return interesting_majors_and_divisions
 
     @classmethod
-    def add_score_which_has_interesting_division(cls, index, recommend_item, interesting_majors_and_divisions):
-        if recommend_item.record.division in interesting_majors_and_divisions:
+    def add_score_which_has_interesting_division(cls, index, recommend_condition, recommend_item, interesting_majors_and_divisions):
+        if recommend_item.record.category not in recommend_condition.majors.split('-') and recommend_item.record.division in interesting_majors_and_divisions:
             cls.selected_recommend_list[index].score += 2
         elif recommend_item.record.category in interesting_majors_and_divisions:
-            if recommend_item.record.division is "취업" \
-                    and recommend_item.record.division not in interesting_majors_and_divisions:
-                cls.selected_recommend_list[index].score += 1
-            elif recommend_item.record.division is "취업" \
-                    and recommend_item.record.division in interesting_majors_and_divisions:
-                cls.selected_recommend_list[index].score += 2.5
+            if recommend_item.record.division in ['취업']:
+                if '취업' not in interesting_majors_and_divisions:
+                    cls.selected_recommend_list[index].score += 1
+                elif '취업' in interesting_majors_and_divisions:
+                    cls.selected_recommend_list[index].score += 2.5
             else:
                 cls.selected_recommend_list[index].score += 2
 
