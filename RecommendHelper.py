@@ -146,7 +146,7 @@ class RecommendHelper:
                 if '취업' not in interesting_majors_and_divisions:
                     cls.selected_recommend_list[index].score += 1
                 elif '취업' in interesting_majors_and_divisions:
-                    cls.selected_recommend_list[index].score += 2.5
+                    cls.selected_recommend_list[index].score += 2.75
             else:
                 cls.selected_recommend_list[index].score += 2
 
@@ -157,7 +157,7 @@ class RecommendHelper:
             1: ["저학년", "신입", "새내기", "입학식", "2-3학기", "1학년"],
             2: ["저학년", " 2학년", "전과", "교환학생", "전공선택", "3학기", "4학기", "학·석사"],
             3: ["고학년", " 3학년", "조기졸업", "전공선택" "5학기", "6학기", "교환학생", "학·석사"],
-            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "대학원", "졸준위"]
+            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "졸준위"]
         }.get(recommend_condition.student_grade)
 
         # 공통
@@ -208,8 +208,8 @@ class RecommendHelper:
     def subtract_score_which_has_unrelated_word(cls, index, recommend_item, recommend_condition):
         # 학년
         unrelated_words_with_user = {
-            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원", "신입사원", "졸준위"],
-            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "대학원", "신입생", "새내기"],
+            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "신입사원", "졸준위"],
+            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "신입생", "새내기"],
             3: ["저학년", "수료생", "신입생", "새내기"],
             4: ["저학년", "전과", "신입생", "새내기"]
         }.get(recommend_condition.student_grade)
@@ -222,6 +222,6 @@ class RecommendHelper:
         if unrelated_words_with_user is not None:
             for word in unrelated_words_with_user:
                 if word in recommend_item.record.title:
-                    cls.selected_recommend_list[index].score -= 2
+                    cls.selected_recommend_list[index].score -= 1.5
                 elif word in recommend_item.record.content:
                     cls.selected_recommend_list[index].score -= 1
