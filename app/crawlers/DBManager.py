@@ -292,7 +292,6 @@ class DBManager:
 
     @staticmethod
     def select_max_list(title_list):
-        record_list = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -303,22 +302,18 @@ class DBManager:
             sql = 'SELECT * FROM web WHERE title=%s or title=%s;'
             cursor.execute(sql, (title_list[0].subject_line, title_list[1].subject_line))
             conn.commit()
-            result = cursor.fetchall()
-            for row in result:
-                record_list.append(row)
+            results = cursor.fetchall()
+            record_list = []
+            for result in results:
+                record = Record()
+                record.id = str(result[0])
+                record.category = str(result[1])
+                record.division = str(result[2])
+                record.title = str(result[3])
+                record.content = str(result[4])
+                record.view = str(result[5])
+                record.date = str(result[6])
+                record.url = str(result[7])
+                record.attach = str(result[8])
+                record_list.append(record)
         return record_list
-
-    @staticmethod
-    def selectDatumBy(title):
-        conn = pymysql.connect(host='localhost',
-                               user=DBManager.USER,
-                               password=DBManager.PW,
-                               db='sookmyung',
-                               charset='utf8mb4')
-
-        with conn.cursor() as cursor:
-            sql = 'SELECT * FROM web where title='+ title +";"
-            cursor.execute(sql)
-            conn.commit()
-            result = cursor.fetchone()
-        return result
