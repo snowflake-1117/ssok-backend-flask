@@ -142,8 +142,12 @@ class RecommendHelper:
         if recommend_item.record.division in interesting_majors_and_divisions:
             cls.selected_recommend_list[index].score += 2
         elif recommend_item.record.category in interesting_majors_and_divisions:
-            if recommend_item.record.division not in interesting_majors_and_divisions:
+            if recommend_item.record.division is "취업" \
+                    and recommend_item.record.division not in interesting_majors_and_divisions:
                 cls.selected_recommend_list[index].score += 1
+            elif recommend_item.record.division is "취업" \
+                    and recommend_item.record.division in interesting_majors_and_divisions:
+                cls.selected_recommend_list[index].score += 2.5
             else:
                 cls.selected_recommend_list[index].score += 2
 
