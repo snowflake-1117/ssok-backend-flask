@@ -143,9 +143,9 @@ class RecommendHelper:
             cls.selected_recommend_list[index].score += 2
         elif recommend_item.record.category in interesting_majors_and_divisions:
             if recommend_item.record.division not in interesting_majors_and_divisions:
-                cls.selected_recommend_list[index].score += 2
-            else:
                 cls.selected_recommend_list[index].score += 1
+            else:
+                cls.selected_recommend_list[index].score += 2
 
     @classmethod
     def add_score_which_has_relative_word(cls, index, recommend_item, recommend_condition):
