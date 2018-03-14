@@ -19,7 +19,6 @@ class RecommendHelper:
             cls.add_score_close_today(index, recommend_item)
             cls.subtract_score_which_has_unrelated_word(index, recommend_item, recommend_condition)
         result_recommend_list = cls.sort_by_score_desc()
-
         if result_recommend_list.__len__() < 10:
             return result_recommend_list
         else:
@@ -27,7 +26,7 @@ class RecommendHelper:
 
     @classmethod
     def add_date_condition_within_10days(cls, sql):
-        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 10 DAY)) AND DATE (date) <= DATE(now())'
+        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
     def add_category_and_division_condition(cls, recommend_condition, sql):
@@ -75,7 +74,6 @@ class RecommendHelper:
             division_list.append(recommend_condition.INTEREST_EVENT)
         else:
             uninteresting_division_list.append(recommend_condition.INTEREST_EVENT)
-
     @classmethod
     def filter_by_uninteresting_division(cls, uninteresting_division_list, sql):
         if uninteresting_division_list.__len__() > 0:
@@ -143,7 +141,7 @@ class RecommendHelper:
         if recommend_item.record.division in interesting_majors_and_divisions:
             cls.selected_recommend_list[index].score += 1.5
         elif recommend_item.record.category in interesting_majors_and_divisions:
-            cls.selected_recommend_list[index].score += 2
+            cls.selected_recommend_list[index].score += 1.5
 
     @classmethod
     def add_score_which_has_relative_word(cls, index, recommend_item, recommend_condition):
@@ -197,7 +195,7 @@ class RecommendHelper:
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        cls.selected_recommend_list[index].score += 1.5 - date_distance.days / 10*1.5
+        cls.selected_recommend_list[index].score += 1.4-date_distance.days / 10*1.4
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, index, recommend_item, recommend_condition):
