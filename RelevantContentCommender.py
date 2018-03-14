@@ -2,8 +2,6 @@ from DBManager import DBManager
 import random
 
 sentence_list = DBManager.select_all_titles()
-random_sentence = random.choice(sentence_list)
-print("> ", random_sentence)
 
 n_number = 2
 data_list = []
@@ -74,6 +72,3 @@ def filter(sorted_list):
                 max_data.append(datum)
     return max_data
 
-
-compare_with(random_sentence)
-get_max()
