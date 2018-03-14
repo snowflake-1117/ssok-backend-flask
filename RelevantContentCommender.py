@@ -4,7 +4,6 @@ import random
 sentence_list = DBManager.select_all_titles()
 random_sentence = random.choice(sentence_list)
 print("> ", random_sentence)
-# random_datum = DBManager.selectDatumBy(random_sentence)
 
 n_number = 2
 data_list = []
@@ -54,7 +53,12 @@ def get_max():
     sorted_list = sorted(data_list, key=lambda item: item.similarity, reverse=True)
     response = filter(sorted_list)
     for record in response:
-        print("comparing title list: ", record.subject_line, "\nsimilarity: ", record.similarity)
+        print("comparing title list: ", record.subject_line,
+              "\nsimilarity: ", record.similarity)
+    response_list = DBManager.select_max_list(response)
+    print("response>")
+    for record in  response_list:
+        print(record)
 
 
 def filter(sorted_list):
@@ -71,5 +75,4 @@ def filter(sorted_list):
 
 
 compare_with(random_sentence)
-print("Max> ")
 get_max()

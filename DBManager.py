@@ -3,8 +3,6 @@ from pymysql.err import InternalError
 
 
 class DBManager:
-    YOUR_USER = 'admin'
-    YOUR_PW = '2846'
     USER = YOUR_USER
     PW = YOUR_PW
 
@@ -87,6 +85,23 @@ class DBManager:
                 print(row)
         return
 
+    @staticmethod
+    def select_max_list(title_list):
+        record_list = []
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT * FROM univ WHERE title=%s or title=%s'
+            cursor.execute(sql, ( title_list[0].subject_line, title_list[1].subject_line) )
+            conn.commit()
+            result = cursor.fetchall()
+            for row in result:
+                record_list.append(row)
+        return record_list
 
     @staticmethod
     def select_all_titles():
