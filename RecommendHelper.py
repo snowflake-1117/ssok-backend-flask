@@ -10,7 +10,6 @@ class RecommendHelper:
         filtered_recommend_list_with_score = []
         for recommend_item in filtered_recommend_list:
             filtered_recommend_list_with_score.append(FilteredRecommendItemWithScore(recommend_item, 0))
-
         cls.selected_recommend_list = filtered_recommend_list_with_score
 
         interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
@@ -28,7 +27,7 @@ class RecommendHelper:
 
     @classmethod
     def add_date_condition_within_10days(cls, sql):
-        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())'
+        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 10 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
     def add_category_and_division_condition(cls, recommend_condition, sql):
@@ -142,9 +141,9 @@ class RecommendHelper:
     @classmethod
     def add_score_which_has_interesting_division(cls, index, recommend_item, interesting_majors_and_divisions):
         if recommend_item.record.division in interesting_majors_and_divisions:
-            cls.selected_recommend_list[index].score += 1
+            cls.selected_recommend_list[index].score += 1.5
         elif recommend_item.record.category in interesting_majors_and_divisions:
-            cls.selected_recommend_list[index].score += 1
+            cls.selected_recommend_list[index].score += 2
 
     @classmethod
     def add_score_which_has_relative_word(cls, index, recommend_item, recommend_condition):
@@ -198,7 +197,7 @@ class RecommendHelper:
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        cls.selected_recommend_list[index].score += 1 - date_distance.days / 10
+        cls.selected_recommend_list[index].score += 1.5 - date_distance.days / 10*1.5
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, index, recommend_item, recommend_condition):
