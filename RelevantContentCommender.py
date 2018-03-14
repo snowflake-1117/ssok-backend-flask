@@ -55,9 +55,10 @@ def get_max():
     for record in response:
         print("comparing title list: ", record.subject_line,
               "\nsimilarity: ", record.similarity)
+    print("item length > ",response.__len__())
     response_list = DBManager.select_max_list(response)
     print("response>")
-    for record in response_list:
+    for record in response_list[:2]:
         print(record)
     return response_list
 
@@ -66,14 +67,11 @@ def filter(sorted_list):
     max_data =[]
     dup = False
     for datum in sorted_list:
-        for operand in max_data:
-            if operand.subject_line == datum.subject_line:
-                dup = True
-                break
-        if dup==False and max_data.__len__() < n_number:
-            max_data.append(datum)
-        else:
-            break
+        try:
+            m = max_data.index(datum)
+        except ValueError:
+            if max_data.__len__() < n_number:
+                max_data.append(datum)
     return max_data
 
 
