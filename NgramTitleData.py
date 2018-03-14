@@ -27,3 +27,6 @@ class NgramTitleData:
     @list_of_two_titles.setter
     def list_of_two_titles(self, title_list):
         self._list_of_two_titles = title_list
+
+    def __str__(self):
+        return self.list_of_two_titles[1] + "=>" + str(self.similarity_between_two_sentences)

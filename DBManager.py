@@ -3,8 +3,10 @@ from pymysql.err import InternalError
 
 
 class DBManager:
-    USER =
-    PW =
+    YOUR_USER = 'admin'
+    YOUR_PW = '2846'
+    USER = YOUR_USER
+    PW = YOUR_PW
 
     def __init__(self):
         DBManager.createDB()
@@ -85,6 +87,7 @@ class DBManager:
                 print(row)
         return
 
+
     @staticmethod
     def select_all_titles():
         conn = pymysql.connect(host='localhost',
@@ -103,6 +106,23 @@ class DBManager:
                 title_list.append(str(title[0]))
         return title_list
 
+
+    @staticmethod
+    def selectDatumBy(title):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = 'SELECT * FROM univ where title='+ title +"';"
+            cursor.execute(sql)
+            conn.commit()
+            result = cursor.fetchone()
+        return result
+
+
     @staticmethod
     def delete_all():
         conn = pymysql.connect(host='localhost',
@@ -116,3 +136,4 @@ class DBManager:
             cursor.execute(sql)
             conn.commit()
         return
+

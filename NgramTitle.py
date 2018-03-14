@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-]
+import heapq
 
 from NgramTitleData import NgramTitleData
 
@@ -31,6 +32,20 @@ class NgramTitle:
                 self._ngram_data.append(ngram_data)
                 self._indices_list.append([object_index, subject_index])
 
+    def compare_with(self, object_sentence):
+        object_split_list = self.get_spilt_list_of(object_sentence)
+        for subject_index, subject_sentence in enumerate(self._sentence_list):
+            subject_split_list = self.get_spilt_list_of(subject_sentence)
+            count = 0
+            for i in object_split_list:
+                for j in subject_split_list:
+                    if i == j:
+                        count += 1
+        ngram_data = NgramTitleData()
+        ngram_data.list_of_two_titles = [object_sentence, subject_sentence]
+        ngram_data.similarity_between_two_sentences = count / len(object_split_list)
+        self._ngram_data.append(ngram_data)
+
     def get_spilt_list_of(self, sentence):
         split_list = []
         sentence_length = len(sentence) - self._n_number + 1
@@ -45,3 +60,15 @@ class NgramTitle:
                 print("comparing index list: ", i.list_of_two_indices,
                       "\ncomparing title list: ", i.list_of_two_titles,
                       "\nsimilarity: ", i.similarity_between_two_sentences)
+
+    def print_all_subject_data(self):
+        for i in self._ngram_data:
+            print("comparing index list: ", i.list_of_two_indices,
+                  "\ncomparing title list: ", i.list_of_two_titles,
+                  "\nsimilarity: ", i.similarity_between_two_sentences)
+
+    def get_max(self, cnt):
+        response = heapq.nlargest(cnt, self._ngram_data, lambda item: item.similarity_between_two_sentences)
+        for record in response:
+            print("comparing title list: ", record.list_of_two_titles,
+                  "\nsimilarity: ", record.similarity_between_two_sentences)
