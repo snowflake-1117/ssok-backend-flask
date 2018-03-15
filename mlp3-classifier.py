@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 from keras.models import Sequential
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Dropout, Activation
@@ -7,14 +9,14 @@ from keras import backend as K
 from pymysql import ProgrammingError
 
 from department_convertor import idx_to_kor
-from db_manager import DBManager
+from app.crawlers.DBManager import DBManager
 import json
 import numpy as np
 
 
 category = "snowe"
-root_dir = "./data/" + category + "/"
-dic_file = root_dir + "/word-dic.json"
+root_dir = "/var/lib/mysql/data/" + category + "/"
+dic_file = root_dir + "word-dic.json"
 
 word_dic = json.load(open(dic_file))
 max_words = word_dic["_MAX"]
@@ -61,7 +63,7 @@ except OSError:
         batch_size=batch_size)
     model.fit(np.array(X), np.array(Y_train))
 
-data = json.load(open(root_dir + "/test_data.json"))
+data = json.load(open(root_dir + "test_data.json"))
 X = data["X"]
 Y = data["Y"]
 predicts = model.predict(np.array(X))
@@ -84,8 +86,8 @@ def get_original_line(fname, idx):
 for position, predict in enumerate(predicts):
     try:
         Y_predicted = idx_to_kor[predict]
-        print(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
-        DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
+        print(get_original_line(root_dir + "snowe_gongji.txt", position), Y_predicted)
+        DBManager.update_at(get_original_line(root_dir + "snowe_gongji.txt", position), Y_predicted)
     except ProgrammingError:
         # the line is not in table
         pass
