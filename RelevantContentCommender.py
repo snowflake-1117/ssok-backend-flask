@@ -50,25 +50,19 @@ def print_all_subject_data():
 def get_max():
     sorted_list = sorted(data_list, key=lambda item: item.similarity, reverse=True)
     response = filter(sorted_list)
-    for record in response:
-        print("comparing title list: ", record.subject_line,
-              "\nsimilarity: ", record.similarity)
-    print("item length > ",response.__len__())
     response_list = DBManager.select_max_list(response)
-    print("response>")
-    for record in response_list[:2]:
-        print(record)
     return response_list
 
 
 def filter(sorted_list):
     max_data =[]
-    dup = False
     for datum in sorted_list:
         try:
             m = max_data.index(datum)
         except ValueError:
-            if max_data.__len__() < n_number:
+            if max_data.__len__() <= n_number:
                 max_data.append(datum)
+        if max_data.__len__() > n_number:
+            break
     return max_data
 

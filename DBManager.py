@@ -29,6 +29,7 @@ class DBManager:
             conn.commit()
         return
 
+
     @staticmethod
     def createUniv():
         conn = pymysql.connect(host='localhost',
@@ -87,7 +88,6 @@ class DBManager:
 
     @staticmethod
     def select_max_list(title_list):
-        record_list = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -96,12 +96,14 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = 'SELECT * FROM univ WHERE title=%s or title=%s'
-            cursor.execute(sql, ( title_list[0].subject_line, title_list[1].subject_line) )
+            cursor.execute(sql, (title_list[0].subject_line, title_list[1].subject_line))
             conn.commit()
             result = cursor.fetchall()
+            record_list = []
             for row in result:
-                record_list.append(row)
-        return record_list
+                if does_not_exist(record_list, row):
+                    record_list.append(row)
+        return record_list[:2]
 
     @staticmethod
     def select_all_titles():
@@ -131,7 +133,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT * FROM univ where title='+ title +"';"
+            sql = 'SELECT * FROM univ where title=' + title + "';"
             cursor.execute(sql)
             conn.commit()
             result = cursor.fetchone()
@@ -139,6 +141,8 @@ class DBManager:
 
 
     @staticmethod
+
+
     def delete_all():
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
@@ -151,4 +155,11 @@ class DBManager:
             cursor.execute(sql)
             conn.commit()
         return
+
+
+def does_not_exist(record_list, row):
+    for record in record_list:
+        if row[3] == record[3]:
+            return False
+    return True
 
