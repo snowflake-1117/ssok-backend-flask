@@ -33,8 +33,9 @@ class WakatiMaker:
         return results
 
     def make_wakati(self, results, wakati_name):
-        with open("/home/hyemin/PycharmProjects/sookpam-backend-flask/" + wakati_name, 'r', encoding="utf-8") as fp:
-            self.previous_file_result = fp.read().split('\n')
+        if wakati_name != 'data/job/job_gongji.wakati' and wakati_name != 'data/snowe/snowe_gongji.wakati':
+            with open("/home/hyemin/PycharmProjects/sookpam-backend-flask/" + wakati_name, 'r', encoding="utf-8") as fp:
+                self.previous_file_result = fp.read().split('\n')
         all_results = results + self.previous_file_result
         with open(wakati_name, 'w', encoding="utf-8") as fp:
             fp.write("\n".join(all_results))
