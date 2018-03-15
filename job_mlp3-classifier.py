@@ -63,7 +63,7 @@ except OSError:
         batch_size=batch_size)
     model.fit(np.array(X), np.array(Y_train))
 
-data = json.load(open(root_dir + "/test_data.json"))
+data = json.load(open(root_dir + "test_data.json"))
 X = data["X"]
 Y = data["Y"]
 predicts = model.predict(np.array(X))

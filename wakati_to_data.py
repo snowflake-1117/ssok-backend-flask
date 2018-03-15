@@ -46,7 +46,6 @@ def count_freq_train(limit=0):
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
         division = os.path.splitext(file)[0].split('/')[6]
-        division = division.split('.')[0]
         if "_gongji" not in division:
             print("division: ", division)
             division_idx = eng_to_idx[str(division)]
