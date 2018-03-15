@@ -37,7 +37,7 @@ class WakatiMaker:
             with open("/home/hyemin/PycharmProjects/sookpam-backend-flask/" + wakati_name, 'r', encoding="utf-8") as fp:
                 self.previous_file_result = fp.read().split('\n')
         all_results = results + self.previous_file_result
-        with open(wakati_name, 'w', encoding="utf-8") as fp:
+        with open("/var/lib/mysql/"+wakati_name, 'w', encoding="utf-8") as fp:
             fp.write("\n".join(all_results))
 
     def do_snowe2vec(self, category, division, file_name, wakati_name):
