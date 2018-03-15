@@ -22,7 +22,7 @@ MODEL = 'job_model.h5py'
 
 # get numbers of class by counting files
 # files = glob.glob(root_dir + "*.wakati", recursive=True)
-nb_classes = 10
+nb_classes = idx_to_kor.__len__()
 print("nb_classes:", nb_classes)
 batch_size = 64
 nb_epoch = 10
