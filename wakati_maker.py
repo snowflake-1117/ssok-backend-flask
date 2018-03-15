@@ -1,25 +1,12 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 import codecs
-import pymysql
 from konlpy.tag import Twitter
 from app.crawlers.DBManager import DBManager
-import os
+
 
 class WakatiMaker:
-
-    def make_file(self, category, division, file_name):
-        if os.path.isfile(file_name):
-            os.remove(file_name)
-        conn = pymysql.connect(host='localhost',
-                               user=DBManager.USER,
-                               password=DBManager.PW,
-                               db='sookmyung',
-                               charset='utf8mb4')
-        with conn.cursor() as cursor:
-            sql = 'select title from univ where category=\''+category+'\' AND division=\''+division+'\' into outfile \''+file_name+'\';'
-            cursor.execute(sql)
-        conn.commit()
-        print(cursor.rowcount)
-        return
+    previous_file_result = []
 
     def read_file(self, file_name):
         text = ""
@@ -46,11 +33,14 @@ class WakatiMaker:
         return results
 
     def make_wakati(self, results, wakati_name):
+        with open("/home/hyemin/PycharmProjects/sookpam-backend-flask/" + wakati_name, 'r', encoding="utf-8") as fp:
+            self.previous_file_result = fp.read().split('\n')
+        all_results = results + self.previous_file_result
         with open(wakati_name, 'w', encoding="utf-8") as fp:
-            fp.write("\n".join(results))
+            fp.write("\n".join(all_results))
 
     def do_snowe2vec(self, category, division, file_name, wakati_name):
-        self.make_file(category, division, file_name)
+        DBManager.make_file(category, division, file_name)
         text = self.read_file(file_name)
         results = self.parse(text)
         self.make_wakati(results, wakati_name)

@@ -2,6 +2,7 @@ import pymysql.cursors
 from pymysql.err import InternalError
 from .Record import Record
 from RecommendHelper import RecommendHelper
+import os
 
 
 class DBManager:
@@ -317,3 +318,34 @@ class DBManager:
                 record.attach = str(result[8])
                 record_list.append(record)
         return record_list
+
+    @staticmethod
+    def update_at(title, division):
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            sql = "update web set division=%s where title=%s;"
+            cursor.execute(sql, (division, title))
+            conn.commit()
+        return
+
+    @staticmethod
+    def make_file(category, division, file_name):
+        os.chdir("/var/lib/mysql")
+        if os.path.isfile(file_name):
+            os.remove(file_name)
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+        with conn.cursor() as cursor:
+            sql = 'select title from web where category=%s AND division=%s into outfile %s;'
+            cursor.execute(sql, (category, division, file_name))
+        conn.commit()
+        print(cursor.rowcount)
+        return

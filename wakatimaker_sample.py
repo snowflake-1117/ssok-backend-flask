@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 from wakati_maker import WakatiMaker
 
 #  readme
@@ -7,7 +9,8 @@ from wakati_maker import WakatiMaker
 
 wm = WakatiMaker()
 
-categories = "취업", "공지"
+categories = "취업", "공통"
+directories = "data/job/", "data/snowe/"
 job_divisions = "공지", "취업", "인턴십", "교육", "멘토", "행사"
 snowe_division = "공지", "모집", "학사", "행사", "학생", "장학", "시스템"
 all_divisions = job_divisions, snowe_division
@@ -21,12 +24,12 @@ wakati = ".wakati"
 
 for i in range(0, len(categories)):
     category = categories[i]
-    print(str(i)+" "+category)
+    directory = directories[i]
+    print(str(i) + " " + category)
     for j in range(0, len(all_divisions[i])):
         division = all_divisions[i][j]
         outfile_name = all_outfile_names[i][j]
-        wm.do_snowe2vec(category, division, "C:/ProgramData/MySQL/MySQL Server 5.7/Uploads/"+outfile_name+txt, outfile_name+wakati)
-
-wm.do_snowe2vec('국제', '국제', "C:/ProgramData/MySQL/MySQL Server 5.7/Uploads/global.txt", "global.wakati")
+        wm.do_snowe2vec(category, division, directory + outfile_name + txt, directory +
+                        outfile_name + wakati)
 
 print("ok")
