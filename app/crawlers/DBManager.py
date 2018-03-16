@@ -282,13 +282,14 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT DISTINCT title FROM web WHERE title<>%s;'
+            sql = 'SELECT DISTINCT title FROM web WHERE title!=%s;'
             cursor.execute(sql, title)
             conn.commit()
-            result = cursor.fetchall()
+            results = cursor.fetchall()
             title_list = []
-            for title in result:
-                title_list.append(str(title[0]))
+            for result in results:
+                if result[0] != title:
+                    title_list.append(str(result[0]))
         return title_list
 
     @staticmethod
@@ -300,7 +301,7 @@ class DBManager:
                                charset='utf8mb4')
 
         with conn.cursor() as cursor:
-            sql = 'SELECT * FROM web WHERE title=%s or title=%s;'
+            sql = 'SELECT DISTINCT * FROM web WHERE title=%s or title=%s;'
             cursor.execute(sql, (title_list[0].subject_line, title_list[1].subject_line))
             conn.commit()
             results = cursor.fetchall()
@@ -317,7 +318,7 @@ class DBManager:
                 record.url = str(result[7])
                 record.attach = str(result[8])
                 record_list.append(record)
-        return record_list
+        return record_list[0:2]
 
     @staticmethod
     def update_at(title, division):
@@ -329,7 +330,7 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = "update web set division=%s where title=%s;"
-            cursor.execute(sql, (division, title))
+            cursor.execute(sql, (division, title.replace("\n", "")))
             conn.commit()
         return
 
