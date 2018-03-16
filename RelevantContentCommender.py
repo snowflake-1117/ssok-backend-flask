@@ -9,10 +9,11 @@ class RecommendDatum:
     @staticmethod
     def compare_with(sentence, sentence_list):
         data_list = []
+        sentence_set = set(sentence_list)
         object_sentence = sentence
         object_split_list = RecommendDatum.get_spilt_list_of(object_sentence)
 
-        for subject_index, subject_sentence in enumerate(sentence_list):
+        for subject_index, subject_sentence in enumerate(sentence_set):
             if subject_sentence != object_sentence:
                 subject_split_list = RecommendDatum.get_spilt_list_of(subject_sentence)
                 count = 0
@@ -26,9 +27,6 @@ class RecommendDatum:
         sorted_list = sorted(data_list, key=lambda item: item.similarity, reverse=True)
         response = RecommendDatum.filter(sorted_list)
         response_list = DBManager.select_max_list(response)
-        print("response>")
-        for record in response_list[:2]:
-            print(record)
         return response_list
 
     @staticmethod

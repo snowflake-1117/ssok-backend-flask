@@ -4,7 +4,8 @@ import json
 from app.crawlers.DBManager import DBManager
 from RecommendCondition import RecommendCondition
 from RecommendHelper import RecommendHelper
-import RelevantContentCommender
+from RelevantContentCommender import RecommendDatum
+
 
 @app.route('/')
 def index():
@@ -96,7 +97,8 @@ def get_10_recommend_list(student_grade, student_year,
 
 @app.route('/ngram/<title>')
 def get_ngram_results(title):
-    ngram_result_list = RelevantContentCommender.compare_with(title.replace('-', ' ').replace('__', '/'), DBManager.select_all_titles(title))
+    title = title.replace('--', ' ').replace('__', '/')
+    ngram_result_list = RecommendDatum.compare_with(title, DBManager.select_all_titles(title))
     json_dictionary = []
     if ngram_result_list is None:
         return ''
