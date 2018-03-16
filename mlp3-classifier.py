@@ -13,7 +13,6 @@ from app.crawlers.DBManager import DBManager
 import json
 import numpy as np
 
-
 category = "snowe"
 root_dir = "/var/lib/mysql/data/" + category + "/"
 dic_file = root_dir + "word-dic.json"
@@ -44,9 +43,24 @@ def build_model():
     return model
 
 
-data = json.load(open(root_dir + "train_data.json"))
-X = data["X"]  # 텍스트를 나타내는 데이터
-Y = data["Y"]  # 카테고리 데이터
+def load_json():
+    with open(root_dir + "train_data.json") as file:
+        for line in file:
+            if line.rstrip():
+                try:
+                    data = json.loads(line)
+                except:
+                    pass
+                else:
+                    yield data
+
+
+data = load_json()
+X = []
+Y = []
+for value in data:
+    X.extend(value["X"])  # 텍스트를 나타내는 데이터
+    Y.extend(value["Y"])  # 카테고리 데이터
 Y_train = np_utils.to_categorical(Y, nb_classes)
 print("train:", len(X), len(Y))
 
