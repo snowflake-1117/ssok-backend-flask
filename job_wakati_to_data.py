@@ -1,16 +1,19 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 import os, glob, json
 
 from department_convertor import eng_to_idx
 
 category = "job"
-root_dir = "./data/" + category + "/"
-dic_file = root_dir + "/word-dic.json"
-train_data = root_dir + "/train_data.json"
-test_data = root_dir + "/test_data.json"
+root_dir = "/var/lib/mysql/data/" + category + "/"
+dic_file = root_dir + "word-dic.json"
+train_data = root_dir + "train_data.json"
+test_data = root_dir + "test_data.json"
 
 # load word_dic from word_dic
 word_dic = json.load(open(dic_file))
 max_words = word_dic["_MAX"]
+
 
 def text_to_ids(text):
     text = text.strip()
@@ -29,7 +32,6 @@ def text_to_ids(text):
     return result
 
 
-
 def count_line_freq(text):
     cnt = [0 for n in range(word_dic["_MAX"])]
     ids = text_to_ids(text)
@@ -38,26 +40,17 @@ def count_line_freq(text):
     return cnt
 
 
-def get_division_list():
-    files = glob.glob(root_dir + "*.wakati", recursive=True)
-    division_list = []
-    for file in files:
-        division = os.path.splitext(file)[0].split('\\')[1]
-        division_list.append(division)
-    return division_list
-
-
-def count_freq_train(limit = 0):
+def count_freq_train(limit=0):
     X = []
     Y = []
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
-        division = os.path.splitext(file)[0].split('\\')[1]
-        if  "_gongji" not in division:
+        division = os.path.splitext(file)[0].split('/')[6]
+        if "_gongji" not in division:
             print("division: ", division)
             division_idx = eng_to_idx[str(division)]
             file = os.path.abspath(file)
-            with open(file,encoding="utf8") as f:
+            with open(file, encoding="utf8") as f:
                 content = f.readlines()
                 lines = [line.strip(' ') for line in content]
                 capacity = 0
@@ -69,15 +62,15 @@ def count_freq_train(limit = 0):
                         if capacity > limit: break
                         capacity += 1
     print("end of train data creation")
-    return X,Y
+    return X, Y
 
 
-def count_freq_test(limit = 0):
+def count_freq_test(limit=0):
     X = []
     Y = []
     category_idx = 0
     # read by lines
-    file = root_dir + category +"_gongji.wakati"
+    file = root_dir + category + "_gongji.wakati"
     # print(file)
     with open(file, encoding="utf8") as f:
         content = f.readlines()
@@ -92,7 +85,7 @@ def count_freq_test(limit = 0):
                 if capacity > limit: break
                 capacity += 1
     print("end of test data creation")
-    return X,Y
+    return X, Y
 
 
 if not os.path.exists(train_data):

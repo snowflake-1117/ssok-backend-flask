@@ -1,11 +1,15 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 import os, glob, json
 
 category = "job"
-root_dir = "./data/" + category + "/"
-dic_file = root_dir + "/word-dic.json"
+root_dir = "/var/lib/mysql/data/" + category + "/"
+dic_file = root_dir + "word-dic.json"
 
 # 어구를 자르고 ID로 변환하기 ---(※1)
-word_dic = { "_MAX": 0 }
+word_dic = {"_MAX": 0}
+
+
 def text_to_ids(text):
     text = text.strip("")
     words = text.split(" ")
@@ -29,6 +33,7 @@ def file_to_ids(fname):
         text = f.read()
         return text_to_ids(text)
 
+
 # read by line and return array ---(※2)
 def line_to_ids(fname):
     with open(fname, "r", encoding="utf8") as f:
@@ -42,8 +47,8 @@ def line_to_ids(fname):
 def register_dic():
     files = glob.glob(root_dir + "*.wakati", recursive=True)
     for file in files:
-            line_to_ids(file)
-            print(file)
+        line_to_ids(file)
+        print(file)
 
 
 # 단어 딕셔너리 만들기 --- (※5)
@@ -51,7 +56,4 @@ if os.path.exists(dic_file):
     word_dic = json.load(open(dic_file))
 else:
     register_dic()
-    json.dump(word_dic, open(dic_file,"w"))
-
-
-
+    json.dump(word_dic, open(dic_file, "w"))

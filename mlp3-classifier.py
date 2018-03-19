@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*-coding:utf-8-*-
 from keras.models import Sequential
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Dropout, Activation
@@ -7,14 +9,13 @@ from keras import backend as K
 from pymysql import ProgrammingError
 
 from department_convertor import idx_to_kor
-from db_manager import DBManager
+from app.crawlers.DBManager import DBManager
 import json
 import numpy as np
 
-
 category = "snowe"
-root_dir = "./data/" + category + "/"
-dic_file = root_dir + "/word-dic.json"
+root_dir = "/var/lib/mysql/data/" + category + "/"
+dic_file = root_dir + "word-dic.json"
 
 word_dic = json.load(open(dic_file))
 max_words = word_dic["_MAX"]
@@ -22,7 +23,7 @@ MODEL = 'snowe-model.h5py'
 
 # get numbers of class by counting files
 # files = glob.glob(root_dir + "*.wakati", recursive=True)
-nb_classes = 10
+nb_classes = idx_to_kor.__len__()
 print("nb_classes:", nb_classes)
 batch_size = 64
 nb_epoch = 10
@@ -42,9 +43,24 @@ def build_model():
     return model
 
 
-data = json.load(open(root_dir + "train_data.json"))
-X = data["X"]  # 텍스트를 나타내는 데이터
-Y = data["Y"]  # 카테고리 데이터
+def load_json():
+    with open(root_dir + "train_data.json") as file:
+        for line in file:
+            if line.rstrip():
+                try:
+                    data = json.loads(line)
+                except:
+                    pass
+                else:
+                    yield data
+
+
+data = load_json()
+X = []
+Y = []
+for value in data:
+    X.extend(value["X"])  # 텍스트를 나타내는 데이터
+    Y.extend(value["Y"])  # 카테고리 데이터
 Y_train = np_utils.to_categorical(Y, nb_classes)
 print("train:", len(X), len(Y))
 
@@ -61,7 +77,7 @@ except OSError:
         batch_size=batch_size)
     model.fit(np.array(X), np.array(Y_train))
 
-data = json.load(open(root_dir + "/test_data.json"))
+data = json.load(open(root_dir + "test_data.json"))
 X = data["X"]
 Y = data["Y"]
 predicts = model.predict(np.array(X))
@@ -84,8 +100,8 @@ def get_original_line(fname, idx):
 for position, predict in enumerate(predicts):
     try:
         Y_predicted = idx_to_kor[predict]
-        print(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
-        DBManager.updateAt(get_original_line(root_dir + "/gongji.txt", position), Y_predicted)
+        print(get_original_line(root_dir + "snowe_gongji.txt", position), Y_predicted)
+        DBManager.update_at(get_original_line(root_dir + "snowe_gongji.txt", position), Y_predicted)
     except ProgrammingError:
         # the line is not in table
         pass

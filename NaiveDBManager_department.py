@@ -3,7 +3,7 @@ import pymysql.cursors
 
 class DBManager:
     USER = "root"
-    PW = ""
+    PW = "id3"
 
     @staticmethod
     def isDepartment(category):

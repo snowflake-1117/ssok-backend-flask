@@ -3,9 +3,30 @@ from datetime import datetime
 
 
 class RecommendHelper:
+    selected_recommend_list = []
+
+    @classmethod
+    def select_recommend_list_from(cls, filtered_recommend_list, recommend_condition):
+        filtered_recommend_list_with_score = []
+        for recommend_item in filtered_recommend_list:
+            filtered_recommend_list_with_score.append(FilteredRecommendItemWithScore(recommend_item, 0))
+        cls.selected_recommend_list = filtered_recommend_list_with_score
+
+        interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
+        for index, recommend_item in enumerate(cls.selected_recommend_list):
+            cls.add_score_which_has_interesting_division(index, recommend_condition, recommend_item, interesting_division)
+            cls.add_score_which_has_relative_word(index, recommend_item, recommend_condition)
+            cls.add_score_close_today(index, recommend_item)
+            cls.subtract_score_which_has_unrelated_word(index, recommend_item, recommend_condition)
+        result_recommend_list = cls.sort_by_score_desc()
+        if result_recommend_list.__len__() < 10:
+            return result_recommend_list
+        else:
+            return result_recommend_list[0:10]
+
     @classmethod
     def add_date_condition_within_10days(cls, sql):
-        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 10 DAY)) AND DATE (date) <= DATE(now())'
+        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 7 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
     def add_category_and_division_condition(cls, recommend_condition, sql):
@@ -95,26 +116,6 @@ class RecommendHelper:
         return sql
 
     @classmethod
-    def select_recommend_list_from(cls, filtered_recommend_list, recommend_condition):
-        selected_recommend_list = []
-        for recommend_item in filtered_recommend_list:
-            filtered_recommend_item_with_score = FilteredRecommendItemWithScore(recommend_item, 0)
-            selected_recommend_list.append(filtered_recommend_item_with_score)
-
-        interesting_division = cls.get_interesting_categories_and_divisions(recommend_condition)
-        for recommend_item in selected_recommend_list:
-            cls.add_score_which_has_interesting_division(recommend_item, interesting_division)
-            cls.add_score_which_has_relative_word(recommend_item, recommend_condition)
-            cls.add_score_close_today(recommend_item)
-            cls.subtract_score_which_has_unrelated_word(recommend_item, recommend_condition)
-        result_recommend_list = cls.sort_by_score_desc(selected_recommend_list)
-
-        if result_recommend_list.__len__() < 10:
-            return result_recommend_list
-        else:
-            return result_recommend_list[0:10]
-
-    @classmethod
     def get_interesting_categories_and_divisions(cls, recommend_condition):
         interesting_majors_and_divisions = []
         if recommend_condition.interest_scholarship is 1:
@@ -137,20 +138,26 @@ class RecommendHelper:
         return interesting_majors_and_divisions
 
     @classmethod
-    def add_score_which_has_interesting_division(cls, recommend_item, interesting_majors_and_divisions):
-        if recommend_item.record.division in interesting_majors_and_divisions:
-            recommend_item.score += 1
+    def add_score_which_has_interesting_division(cls, index, recommend_condition, recommend_item, interesting_majors_and_divisions):
+        if recommend_item.record.category not in recommend_condition.majors.split('-') and recommend_item.record.division in interesting_majors_and_divisions:
+            cls.selected_recommend_list[index].score += 2
         elif recommend_item.record.category in interesting_majors_and_divisions:
-            recommend_item.score += 1
+            if recommend_item.record.division in ['취업']:
+                if '취업' not in interesting_majors_and_divisions:
+                    cls.selected_recommend_list[index].score += 1
+                elif '취업' in interesting_majors_and_divisions:
+                    cls.selected_recommend_list[index].score += 2.75
+            else:
+                cls.selected_recommend_list[index].score += 2
 
     @classmethod
-    def add_score_which_has_relative_word(cls, recommend_item, recommend_condition):
+    def add_score_which_has_relative_word(cls, index, recommend_item, recommend_condition):
         # 학년
         relative_words_with_user = {
             1: ["저학년", "신입", "새내기", "입학식", "2-3학기", "1학년"],
             2: ["저학년", " 2학년", "전과", "교환학생", "전공선택", "3학기", "4학기", "학·석사"],
             3: ["고학년", " 3학년", "조기졸업", "전공선택" "5학기", "6학기", "교환학생", "학·석사"],
-            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "대학원", "졸준위"]
+            4: ["고학년", " 4학년", "수료생", "졸업", "학위복", "학위수여", "7학기", "8학기", "졸준위"]
         }.get(recommend_condition.student_grade)
 
         # 공통
@@ -180,29 +187,29 @@ class RecommendHelper:
 
         if relative_words_with_user is not None:
             for word in relative_words_with_user:
-                if word in recommend_item.record.title:
+                if word in cls.selected_recommend_list[index].record.title:
                     recommend_item.score += 1
-                elif word in recommend_item.record.content:
+                elif word in cls.selected_recommend_list[index].record.content:
                     recommend_item.score += 0.5
 
     @classmethod
-    def sort_by_score_desc(cls, selected_recommend_list):
-        return sorted(selected_recommend_list, key=lambda selected_recommend_item: selected_recommend_item.score,
+    def sort_by_score_desc(cls):
+        return sorted(cls.selected_recommend_list, key=lambda selected_recommend_item: selected_recommend_item.score,
                       reverse=True)
 
     @classmethod
-    def add_score_close_today(cls, recommend_item):
+    def add_score_close_today(cls, index, recommend_item):
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        recommend_item.score += 1 - date_distance.days / 10
+        cls.selected_recommend_list[index].score += 1.4 - date_distance.days / 10 * 1.4
 
     @classmethod
-    def subtract_score_which_has_unrelated_word(cls, recommend_item, recommend_condition):
+    def subtract_score_which_has_unrelated_word(cls, index, recommend_item, recommend_condition):
         # 학년
         unrelated_words_with_user = {
-            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "대학원", "신입사원", "졸준위"],
-            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "대학원", "신입생", "새내기"],
+            1: ["고학년", "수료생", "졸업", "학위복", "학위수여", "학·석사", "신입사원", "졸준위"],
+            2: ["고학년", "수료생", "졸업", "학위복", "학위수여", "신입생", "새내기"],
             3: ["저학년", "수료생", "신입생", "새내기"],
             4: ["저학년", "전과", "신입생", "새내기"]
         }.get(recommend_condition.student_grade)
@@ -215,6 +222,6 @@ class RecommendHelper:
         if unrelated_words_with_user is not None:
             for word in unrelated_words_with_user:
                 if word in recommend_item.record.title:
-                    recommend_item.score -= 2
+                    cls.selected_recommend_list[index].score -= 1.5
                 elif word in recommend_item.record.content:
-                    recommend_item.score -= 1
+                    cls.selected_recommend_list[index].score -= 1
