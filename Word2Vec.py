@@ -5,5 +5,8 @@ class W2V:
 
     @classmethod
     def get_similar_words(cls, target_word, number):
-        results = cls.model.most_similar(positive=[target_word])[0:number]
-        return results
+        try:
+            results = cls.model.most_similar(positive=[target_word])[0:number]
+            return results
+        except Exception as e:
+            return None
