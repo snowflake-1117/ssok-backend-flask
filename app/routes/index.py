@@ -14,11 +14,12 @@ def index():
 
 @app.route('/공통/취업')
 def get_career_list():
-    record_list = DBManager.select_category_of("취업")
+    record_list = DBManager.select_category_of('취업')
     json_dictionary = []
     for record in record_list:
         json_dictionary.append(
-            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
+            {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
+             'title': record.title,
              'content': record.content, 'view': record.view,
              'date': record.date, 'url': record.url, 'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
@@ -31,7 +32,8 @@ def get_major_category_list(category_name, division_name):
     json_dictionary = []
     for record in record_list:
         json_dictionary.append(
-            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
+            {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
+             'title': record.title,
              'content': record.content, 'view': record.view,
              'date': record.date, 'url': record.url, 'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
@@ -46,7 +48,8 @@ def get_search_list_by_words(words):
         return ''
     for record in search_list:
         json_dictionary.append(
-            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
+            {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
+             'title': record.title,
              'content': record.content, 'view': record.view, 'date': record.date, 'url': record.url,
              'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
@@ -79,7 +82,7 @@ def get_10_recommend_list(student_grade, student_year,
                                              interest_scholarship, interest_academic, interest_event,
                                              interest_recruit,
                                              interest_system, interest_global, interest_career, interest_student)
-    print("interest_scholarship: ", interest_scholarship)
+    print('interest_scholarship: ', interest_scholarship)
     db_manager = DBManager()
     recommend_helper = RecommendHelper()
     filtered_record_list = db_manager.select_recommend_list_by(recommend_condition)
@@ -87,7 +90,8 @@ def get_10_recommend_list(student_grade, student_year,
     json_dictionary = []
     for selected_item in selected_record_list:
         json_dictionary.append(
-            {"category": selected_item.record.category, "division": selected_item.record.division,
+            {'db_id': selected_item.record.db_id, 'category': selected_item.record.category,
+             'division': selected_item.record.division,
              'id': selected_item.record.id, 'title': selected_item.record.title,
              'content': selected_item.record.content, 'view': selected_item.record.view,
              'date': selected_item.record.date, 'url': selected_item.record.url, 'attach': selected_item.record.attach})
@@ -104,8 +108,26 @@ def get_ngram_results(title):
         return ''
     for record in ngram_result_list:
         json_dictionary.append(
-            {"category": record.category, "division": record.division, 'id': record.id, 'title': record.title,
-             'content': record.content, 'view': record.view, 'date': record.date, 'url': record.url,
+            {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
+             'title': record.title, 'content': record.content, 'view': record.view, 'date': record.date,
+             'url': record.url,
+             'attach': record.attach})
+    json_data = json.dumps(json_dictionary, ensure_ascii=False)
+    return ''.join(json_data)
+
+
+@app.route('/clip/<clipped_id_list>')
+def get_clipped_id_records(clipped_id_list):
+    id_list = clipped_id_list.split('&')
+    record_list = DBManager.get_clipped_records(id_list)
+    json_dictionary = []
+    if record_list is None:
+        return ''
+    for record in record_list:
+        json_dictionary.append(
+            {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
+             'title': record.title, 'content': record.content, 'view': record.view, 'date': record.date,
+             'url': record.url,
              'attach': record.attach})
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
