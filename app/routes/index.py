@@ -53,6 +53,8 @@ def get_search_list_by_words(words):
         return ''
 
     json_search_keywords = []
+    if relative_words is None:
+        return ''
     for word in relative_words:
         json_search_keywords.append(str(word[0]))
 
