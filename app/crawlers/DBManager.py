@@ -256,9 +256,9 @@ class DBManager:
             sql = 'SELECT * FROM web WHERE '
             for index, word in enumerate(words):
                 if index < len(words) - 1:
-                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") AND '
+                    sql += '(title LIKE ' + '\"%' + word + '%\") AND '
                 else:
-                    sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") ORDER BY date DESC;'
+                    sql += '(title LIKE ' + '\"%' + word + '%\") ORDER BY date DESC;'
             cursor.execute(sql)
             conn.commit()
             results = cursor.fetchall()
