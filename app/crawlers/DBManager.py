@@ -246,7 +246,6 @@ class DBManager:
 
     @classmethod
     def select_search_by(cls, words):
-        word_list = words.split('--')
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
                                password=DBManager.PW,
@@ -255,8 +254,8 @@ class DBManager:
 
         with conn.cursor() as cursor:
             sql = 'SELECT * FROM web WHERE '
-            for index, word in enumerate(word_list):
-                if index < len(word_list) - 1:
+            for index, word in enumerate(words):
+                if index < len(words) - 1:
                     sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") AND '
                 else:
                     sql += '(title LIKE ' + '\"%' + word + '%\" OR content LIKE ' + '\"%' + word + '%\") ORDER BY date DESC;'

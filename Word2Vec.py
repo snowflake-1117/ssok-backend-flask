@@ -1,5 +1,6 @@
 from gensim.models import word2vec
 
+
 class W2V:
     model = word2vec.Word2Vec.load("whole.model")
 

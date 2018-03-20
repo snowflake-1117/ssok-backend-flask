@@ -5,6 +5,7 @@ from app.crawlers.DBManager import DBManager
 from RecommendCondition import RecommendCondition
 from RecommendHelper import RecommendHelper
 from RelevantContentCommender import RecommendDatum
+from Word2Vec import W2V
 
 
 @app.route('/')
@@ -42,16 +43,29 @@ def get_major_category_list(category_name, division_name):
 
 @app.route('/search/<words>')
 def get_search_list_by_words(words):
-    search_list = DBManager.select_search_by(words)
+    word_list = words.split('--')
+    if word_list is None:
+        return ''
+    relative_words = W2V.get_similar_words(word_list[0])
+    search_list = DBManager.select_search_by(word_list)
     json_dictionary = []
     if search_list is None:
         return ''
+
+    json_search_keywords = []
+    for word in relative_words:
+        json_search_keywords.append(str(word[0]))
+
+    json_search_records = []
     for record in search_list:
-        json_dictionary.append(
+        json_search_records.append(
             {'db_id': record.db_id, 'category': record.category, 'division': record.division, 'id': record.id,
              'title': record.title,
              'content': record.content, 'view': record.view, 'date': record.date, 'url': record.url,
              'attach': record.attach})
+
+    json_dictionary.append({'search_keywords': json_search_keywords, 'search_list': json_search_records})
+
     json_data = json.dumps(json_dictionary, ensure_ascii=False)
     return ''.join(json_data)
 
