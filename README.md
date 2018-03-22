@@ -8,11 +8,12 @@
  + original_set : 게시판이 2개 이상인 학과들
  + train_set, test_set : original_set을 분리, test_set size = 0.2, train_set=0.8
 
-> <pre>정확도 측정 방법
-test_data의 실제 값과 bayesian filter의 예측값을 비교했습니다.
-총 데이터 2050개 (train 1640, test 410)으로 테스트 해본 결과는 아래와 같습니다.
-정확도: 0.9 이상 (1차 0.9390243902439024, 2차 0.9560975609756097)
-결과 중 예측값과 다른 경우만 추출해봤습니다.</pre>
+> 정확도 측정 방법
++ test_data의 실제 값과 bayesian filter의 예측값을 비교했습니다.
++ 총 데이터 2050개 (train 1640, test 410)으로 테스트 해본 결과는 아래와 같습니다.
++ 정확도: 0.9 이상 (1차 0.9390243902439024, 2차 0.9560975609756097)
+
+결과 중 예측값과 다른 경우만 추출해봤습니다.
 
 <pre>
 title                 |  predict | real value
