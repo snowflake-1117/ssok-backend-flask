@@ -2,8 +2,6 @@ from pymysql.err import InternalError
 import pymysql.cursors
 
 class DBManager:
-    YOUR_USER = 'admin'
-    YOUR_PW = '2846'
     USER = YOUR_USER
     PW = YOUR_PW
 
