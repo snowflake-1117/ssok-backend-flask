@@ -2,6 +2,8 @@ from pymysql.err import InternalError
 import pymysql.cursors
 
 class DBManager:
+    YOUR_USER = 'admin'
+    YOUR_PW = '2846'
     USER = YOUR_USER
     PW = YOUR_PW
 
@@ -9,9 +11,8 @@ class DBManager:
     def isDepartment(category):
         return category != "공통" and category != "취업" and category!="국제"
 
-
     @staticmethod
-    def selectTrainData():
+    def selectClassifiedData():
         rows = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,
@@ -55,7 +56,27 @@ class DBManager:
         return rows
 
     @staticmethod
-    def selectTestData():
+    def reset_test_data_division():
+        conn = pymysql.connect(host='localhost',
+                               user=DBManager.USER,
+                               password=DBManager.PW,
+                               db='sookmyung',
+                               charset='utf8mb4')
+
+        with conn.cursor() as cursor:
+            categoryList = DBManager.getTestCategoryList()
+            sql = "update univ set division='취업' where "
+            for category in categoryList:
+                sql = sql + "category='" + category + "' or "
+
+            sql = sql[:len(sql) - 4]
+            print("sql_test:", sql)
+            cursor.execute(sql)
+            conn.commit()
+
+
+    @staticmethod
+    def selectUnclassifiedData():
         rows = []
         conn = pymysql.connect(host='localhost',
                                user=DBManager.USER,

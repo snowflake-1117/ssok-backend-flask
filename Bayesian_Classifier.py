@@ -1,16 +1,15 @@
-from NaiveDBManager_department import DBManager
+from BayesianDBManager import DBManager
 from BayesianFilter import BayesianFilter
-import csv
 
 bf = BayesianFilter()
 
 DBManager()
-train_set = DBManager.selectTrainData()
-for row in train_set:
+classified_set = DBManager.selectClassifiedData()
+for row in classified_set:
     bf.fit(row[0], row[1])
 
-test_set = DBManager.selectTestData()
+unclassified_set = DBManager.selectUnclassifiedData()
 
-for row in test_set:
+for row in unclassified_set:
     pre, scorelist = bf.predict(row[0])
     DBManager.updateAt(row[0], pre)
