@@ -26,8 +26,8 @@ class RecommendHelper:
             return result_recommend_list[0:10]
 
     @classmethod
-    def add_date_condition_within_10days(cls, sql):
-        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 9 DAY)) AND DATE (date) <= DATE(now())'
+    def add_date_condition_within_7days(cls, sql):
+        return sql + 'DATE(date) >= DATE(subdate(now(), INTERVAL 6 DAY)) AND DATE (date) <= DATE(now())'
 
     @classmethod
     def add_category_and_division_condition(cls, recommend_condition, sql):
@@ -193,7 +193,12 @@ class RecommendHelper:
             for word in relative_words_with_user:
                 if word in cls.selected_recommend_list[index].record.title:
                     count += 1
-            recommend_item.score += (count / relative_words_with_user.__len__()) * 0.2
+            if count == 0:
+                recommend_item.score += 0
+            elif count < 2:
+                recommend_item.score += 0.5 * 0.2
+            else:
+                recommend_item.score += 1 * 0.2
 
     @classmethod
     def sort_by_score_desc(cls):
@@ -205,7 +210,7 @@ class RecommendHelper:
         today = datetime.today()
         item_posted_date = datetime.strptime(recommend_item.record.date, "%Y-%m-%d")
         date_distance = today - item_posted_date
-        cls.selected_recommend_list[index].score += (1 - (date_distance.days+1) / 10) * 0.1
+        cls.selected_recommend_list[index].score += (1 - (date_distance.days + 1) / 7) * 0.1
 
     @classmethod
     def subtract_score_which_has_unrelated_word(cls, index, recommend_item, recommend_condition):
@@ -227,4 +232,7 @@ class RecommendHelper:
             for word in unrelated_words_with_user:
                 if word in recommend_item.record.title:
                     count += 1
-            cls.selected_recommend_list[index].score += (1 - count / unrelated_words_with_user.__len__()) * 0.3
+            if count == 0:
+                cls.selected_recommend_list[index].score += 1 * 0.3
+            else:
+                cls.selected_recommend_list[index].score += 0
