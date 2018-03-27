@@ -159,7 +159,7 @@ class DBManager:
         with conn.cursor() as cursor:
             sql = 'SELECT * FROM web WHERE '
             recommend_helper = RecommendHelper()
-            sql = recommend_helper.add_date_condition_within_10days(sql)
+            sql = recommend_helper.add_date_condition_within_7days(sql)
             sql = recommend_helper.add_category_and_division_condition(recommend_condition, sql)
             sql += ' ORDER BY date DESC;'
             cursor.execute(sql)
