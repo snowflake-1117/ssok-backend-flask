@@ -161,7 +161,7 @@ class DBManager:
             recommend_helper = RecommendHelper()
             sql = recommend_helper.add_date_condition_within_10days(sql)
             sql = recommend_helper.add_category_and_division_condition(recommend_condition, sql)
-            sql += ' ORDER BY date DESC'
+            sql += ' ORDER BY date DESC;'
             cursor.execute(sql)
             conn.commit()
             results = cursor.fetchall()
@@ -239,7 +239,7 @@ class DBManager:
         with conn.cursor() as cursor:
             sql = 'delete u1 from web u1, web u2 where u1.db_id < u2.db_id ' \
                   'and u1.title=u2.title and u1.content=u2.content ' \
-                  'and u1.category=u2.category and u1.division=u2.division;'
+                  'and u1.category=u2.category and u1.division=u2.division and u1.date=u2.date;'
             cursor.execute(sql)
         conn.commit()
         return
