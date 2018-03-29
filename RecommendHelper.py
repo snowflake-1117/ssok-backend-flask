@@ -158,9 +158,9 @@ class RecommendHelper:
         # 학년
         relative_words_with_user = {
             1: ["저학년", "신입생", "새내기", "입학식", "3학기", "1학년"],
-            2: ["저학년", " 2학년", "전과", "교환학생", "전공선택", "3학기", "4학기", "학·석사"],
-            3: ["고학년", " 3학년", "조기졸업", "전공선택" "5학기", "6학기", "교환학생", "학·석사", "대학원"],
-            4: ["고학년", " 4학년", "수료생", "졸업", "학위", "7학기", "8학기", "졸준위", "대학원"]
+            2: ["저학년", " 2학년", "전과", "교환학생", "전공선택", "3학기", "4학기"],
+            3: ["고학년", " 3학년", "조기졸업", "전공선택" "5학기", "6학기", "교환학생"],
+            4: ["고학년", " 4학년", "수료생", "졸업", "학위", "7학기", "8학기", "졸준위"]
         }.get(recommend_condition.student_grade)
 
         # 공통
@@ -177,7 +177,7 @@ class RecommendHelper:
             relative_words_with_user.extend(
                 ["재학생", "수강신청", "수강정정", "학사일정", "수업평가", "성적", "학생지도의 날", "계절학기", "소멸과목"])
         else:
-            relative_words_with_user.extend(["복학", "휴학", "등록"])
+            relative_words_with_user.extend(["복학", "휴학"])
 
         # 장학
         if recommend_condition.interest_scholarship is 1:
@@ -225,7 +225,7 @@ class RecommendHelper:
         if recommend_condition.student_status is recommend_condition.STATUS_IN:
             unrelated_words_with_user.extend(["복학"])
         else:
-            unrelated_words_with_user.extend(["학사일정", "수업평가", "성적", "학생지도의 날", "휴학생 제외"])
+            unrelated_words_with_user.extend(["학사일정", "수업평가", "성적", "학생지도의 날"])
 
         if unrelated_words_with_user is not None:
             count = 0
